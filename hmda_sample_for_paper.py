@@ -1736,7 +1736,7 @@ if __name__ == '__main__':
         'tract_median_age_of_housing_units',
     ]
     lar = lar[output_columns]
-    lar_sample = lar.sample(n=40000, random_state=5419)
+    lar_sample = lar.sample(n=40000)
     lar_sample.to_csv(
         '/mnt/ldrive/census/hmda lar 2018-static/hmda_lar_2018_orig_mtg_sample.csv'
     )
