@@ -9,10 +9,10 @@ Subset the original data and create a training and test set.
 random.seed(42)
 
 # Load the data
-DATA = pd.read_csv('./hmda_lar_2018_orig_mtg_sample.csv')
+DATA = pd.read_csv('data/hmda_lar_2018_orig_mtg_sample.csv')
 
 
-
+'''
 # Keep only certain subsets
 DATA = DATA[DATA["derived_dwelling_category"]=="Single Family (1-4 Units):Site-Built"]
 # Subset to "action_taken"=="Loan originated"
@@ -39,14 +39,14 @@ keep_columns += ['applicant_credit_score_type', 'co_applicant_credit_score_type'
 
 # Keep only the interesting columns
 DATA = DATA[keep_columns]
-
+'''
 
 
 # Shuffle the dataset then create a training and test set
 fraction_train = 0.8
 DATA = DATA.sample(frac=1)
-TRAIN = DATA.iloc[0:(int(fraction_train*len(DATA))),:].copy()
-TEST= DATA.iloc[(int(fraction_train*len(DATA))):,:].copy()
+TRAIN = DATA.iloc[0:(int(fraction_train*len(DATA))), :].copy()
+TEST = DATA.iloc[(int(fraction_train*len(DATA))):, :].copy()
 
 
 # Create a cv column in the training set
@@ -54,8 +54,8 @@ TRAIN['cv_fold'] = random.choices(list(range(0, 5)), k=len(TRAIN))
 
 
 # Save the training and test set
-TRAIN.to_csv('output/TRAIN.csv', index=False)
-TEST.to_csv('output/TEST.csv', index=False)
+TRAIN.to_csv('data/output/hmda_train.csv', index=False)
+TEST.to_csv('data/output/hmda_test.csv', index=False)
 
 
 
