@@ -8,4 +8,4 @@ This text outlines a viable approach for training and evaluating complex machine
 
 ### Current Working Draft:
 
-See [template.pdf](template.pdf).
+See [article-information-2019.pdf](article-information-2019.pdf).
