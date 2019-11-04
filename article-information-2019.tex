@@ -67,7 +67,7 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Responsible Machine Learning\\\large{Interpretable Models, Post-hoc Explanation, and Disparate Impact Testing}}
+\Title{Responsible Machine Learning\\\large{with Interpretable Models, Post-hoc Explanation, and Disparate Impact Testing}}
 
 % Author Orchid ID: enter ID or remove command
 \newcommand{\orcidauthorA}{0000-0000-000-000X} % Add \orcidA{} behind the author's name
@@ -145,10 +145,112 @@ $^{2}$ \quad BLDS, LLC}
 \section{Materials and Methods}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Notation}
+
+To facilitate descriptions of data, modeling, explanatory, and social bias techniques, notation for input and output spaces, datasets, and models is defined.
+
+\subsubsection{Spaces} 
+ 
+	\begin{itemize}
+		\item Input features come from the set $\mathcal{X}$ contained in a \textit{P}-dimensional input space, $\mathcal{X} \subset \mathbb{R}^P$.  An arbitrary, potentially unobserved, or future instance of $\mathcal{X}$ is denoted $\mathbf{x}$, $\mathbf{x} \in \mathcal{X}$.
+		\item Labels corresponding to instances of $\mathcal{X}$ come from the set $\mathcal{Y}$.
+		\item Learned output responses come from the set $\mathcal{\hat{Y}}$. % For regression models, the set $\mathcal{\hat{Y}}_r$ is also contained in a $C$-dimensional output space, $\mathcal{\hat{Y}}_r \subset \mathbb{R}^{C_r}$. For classification models, the set $\mathcal{\hat{Y}}_c$ typically contains a column vector for each unique class in $\mathcal{Y}$. Hence, $\mathcal{\hat{Y}}_c$ is contained in a $C'$-dimensional output space,  $\mathcal{\hat{Y}}_c \subset \mathbb{R}^{C'_c}$.
+	\end{itemize}	
+	
+\subsubsection{Datasets} 
+
+	\begin{itemize}
+		\item The input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$. 
+		\item Each $i$-th observation of $\mathbf{X}$ is denoted as $\mathbf{x}^{(i)} = $  
+		$[x_0^{(i)}, x_1^{(i)}, \dots, x_{\textit{P}-1}^{(i)}]$, with corresponding $i$-th labels in $\mathbf{Y}, \mathbf{y}^{(i)}$, and corresponding predictions in $\mathbf{\hat{Y}}, \mathbf{\hat{y}}^{(i)}$. % = [y_0^{(i)}, y_1^{(i)}, \dots, y_{\textit{C}-1}^{(i)}]$.
+		\item $\mathbf{X}$ and $\mathbf{Y}$ consist of $N$ tuples of observations: $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots,(\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$. %\\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
+		\item Each $j$-th input column vector of $\mathbf{X}$ is denoted as $X_j = [x_{j}^{(0)}, x_{j}^{(1)}, \dots, x_{j}^{(N-1)}]^T$.
+	\end{itemize}	 
+
+\subsubsection{Models}
+
+	\begin{itemize}
+		\item A type of machine learning model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown signal-generating function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
+		$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$, such that $g \approx f$.
+		\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
+		\item The model to be explained is denoted as $g$.
+	\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Data Description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Model Description}
+
+\subsubsection{Explainable Neural Network}
+
+\subsubsection{Monotonically Constrained Gradient Boosting Machine}
+
+Monotonic gradient boosting machines (M-GBMs) constrain typical GBM training to consider only tree splits that obey user-defined positive and negative monotonicity constraints. The M-GBM remains an additive combination of many trees, $T_b$, but with a set of splitting rules that respect the monotonicity constraints,  $\Theta^\text{mono}_b$.
+
+\begin{equation}
+\begin{aligned}\label{eq:rf}
+g^{\text{mono}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mono}_b\right)
+\end{aligned}
+\end{equation}
+
+\noindent As in unconstrained GBM, $\Theta_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the M-GBM, $g^{\text{mono}}_{b-1}(\mathbf{X})$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For each $i$-th observation  and the $b$-th iteration the loss function, $\mathcal{L}_{i,b}$, can be defined as:
+
+\begin{equation}
+\begin{aligned}
+\mathcal{L}_{i,b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{mono}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
+\end{aligned}
+\end{equation}
+
+\noindent In addition to $\mathcal{L}_{i,b}$, $\Theta^\text{mono}_b$ is constrained by applying additional splitting rules for each binary split rule, $\theta_{b,j,k} \in \Theta_b$. Each $\theta_{b,j,k}$ is associated with a feature, $X_j$, and can be the $k$-th such split associated with $X_j$ in $T_b$. Each $\theta_{b,j,k}$ also results in left and right child nodes with a numeric weight, $\{w_{b,j,k,L}, w_{b,j,kR}\}$. For terminal nodes, each $w_{b,j,k}$ is essentially the model prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$, $\Theta_b$ is said to be positive monotonic if:
+
+\begin{enumerate}
+\item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ causing the left child weight to be greater than the right child weight, $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$ is not considered. 
+\item For any subsequent left child node involving $X_j$, any $\theta_{b,j, 1+}$ causing $T(x_j; \theta_{b,j,1+}) = \{w_{b,j,1+,L}, w_{b,j,1+R}\}$ where $w_{b,j,1+,L} > w_{b,j,1+,R}$ is not considered.
+\item Moreover, for any subsequent left child node involving $X_j$, $T(x_j; \theta_{b,j,k+}) = \{w_{b,j,k,L}, w_{b,j,k,R}\}$ for $k > 0$, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$ are bound by the preceding set of $\{w_{b,j,k-1,L}, w_{b,j,k-1, R}\}$ such that $ \{w_{b,j,k,L}, w_{b,j,k,R}\} \le \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
+\item (1) and (2) are also applied to all right child nodes, except that for right child nodes $\{w_{b,j,k,L}, w_{b,j,k,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
+
+\end{enumerate}
+
+\noindent Note that for any $X_j$ in any $g_{\text{mono}}~T_b$ left subtrees will alway produce lower predictions than right subtrees, and that any $g_{\text{mono}}(\mathbf{x})$ is a sequential addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classifications. Also note that each tree's root node will always obey monotonicity constraints, as $T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,0})$, ensuring $T(x^{\alpha}_j; \theta_{b,j,0}) = w_{b,j,0,L} \le T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,j,0,R}$. For negative monotonic constraints left and right splitting rules are switched, and tree pruning strategies can be applied.
+
+% Tree pruning?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Explanatory Method Description}
+
+\subsubsection{Partial Dependence and Individual Conditional Expectation}
+
+Partial dependence (PD) plots are a widely-used method for describing the average predictions of a complex model $g$ across some partition of data $\mathbf{X}$ for some interesting input feature $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single instance $\mathbf{x} \in \mathcal{X}$. Partial dependence and ICE can be combined in the same plot to compensate for known weaknesses of partial dependence, to identify interactions modeled by $g$, and to create a holistic portrait of the predictions of a complex model for some $X_j$  \cite{ice_plots}.
+
+Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{(-j)} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{(-j)}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{(-j)}$ are left untouched. Partial dependence and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$. 
+
+\subsubsection{Shapley Values}
+
+Shapley explanations, including Tree SHAP (SHapley Additive exPlanations) , are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ and that Shapley explanation values can never decrease for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}. 
+
+For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
+
+\begin{equation}
+\label{eq:shap_additive}
+\begin{aligned}
+g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
+\end{aligned}
+\end{equation}
+
+\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. 
+
+Shapley values can be estimated in different ways. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal tree structures to estimate the impact of each $x_j$ for some $g(\mathbf{x})$ of interest \cite{tree_shap}.
+
+\begin{equation}
+\label{eq:shap_contrib}
+\begin{aligned}
+\phi_{j} = \sum_{S \subseteq \mathcal{P} \setminus \{j\}}\frac{|S|!(\mathcal{P} -|S| -1)!}{\mathcal{P}!}[g_x(S \cup \{j\}) - g_x(S)]
+\end{aligned}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Social Bias Test Description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Software Resources}
@@ -156,7 +258,6 @@ $^{2}$ \quad BLDS, LLC}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulated Data Results}
@@ -166,6 +267,7 @@ $^{2}$ \quad BLDS, LLC}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
+% Bivariate monotonicity constraints likely dampen impact of interactions
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
@@ -184,7 +286,7 @@ $^{2}$ \quad BLDS, LLC}
 \funding{This research received no external funding.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\acknowledgments{}
+\acknowledgments{Wen Phan for work in formalizing our notation.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \conflictsofinterest{} 
