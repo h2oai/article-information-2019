@@ -97,7 +97,7 @@ $^{2}$ \quad BLDS, LLC}
 %\conference{} % An extended version of a conference paper
 
 % Abstract (Do not insert blank lines, i.e. \\) 
-\abstract{This text outlines a viable approach for training and evaluating complex machine learning systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (M-GBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated datasets with known feature importance and sociological bias characteristics and on realistic, publicly available example datasets. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of individual conditional expectation (ICE) and global and local gradient-based or Shapley feature importance. The constrained model predictions are also tested for disparate impact and other types of sociological bias using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and bias testing with accessible software tools, this text aims to provide a template workflow for important machine learning applications that require high accuracy and interpretability and low disparate impact.}
+\abstract{This text outlines a viable approach for training and evaluating machine learning systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (M-GBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and sociological bias characteristics and on realistic, publicly available lending data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence and individual conditional expectation (ICE) and global and local gradient-based or Shapley feature importance. The constrained model predictions are also tested for disparate impact and other types of sociological bias using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and bias testing with accessible software tools, this text aims to provide a template workflow for important machine learning applications that require high accuracy and interpretability and low disparate impact.}
 
 % Keywords
 \keyword{Machine Learning; Neural Network; Gradient Boosting Machine; Interpretable; Explanation; Fairness; Disparate Impact; Python}
@@ -173,7 +173,7 @@ To facilitate descriptions of data, modeling, explanatory, and social bias techn
 		\item A type of machine learning model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown signal-generating function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
 		$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$, such that $g \approx f$.
 		\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
-		\item The model to be explained is denoted as $g$.
+		\item The model to be explained and tested for unwanted social bias is denoted as $g$.
 	\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,12 +181,33 @@ To facilitate descriptions of data, modeling, explanatory, and social bias techn
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Model Description}
+% both additive
+% XNN smooth
 
 \subsubsection{Explainable Neural Network}
 
+Explainable neural networks (XNNs) are an alternative formulation of additive index models in which the ridge functions are neural networks \cite{wf_xnn}. XNNs also bare a strong resemblance to generalized additive models (GAMs) and so-called explainable boosting machines (EBMs or GA\textsuperscript{2}M), i.e. GAMs which consider main effects and a small number of 2-way interactions and incorporate boosting in their training \cite{esl}, \cite{ga2m}.  Hence, XNNs enable users to tailor interpretable neural network architectures to a given prediction problem and to visualize model behavior by plotting ridge functions. XNNs are composed of a global bias term, $\mu_0$, $K$ individually specified neural networks, $n_k$ with scale parameters $\gamma_k$, and the inputs to each $n_k$ are themselves a linear combination of modeling inputs, $\sum^J_{j=0}\beta_{k, j}x_j$.
+
+\begin{equation}
+\begin{aligned}
+\label{eq:xnn}
+g^{\text{XNN}}(\mathbf{x}) = \mu_0 + \sum_{k=1}^K\gamma_k n_k(\sum^J_{j=1}\beta_{k, j}x_j)
+\end{aligned}
+\end{equation}
+
+\noindent $g^{\text{XNN}}$ is comprised of 3 meta-layers:
+
+\begin{enumerate}
+\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, is known as the \textit{projection layer} and is fully connected to each input feature, $X_j$.
+\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network, which can be parameterized to suite a given modeling task. To facilitate direct visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer hidden unit, $\sum_j\beta_{k,j}x_j$.
+\item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for visualization purposes.
+\end{enumerate}
+
+\noindent $g^{\text{XNN}}$ is typically trained by mini-batch stochastic gradient descent (SGD). $L_1$ regularization is often applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof.
+
 \subsubsection{Monotonically Constrained Gradient Boosting Machine}
 
-Monotonic gradient boosting machines (M-GBMs) constrain typical GBM training to consider only tree splits that obey user-defined positive and negative monotonicity constraints. The M-GBM remains an additive combination of many trees, $T_b$, but with a set of splitting rules that respect the monotonicity constraints,  $\Theta^\text{mono}_b$.
+Monotonic gradient boosting machines (M-GBMs) constrain typical GBM training to consider only tree splits that obey user-defined positive and negative monotonicity constraints. The M-GBM remains an additive combination of $B$ trees trained by gradient boosting, $T_b$, but each tree learns a set of splitting rules that respect monotonicity constraints,  $\Theta^\text{mono}_b$. 
 
 \begin{equation}
 \begin{aligned}\label{eq:rf}
@@ -194,27 +215,24 @@ g^{\text{mono}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mo
 \end{aligned}
 \end{equation}
 
-\noindent As in unconstrained GBM, $\Theta_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the M-GBM, $g^{\text{mono}}_{b-1}(\mathbf{X})$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For each $i$-th observation  and the $b$-th iteration the loss function, $\mathcal{L}_{i,b}$, can be defined as:
+\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the M-GBM, $g^{\text{mono}}_{b-1}(\mathbf{X})$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For the $b$-th iteration, the loss function, $\mathcal{L}_{b}$, can generally be defined as:
 
 \begin{equation}
 \begin{aligned}
-\mathcal{L}_{i,b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{mono}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
+\mathcal{L}_{b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{mono}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
 \end{aligned}
 \end{equation}
 
-\noindent In addition to $\mathcal{L}_{i,b}$, $\Theta^\text{mono}_b$ is constrained by applying additional splitting rules for each binary split rule, $\theta_{b,j,k} \in \Theta_b$. Each $\theta_{b,j,k}$ is associated with a feature, $X_j$, and can be the $k$-th such split associated with $X_j$ in $T_b$. Each $\theta_{b,j,k}$ also results in left and right child nodes with a numeric weight, $\{w_{b,j,k,L}, w_{b,j,kR}\}$. For terminal nodes, each $w_{b,j,k}$ is essentially the model prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$, $\Theta_b$ is said to be positive monotonic if:
+\noindent In addition to $\mathcal{L}_{b}$, $g^\text{mono}$ training is characterized by additional splitting rules and constraints on tree node weights. Each binary splitting rule, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left and right child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,kR}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,kR}\}$ can be direct numeric components of some $g^\text{mono}$ prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$, $\Theta_b$ is restricted to be positive monotonic w.r.t. $X_j$ by the following rules and constraints.
 
 \begin{enumerate}
-\item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ causing the left child weight to be greater than the right child weight, $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$ is not considered. 
-\item For any subsequent left child node involving $X_j$, any $\theta_{b,j, 1+}$ causing $T(x_j; \theta_{b,j,1+}) = \{w_{b,j,1+,L}, w_{b,j,1+R}\}$ where $w_{b,j,1+,L} > w_{b,j,1+,R}$ is not considered.
-\item Moreover, for any subsequent left child node involving $X_j$, $T(x_j; \theta_{b,j,k+}) = \{w_{b,j,k,L}, w_{b,j,k,R}\}$ for $k > 0$, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$ are bound by the preceding set of $\{w_{b,j,k-1,L}, w_{b,j,k-1, R}\}$ such that $ \{w_{b,j,k,L}, w_{b,j,k,R}\} \le \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
-\item (1) and (2) are also applied to all right child nodes, except that for right child nodes $\{w_{b,j,k,L}, w_{b,j,k,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
-
+\item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ resulting in the left child weight being greater than the right child weight, $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$, is not considered. 
+\item For any subsequent left child node involving $X_j$, any $\theta_{b,j, k\ge1}$ resulting in $T(x_j; \theta_{b,j,k\ge1}) = \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$ where $w_{b,j,k\ge1,L} > w_{b,j,k\ge1,R}$, is not considered.
+\item Moreover, for any subsequent left child node involving $X_j$, $T(x_j; \theta_{b,j,k\ge1}) = \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$, $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$ are bound by the parent set of node weights, $\{w_{b,j,k-1,L}, w_{b,j,k-1, R}\}$, such that $ \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \le \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
+\item (1) and (2) are also applied to all right child nodes, except that for right child nodes $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
 \end{enumerate}
 
-\noindent Note that for any $X_j$ in any $g_{\text{mono}}~T_b$ left subtrees will alway produce lower predictions than right subtrees, and that any $g_{\text{mono}}(\mathbf{x})$ is a sequential addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classifications. Also note that each tree's root node will always obey monotonicity constraints, as $T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,0})$, ensuring $T(x^{\alpha}_j; \theta_{b,j,0}) = w_{b,j,0,L} \le T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,j,0,R}$. For negative monotonic constraints left and right splitting rules are switched, and tree pruning strategies can be applied.
-
-% Tree pruning?
+\noindent Note that for any one $X_j$ and $T_b \in g^{\text{mono}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{mono}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{mono}}(x^{\alpha}_j)  \le g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e. $g^{\text{mono}}(x^{\alpha}_j)  \ge g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Explanatory Method Description}
@@ -267,7 +285,15 @@ Shapley values can be estimated in different ways. Tree SHAP is a specific imple
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
+
+% richness of possible interpretable model architecture
+
+%scalability, easy computation of derivatives
+% XNN is quite sensitive to initialization, and ...
+% variable selection
+
 % Bivariate monotonicity constraints likely dampen impact of interactions
+% Tree pruning?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
