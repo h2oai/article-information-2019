@@ -13,10 +13,12 @@ See [article-information-2019.pdf](article-information-2019.pdf).
 ### Current Python 3.6 Environment Setup: 
 
 ```
+$ pip install virtualenv
 $ cd notebooks
 $ virtualenv -p python3.6 env
 $ source env/bin/activate
 $ pip install -r requirements.txt
+$ jupyter notebook
 ```
 
 ### Current Results:
