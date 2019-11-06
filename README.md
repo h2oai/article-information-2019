@@ -15,7 +15,8 @@ See [article-information-2019.pdf](article-information-2019.pdf).
 ```$ cd notebooks
 $ virtualenv -p python3.6 env
 $ source env/bin/activate
-$ pip install -r requirements.txt```
+$ pip install -r requirements.txt
+```
 
 ### Current Results
 
