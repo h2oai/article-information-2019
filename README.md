@@ -9,3 +9,15 @@ This text outlines a viable approach for training and evaluating complex machine
 ### Current Working Draft:
 
 See [article-information-2019.pdf](article-information-2019.pdf).
+
+### Current Python 3.6 Environment Setup 
+
+```$ cd notebooks
+$ virtualenv -p python3.6 env
+$ source env/bin/activate
+$ pip install -r requirements.txt```
+
+### Current Results
+
+* For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb)
+* For lending data, see [notebooks/article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb)
