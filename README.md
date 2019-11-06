@@ -12,7 +12,8 @@ See [article-information-2019.pdf](article-information-2019.pdf).
 
 ### Current Python 3.6 Environment Setup 
 
-```$ cd notebooks
+```
+$ cd notebooks
 $ virtualenv -p python3.6 env
 $ source env/bin/activate
 $ pip install -r requirements.txt
