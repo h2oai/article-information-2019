@@ -22,4 +22,4 @@ $ pip install -r requirements.txt
 ### Current Results:
 
 * For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb)
-* For lending data, see [notebooks/article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb)
+* For lending data, see [article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb)
