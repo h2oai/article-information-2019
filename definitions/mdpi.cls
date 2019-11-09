@@ -20,7 +20,7 @@
 
 %% IDENTIFICATION
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Definitions/mdpi}[09/09/2019 MDPI paper class]
+\ProvidesClass{definitions/mdpi}[09/09/2019 MDPI paper class]
 
 %%%% Copyright and citebox
  \AtEndDocument{\par \cright}
@@ -58,7 +58,7 @@
 %% To choose the journal
 % All journals (website name, full name, short name, DOI abbreviation, and ISSN) are defined in an extra file. 
 % This is the same as for mdpi.cls.
-\input{Definitions/journalnames}
+\input{definitions/journalnames}
 \DeclareOption{journal}{\ClassWarning{mdpi}{You used an invalid journal name or you have not specified the journal. The first option of the documentclass command specifies the journal. The word 'journal' should be replaced by one of the journal names specified in template.tex (in the comment 'Choose between the following MDPI journal').}} 
 
 %% To choose the type of manuscript
@@ -225,10 +225,10 @@
 \OR \equal{\@journal}{religions}
 \OR \equal{\@journal}{risks}
 \OR \equal{\@journal}{socsci}}{%
-	\bibliographystyle{Definitions/chicago2}
+	\bibliographystyle{definitions/chicago2}
 	\bibpunct{(}{)}{;}{x}{}{}%
 	}{%
-	\bibliographystyle{Definitions/mdpi}
+	\bibliographystyle{definitions/mdpi}
 	\bibpunct{[}{]}{,}{n}{}{,}%
 	}%
 
@@ -438,7 +438,7 @@
 
 %% ORCID
 % Make Orcid icon
-\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{Definitions/logo-orcid.eps}}
+\newcommand{\orcidicon}{\includegraphics[width=0.32cm]{definitions/logo-orcid.eps}}
 
 % Define link and button for each author
 \foreach \x in {A, ..., Z}{%
@@ -543,20 +543,20 @@
 			\OR \equal{\@arttype}{Book}}{}{%
 				\ifthenelse{\equal{\@status}{submit}}{%	
 					\hfill \href{http://www.mdpi.com}{%
-					\includegraphics[height=1cm]{Definitions/logo-mdpi.eps}}\vspace{0.5cm}%
+					\includegraphics[height=1cm]{definitions/logo-mdpi.eps}}\vspace{0.5cm}%
 					}{
 					\href{http://www.mdpi.com/journal/\@journal}{
-					\includegraphics[height=1.2cm]{Definitions/\@journal-logo.eps}}%
+					\includegraphics[height=1.2cm]{definitions/\@journal-logo.eps}}%
 					\hfill
 					\ifthenelse{\equal{\@journal}{proceedings}}{
 						\href{http://www.mdpi.com/journal/\@journal}{
-						\includegraphics[height=1.2cm]{Definitions/logo-conference.eps}
+						\includegraphics[height=1.2cm]{definitions/logo-conference.eps}
 						\hfill}
 						}{}
 					\ifthenelse{\equal{\@journal}{scipharm}}{%
-						\href{http://www.mdpi.com}{\includegraphics[height=1cm]{Definitions/logo-mdpi-scipharm.eps}}%
+						\href{http://www.mdpi.com}{\includegraphics[height=1cm]{definitions/logo-mdpi-scipharm.eps}}%
 						}{%
-						\href{http://www.mdpi.com}{\includegraphics[height=1cm]{Definitions/logo-mdpi.eps}}%
+						\href{http://www.mdpi.com}{\includegraphics[height=1cm]{definitions/logo-mdpi.eps}}%
 						}%
 					}%
 			}%
@@ -689,7 +689,7 @@
         		\hfill
         		\ifthenelse{\equal{\@updates}{\@empty}}{
         			}{
-        			\href{http://www.mdpi.com/\@ISSN/\@pubvolume/\@issuenum/\@articlenumber?type=check_update&version=1}{\includegraphics[height=.6cm]{Definitions/logo-updates.pdf}}%
+        			\href{http://www.mdpi.com/\@ISSN/\@pubvolume/\@issuenum/\@articlenumber?type=check_update&version=1}{\includegraphics[height=.6cm]{definitions/logo-updates.pdf}}%
         			}%
         		}%
 		}
@@ -1155,9 +1155,9 @@
 				\vspace{2mm}%
 				\href{http://creativecommons.org/}{%
 				\ifthenelse{\equal{\@journal}{ijtpp}}{%
-					\includegraphics[width=0.94\textwidth]{Definitions/logo-ccby-nc-nd.eps}%
+					\includegraphics[width=0.94\textwidth]{definitions/logo-ccby-nc-nd.eps}%
 					}{%
-					\includegraphics[width=0.94\textwidth]{Definitions/logo-ccby.eps}
+					\includegraphics[width=0.94\textwidth]{definitions/logo-ccby.eps}
 					}
 				}
 			\end{minipage}%
