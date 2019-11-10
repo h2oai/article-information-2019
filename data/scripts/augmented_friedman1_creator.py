@@ -3,12 +3,12 @@ import numpy as np
 import pandas as pd
 from sklearn import datasets as ds
 from scipy import stats
-
+from data.scripts.di_testing import DisparateImpactTesting
 
 if __name__ == "__main__":
 
-    n_corr_normal = 20
-    n_normal = 20
+    n_corr_normal = 20  # do not change; variable naming is specific to 20
+    n_normal = 20  # do not change; variable naming is specific to 20
     n_obs = 100000
     intercept = -13.8955411
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     for vci in ["binary1", "binary2", "cat1"]:
         print(X[vci].value_counts(dropna=False, normalize=True))
 
-    dum = pd.get_dummies(X["cat1"], drop_first=False, prefix="cat1")
+    dum = pd.get_dummies(X["cat1"], drop_first=True, prefix="cat1")
     X = pd.concat([X, dum], sort=False, axis=1)
 
     # Friedman + binaries & categoricals, no noise:
@@ -136,8 +136,15 @@ if __name__ == "__main__":
                 or str.startswith(x, "cat1_")
                 or str.startswith(x, "other_uncor_norm")]
     X.drop(inplace=True, columns=droppers + ["other_cor_uni5", "other_cor_uni6"])
-
     simulated = pd.merge(label_set, X, left_index=True, right_index=True, how='inner')
+
+    pd.crosstab(simulated["binary1"], simulated["label_with_noise"], normalize=True, margins=True)
+    pd.crosstab(simulated["other_binary1"], simulated["label_with_noise"], normalize=True, margins=True)
+
+    simulated.rename(inplace=True, columns={'binary1': 'ctrl_class1',
+                                            'other_binary1': 'ctrl_class2'})
+    simulated["prot_class1"] = 1 - simulated["ctrl_class1"]
+    simulated["prot_class2"] = 1 - simulated["ctrl_class2"]
 
     simu_train = simulated[:int(round(n_obs) * (4 / 5))].copy()
     np.random.seed(rand_seed_list.pop())
@@ -146,3 +153,10 @@ if __name__ == "__main__":
 
     simu_train.to_csv("./data/output/simu_train.csv")
     simu_test.to_csv("./data/output/simu_test.csv")
+
+    di = DisparateImpactTesting(lower_value_favorable=True,
+                                pgcg_names=["prot_class1", "ctrl_class1", "prot_class2", "ctrl_class2"],
+                                pg_names=["prot_class1", "prot_class2"],
+                                cg_names=["ctrl_class1", "ctrl_class2"])
+    air = di.adverse_impact_ratio(data=simulated, label="label_with_noise")
+    print(air)
