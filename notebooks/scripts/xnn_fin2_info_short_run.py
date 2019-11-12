@@ -31,13 +31,10 @@ import tensorflow as tf
 from keras import backend as K
 
 lll="quick_info_first_"
-""" Changing MLP init """
-""" The previous init changes were lousy"""
-""" Let's try again """
-""" First two mlp's """
+
 
 seed = 12345
-seed = 4422
+
 np.random.seed(seed)
 
 my_init = keras.initializers.RandomUniform(seed=seed)
