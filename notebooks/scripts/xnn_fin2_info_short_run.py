@@ -30,6 +30,8 @@ from timeit import default_timer as timer
 import tensorflow as tf
 from keras import backend as K
 
+
+# Output file label
 lll="quick_info_first_"
 
 
@@ -55,6 +57,8 @@ def projection_initializer(shape, dtype=None):
         weights.append(w)
     return weights
 
+
+
 class XNN:
     # define base model
     def __init__(self, features, ridge_functions=3, arch=[20,12], bg_samples=100, seed=None, is_categorical=False):
@@ -63,19 +67,15 @@ class XNN:
         self.is_categorical = is_categorical
         
         #
-        # Prepare model arch
+        # Prepare model architecture
         #
-        
         # Input to the network, our observation containing all the features
         input = Input(shape=(features,), name='main_input')
 
-        init = keras.initializers.RandomUniform(minval=-5, maxval=5, seed=None)
         # Input to ridge function number i is the dot product of our original input vector times coefficients
         ridge_input = Dense(ridge_functions,
                             name="projection_layer",
                                 activation='linear')(input)
-        #                        kernel_initializer=init, 
-        #                        kernel_regularizer=keras.regularizers.l1(1e+1))(input)
         
         self.ridge_networks = []
         # Each subnetwork uses only 1 neuron from the projection layer as input so we need to split it
@@ -233,6 +233,7 @@ import math
 #TEST = DATA_full.iloc[3000:6000,].copy()
 
 DATA=pd.read_csv('data_dir/train_transformed.csv')
+#DATA = DATA.iloc[0:10000,:]
 TEST=pd.read_csv('data_dir/test_transformed.csv')
 
 
