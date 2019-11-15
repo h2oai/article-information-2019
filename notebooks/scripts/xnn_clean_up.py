@@ -19,11 +19,7 @@ import sys
 def install(library):
     subprocess.call([sys.executable, "-m", "pip", "install", library])
 
-try:
-    import pydot
-except ImportError:
-    install('pydot')
-    import pydot
+import pydot
     
 
 from timeit import default_timer as timer
@@ -43,7 +39,7 @@ my_init = keras.initializers.RandomUniform(seed=seed)
 
 
 def projection_initializer(shape, dtype=None):
-    print(shape)
+   
     inps = shape[0]
     subs = shape[1]
     if subs > pow(inps, 2) - 1:
@@ -84,33 +80,26 @@ class XNN:
             # Generate subnetwork i
             mlp = self._mlp(ridge_input, i, arch)
             self.ridge_networks.append(mlp)
-            
-        # Add results from all subnetworks
-        # out = Add(name='main_output')(self.ridge_networks)
-        
+                    
         added = Concatenate(name='concatenate_1')(self.ridge_networks)
+        
+        # Add the correct output layer for the problem
         if self.is_categorical:
             out = Dense(1, activation='sigmoid', input_shape= (ridge_functions, ), name='main_output')(added)
         else:
             out = Dense(1, activation='linear', input_shape= (ridge_functions, ), name='main_output')(added)
-        
-
-        
+            
         self.model = Model(inputs=input, outputs=out)
-        
-        #optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-
         
         optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=True)
         
+        # Use the correct loss for the problem
         if self.is_categorical:
             self.model.compile(loss={'main_output': 'binary_crossentropy'}, optimizer=optimizer)
         else:
             self.model.compile(loss={'main_output': 'mean_squared_error'}, optimizer=optimizer)
 
         self.explainer = None
-
-        #self.explainer2 = None
                 
         
     def _mlp(self, input, idx, arch=[20,12], activation='relu'):
@@ -122,9 +111,8 @@ class XNN:
         for i, layer in enumerate(arch[1:]):
             mlp = Dense(layer, activation=activation, name='mlp_{}_dense_{}'.format(idx, i+1), kernel_initializer=my_init)(mlp)
          
-        init = keras.initializers.RandomUniform(minval=-5, maxval=5, seed=None)
-        # Output of the MLP
 
+        # Output of the MLP
         mlp = Dense(1, 
                     activation='linear', 
                     name='mlp_{}_dense_last'.format(idx), 
@@ -152,11 +140,7 @@ class XNN:
 
         # Explain predictions of the model on the subset
         self.explainer = shap.DeepExplainer(self.model, background)
-        
-        #intermediate_layer_model = Model(inputs=self.model.input, outputs=self.model.get_layer("concatenate_1").output)
-        #int_background = intermediate_layer_model.predict(background)
-        #self.explainer2 = shap.DeepExplainer((self.model.layers[-2].input, self.model.layers[-1].output), int_background)
-            
+                    
         
     def predict(self, X, pred_contribs=False):
         pred_start = timer()
@@ -166,40 +150,40 @@ class XNN:
 
         if pred_contribs:
             explainer_start = timer()
-            print("Find shap 2 ways")
+
             self.shap_values = self.explainer.shap_values(X)
 
             explainer_end = timer()
             print("Explainer took {}".format(explainer_end - explainer_start))
 
             concat_start = timer()
-            #preds_old = preds.copy()
+
             preds = np.concatenate((preds, self.shap_values[0], preds), axis=1)
             preds[:,-1] = self.explainer.expected_value
-            #preds = np.concatenate((preds, self.shap_values2[0], preds_old), axis=1)
-            #preds[:,-1] = self.explainer2.expected_value
+
             concat_end = timer()
             print("Concat took {}".format(concat_end - concat_start))
         return preds
     
     def plot_shap(self, X):
         shap.summary_plot(self.shap_values, X)
-        #shap.summary_plot(self.shap_values2, X)
         
         
 def alpha_beta(alpha, beta, X , R):
-        
+    """ Calculate the layerwise backpropagation function """
+    
     positive_values = [item for item in X if item > 0]
         
     negative_values = [item for item in X if item < 0] 
         
     ans = np.array([0.0]*len(X))
         
-    if len(positive_values)>0:
+    
+    if len(positive_values) > 0:
            
         ans += alpha*np.array([item / float(sum(positive_values)) if item > 0 else 0 for item in X])
 
-    if len(negative_values)>0:
+    if len(negative_values) > 0:
  
         ans += -beta * np.array([item / float(sum(negative_values)) if item < 0 else 0 for item in X]) 
 
@@ -210,9 +194,12 @@ def alpha_beta(alpha, beta, X , R):
 
 
 def deep_lift(X_bar, X , R):
-    """ Deep lift calculation for xnn """   
+    
+    """ Deep lift backpropagation function"""   
+    
     ans =  np.array(X) - np.array(X_bar)
     ans = ans / (sum(X) - sum(X_bar))     
+    
     return ans*R
 
 
@@ -221,30 +208,14 @@ def deep_lift(X_bar, X , R):
 
 import math
 
-
-
-#DATA_full=pd.read_csv('~/Documents/kaggle/champs/output/train2.csv')
-#DATA_full=pd.read_csv('data_dir/UCI_Credit_Card.csv')
-
-#DATA = DATA_full.iloc[0:int(.7*len(DATA_full)),].copy()
-#TEST = DATA_full.iloc[int(.7*len(DATA_full)):,].copy()
-
-#DATA = DATA_full.iloc[0:3000,].copy()
-#TEST = DATA_full.iloc[3000:6000,].copy()
-
+# Load the dataset
 DATA=pd.read_csv('data_dir/train_transformed.csv')
 #DATA = DATA.iloc[0:10000,:]
 TEST=pd.read_csv('data_dir/test_transformed.csv')
 
 
-#selected_vars = ["LIMIT_BAL", "SEX", "EDUCATION", "MARRIAGE", "AGE", "PAY_0", "PAY_2", "PAY_3", "PAY_4"]                   
-#selected_vars += ["PAY_5", "PAY_6", "BILL_AMT1", "BILL_AMT2", "BILL_AMT3", "BILL_AMT4", "BILL_AMT5", "BILL_AMT6", "PAY_AMT1"]
-#selected_vars += ["PAY_AMT2", "PAY_AMT3", "PAY_AMT4", "PAY_AMT5", "PAY_AMT6"]
-#selected_vars = ["PAY_0_std", "PAY_2_std",  "BILL_AMT1_std", "LIMIT_BAL_std",  "PAY_AMT1_std",  "PAY_AMT2_std"]
-#selected_vars = ["LIMIT_BAL_std", "SEX_std", "EDUCATION_std", "MARRIAGE_std", "AGE_std", "PAY_0_std", "PAY_2_std", "PAY_3_std", "PAY_4_std"]                   
-#selected_vars += ["PAY_5_std", "PAY_6_std", "BILL_AMT1_std", "BILL_AMT2_std", "BILL_AMT3_std", "BILL_AMT4_std", "BILL_AMT5_std", "BILL_AMT6_std", "PAY_AMT1_std"]
-#selected_vars += ["PAY_AMT2_std", "PAY_AMT3_std", "PAY_AMT4_std", "PAY_AMT5_std", "PAY_AMT6_std"]
 
+# Select features and split into target and feature sets
 selected_vars = ['loan_to_value_ratio_std', 'property_value_std', 'loan_amount_std']
 selected_vars += ['income_std', 'discount_points_std', 'intro_rate_period_std']
 selected_vars += ['lender_credits_std', 'loan_term_std']
@@ -260,32 +231,19 @@ features = X.shape[1]
 
 
 
-
-"""
-plt.plot(dataframe['x1'], f1(dataframe['x1']), 'o', label="f1(·)")
-plt.plot(dataframe['x2'], f2(dataframe['x2']), 'o', label="f2(·)")
-plt.plot(dataframe['x3'], f3(dataframe['x3']), 'o', label="f3(·)")
-plt.xlabel("x")
-plt.ylabel("f(x)")
-plt.legend(loc='lower right')
-plt.show()
-"""
-
-
 from keras.utils import plot_model
 
 # Initialize the XNN
 is_cat = True
 xnn = XNN(features=features, ridge_functions=features,arch=[20, 12], is_categorical= is_cat)
-print(features)
-#xnn = XNN(features=features, ridge_functions=3,arch=[20,12,8])
+
 #plot_model(xnn.model, to_file='model_regression.png')
 xnn.print_architecture()
 
 
-#xnn.fit(X, Y, epochs=3000, batch_size=64, validation_split=0.25, verbose=0)
-xnn.fit(X, Y, epochs=10000, batch_size=32, validation_split=0.25, verbose=1)
-#xnn.fit(X, Y, epochs=6, batch_size=32, validation_split=0.25, verbose=0)
+# Train the xnn
+xnn.fit(X, Y, epochs=10, batch_size=32, validation_split=0.25, verbose=1)
+
 
 
 # Print projection layers
@@ -293,24 +251,25 @@ x = list(map(lambda x: 'x' + str(x+1), range(features)))
 
 intermediate_output = []
 
-# Plot the projection weights
+# Record and plot the projection weights
+# 
 weight_list = []
 for layer in xnn.model.layers:
     if "projection_layer" in layer.get_config()['name']:
-        #intermediate_layer_model = Model(inputs=xnn.model.input, outputs=xnn.model.layer.output)
-        #intermediate_output.append(intermediate_layer_model.predict(X))
         
         print(layer.get_config()['name'])
         
-        # Transpose to get the right projection dimension
+        # Record the weights for each projection layer
         weights = [np.transpose(layer.get_weights()[0])]
-        weights2 = layer.get_weights()[1]
+
         wp=[]
         for i, weight in enumerate(weights[0]):
             weight_list.append(weight)
             wp.append(list(np.reshape(weight, (1,features))[0]))
         
             print(weight)
+            
+            # Plot weights
             """
             plt.bar(x, abs(np.reshape(weight, (1,features))[0]), 1, color="blue")
             plt.xlabel("Subnetowork {} coefficient".format(i))
@@ -320,14 +279,16 @@ for layer in xnn.model.layers:
     if "main_output" in layer.get_config()['name']:
         weights_main = layer.get_weights()
         print(weights_main)
+       
         
 pd.DataFrame(wp).to_csv("wp_"+lll+".csv", index=False)
 
 
-# Record output layers
 
+
+
+# Record the output from each layer
 import scipy as sp
-
 
 int_output = {}
 int_output2 = {}
@@ -343,28 +304,40 @@ for layer in xnn.model.layers:
     if layer_name != "main_input":
         print(layer_name)
         weights = layer.get_weights()
-        #bias = layer.get_weights()[1]
+        
+        
+        # Record the biases
         try:
             bias = layer.get_weights()[1]
             int_bias[layer_name] = bias
         except:
             print("No Bias")
-        
+            
+                       
+        # Record outputs for the test set
         intermediate_layer_model = Model(inputs=xnn.model.input, outputs=xnn.model.get_layer(layer_name).output)
-        if is_cat:
-            int_output[layer_name] = sp.special.expit(intermediate_layer_model.predict(TEST_X))
+        if (is_cat) and (layer_name == 'main_output'):
+            int_output[layer_name] = sp.special.logit(intermediate_layer_model.predict(TEST_X))
             int_output[layer_name + "_p"] = intermediate_layer_model.predict(TEST_X)
+            #print("")
+            #print("min max check")
+            #print(layer_name)
+            #for ii in range(len(int_output[layer_name])):
+            #    print("")
+            #    print([min(int_output[layer_name][ii]), max(int_output[layer_name][ii])])
+            #    print([min(int_output[layer_name + "_p"][ii]), max(int_output[layer_name + "_p"][ii])])
         else:
             int_output[layer_name] = intermediate_layer_model.predict(TEST_X)
         
-        if is_cat:
-            original_activations[layer_name] = sp.special.expit(intermediate_layer_model.predict(X))   
+        # Record the outputs from the training set
+        if is_cat and (layer_name == 'main_output'):
+            original_activations[layer_name] = sp.special.logit(intermediate_layer_model.predict(X))   
             original_activations[layer_name + "_p"] = intermediate_layer_model.predict(X)
         else:
             original_activations[layer_name] = intermediate_layer_model.predict(X)        
-        #intermediate_layer_model = Model(inputs=xnn.model.input,
-        #                             outputs=xnn.model.get_layer('mlp_'+str(feature_num)+'_dense_last').output)
-        #intermediate_output.append(intermediate_layer_model.predict(X))
+
+
+        # Record other weights, inputs, and outputs
         int_weights[layer_name] = weights
         int_input[layer_name] = layer.input
         int_output2[layer_name] = layer.output
@@ -374,39 +347,45 @@ for layer in xnn.model.layers:
         
         
         
-# Calculate importance      
+# Calculate ridge and input function local feature importances   
 item = 0
-int_weights["main_output"][0][0][0]
-int_output["concatenate_1"][item][0]
-overall_output = int_output["main_output"][item][0]
 
-#deep_lift(X_bar, X , R)
 
 feature_output = []
 feature_output2 = []
 feature_output3 = []
 
+# Find the average outputs
 S_bar = sum(original_activations["main_output"])/len(original_activations["main_output"])
 # original_activations[layer_name]
 output_weights = np.array([int_weights["main_output"][0][ii][0] for ii in range(features)])
 output_Z_bar = sum(original_activations["concatenate_1"]*output_weights)/len(original_activations["concatenate_1"])
 
 
+# For each ridge function calculate the average input activation
 input_Z_bar = {}
 for ridge_num in range(features):   
     input_weights = np.array([int_weights["projection_layer"][0][ii][ridge_num] for ii in range(features)])
     input_Z_bar[ridge_num] = sum(X*input_weights)/len(X)
     
+    
+# For each test instance, calculate the feature importance scores    
 for test_num in range(len(TEST_X)):
+    
+    # Calculate the output activations
     activation_list=[int_weights["main_output"][0][ii][0]*int_output["concatenate_1"][test_num][ii] for ii in range(features)]
     
+    
+    # Calculate layerwise backpropagaiton to the ridge functions
     # For classification, change this to the inverse sigmoid of the output
     features_ab = alpha_beta(2, 1, activation_list , int_output["main_output"][test_num][0])
     features_ab2 = alpha_beta(2, 1, activation_list , int_output["main_output"][test_num][0]-S_bar)
     
+    # Calculate deep lift backpropagation to the ridge functions
     features_dl = deep_lift(output_Z_bar, activation_list , int_output["main_output"][test_num][0]-S_bar)
       
         
+    # Calculate the deep lift and layerwise information scores for the input layer
     input_scores = []
     input_scores_dl = []
     input_scores2 = []
@@ -417,6 +396,7 @@ for test_num in range(len(TEST_X)):
         
         # [int_weights["projection_layer"][0][ii][0] for ii in range(features)]
         
+        # Calculate the activations from the projection layer
         act = TEST_X[test_num,:]*np.array([int_weights["projection_layer"][0][ii][ridge_num] for ii in range(features)])
     
         # Input relevance scores for a single ridge function
@@ -426,10 +406,13 @@ for test_num in range(len(TEST_X)):
 
         # print(sum(TEST_X[0,:]*np.array([int_weights["projection_layer"][0][ii][0] for ii in range(features)]))+int_bias["projection_layer"][0])
         
+    # Sum the contribution of the variable importance from each of the projections
     input_sum = [sum(input_scores[ii+features*jj] for jj in range(features)) for ii in range(features)] 
     input_sum2 = [sum(input_scores2[ii+features*jj] for jj in range(features)) for ii in range(features)] 
     input_sum_dl = [sum(input_scores_dl[ii+features*jj] for jj in range(features)) for ii in range(features)] 
     input_abs_sum = [sum(abs(input_scores[ii+features*jj]) for jj in range(features)) for ii in range(features)] 
+    
+    # Recored the feature importance informaiton for this instance
     feature_output.append(input_sum+input_abs_sum+[int_output["main_output"][test_num][0]]+list(features_ab)+input_scores)
     feature_output2.append(input_sum+list(features_ab)+input_sum_dl + list(features_dl))
     feature_output3.append(input_sum2+list(features_ab2)+input_sum_dl + list(features_dl))
@@ -437,9 +420,8 @@ for test_num in range(len(TEST_X)):
 
 
 
-# Plot shapes
+# Find the output of the ridge functions
 intermediate_output = []
-
 
 for feature_num in range(features):
     intermediate_layer_model = Model(inputs=xnn.model.input,
@@ -447,7 +429,7 @@ for feature_num in range(features):
     intermediate_output.append(intermediate_layer_model.predict(X))
 
 
-
+# Record and plot the ridge functions
 ridge_x = []
 ridge_y = []
 for weight_number in range(len(weight_list)):
@@ -475,24 +457,17 @@ preds[0:5,:]
 pd.DataFrame(preds).to_csv("preds_"+lll+".csv", index=False)
 pd.DataFrame(TEST).to_csv("TEST_"+lll+".csv", index=False)
 
+
+
+# Calculate the Shapley values.
 shap.initjs()
 shap.summary_plot(xnn.shap_values, X)
 
-
-
-
-
-
-
-
 y=xnn.shap_values
 ind=1
-print(y[0][ind])
 
 
-print(feature_output2[ind])
-
-#feature_output.append(input_sum+input_abs_sum+[int_output["main_output"][test_num][0]]+list(features_ab)+input_scores)
+# Calculate the average feature imporatance
 
 layerwise_average_input=np.array([0.0]*features)
 layerwise_average_input2=np.array([0.0]*features)
@@ -501,6 +476,8 @@ layerwise_average_ridge2=np.array([0.0]*features)
 layerwise_average_shap=np.array([0.0]*features)
 lift_average_input=np.array([0.0]*features)
 lift_average_ridge=np.array([0.0]*features)
+
+
 
 for ii in range(len(feature_output2)):
     layerwise_average_input += np.array(feature_output2[ii][0:features])
@@ -527,6 +504,10 @@ SCORES = [list(layerwise_average_input), list(layerwise_average_ridge),
 
  
 pd.DataFrame(SCORES).to_csv("scores_"+lll+".csv", index=False)
+
+
+
+# Plotting the feature importance results
 """
 plt.bar(x, abs(np.reshape(y[0][ind], (1,features))[0]), 1, color="blue")
 plt.xlabel("Shap Score Example " + str(ind))
@@ -595,7 +576,7 @@ plt.show()
 
 
 
-
+# Find comparible results from a linear regression model and decision tree?
 """
 import numpy as np
 from sklearn.linear_model import LinearRegression
