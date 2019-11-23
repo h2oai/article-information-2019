@@ -5,7 +5,7 @@ import pandas as pd
 
 
 def get_hmda_descriptions(data):
-    data['conforming_loan_limit_desc'] = pd.Series(
+    data['conforming_loan_limit_desc'] = pd.Series(index=data.index, data=
         np.select(
             [
                 data.conforming_loan_limit == 'C',
@@ -23,7 +23,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['action_taken_desc'] = pd.Series(
+    data['action_taken_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.action_taken == 1, data.action_taken == 2, data.action_taken == 3,
@@ -41,7 +41,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['purchaser_type_desc'] = pd.Series(
+    data['purchaser_type_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.purchaser_type == 0, data.purchaser_type == 1, data.purchaser_type == 2,
@@ -61,15 +61,15 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['preapproval_desc'] = pd.Series(
+    data['preapproval_desc'] = pd.Series(index=data.index, data=
         np.select(
-            (data.preapproval == 1, data.preapproval == 2),
+            (data['preapproval'] == 1, data['preapproval'] == 2),
             ('Preapproval requested', 'Preapproval not requested'),
             default=''
         ),
-        dtype='category'
+        dtype='object'
     )
-    data['loan_type_desc'] = pd.Series(
+    data['loan_type_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.loan_type == 1,
@@ -87,7 +87,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['loan_purpose_desc'] = pd.Series(
+    data['loan_purpose_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.loan_purpose == 1, data.loan_purpose == 2, data.loan_purpose == 31,
@@ -101,7 +101,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['lien_status_desc'] = pd.Series(
+    data['lien_status_desc'] = pd.Series(index=data.index, data=
         np.select(
             (data.lien_status == 1, data.lien_status == 2),
             ('Secured by a first lien', 'Secured by a subordinate lien'),
@@ -109,7 +109,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['reverse_mortgage_desc'] = pd.Series(
+    data['reverse_mortgage_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.reverse_mortgage == 1, data.reverse_mortgage == 2,
@@ -120,7 +120,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['open_end_line_of_credit_desc'] = pd.Series(
+    data['open_end_line_of_credit_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.open_end_line_of_credit == 1,
@@ -136,7 +136,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['business_or_commercial_purpose_desc'] = pd.Series(
+    data['business_or_commercial_purpose_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.business_or_commercial_purpose == 1,
@@ -152,7 +152,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['hoepa_status_desc'] = pd.Series(
+    data['hoepa_status_desc'] = pd.Series(index=data.index, data=
         np.select(
             (data.hoepa_status == 1, data.hoepa_status == 2, data.hoepa_status == 3),
             ('High-cost mortgage', 'Not a high-cost mortgage', 'Not Applicable'),
@@ -160,7 +160,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['negative_amortization_desc'] = pd.Series(
+    data['negative_amortization_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.negative_amortization == 1,
@@ -174,7 +174,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['interest_only_payment_desc'] = pd.Series(
+    data['interest_only_payment_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.interest_only_payment == 1,
@@ -190,7 +190,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['balloon_payment_desc'] = pd.Series(
+    data['balloon_payment_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.balloon_payment == 1,
@@ -202,7 +202,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['other_nonamortizing_features_desc'] = pd.Series(
+    data['other_nonamortizing_features_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.other_nonamortizing_features == 1,
@@ -218,7 +218,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['construction_method_desc'] = pd.Series(
+    data['construction_method_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.construction_method == 1,
@@ -229,7 +229,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['occupancy_type_desc'] = pd.Series(
+    data['occupancy_type_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.occupancy_type == 1,
@@ -245,7 +245,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['manufactured_home_secured_property_type_desc'] = pd.Series(
+    data['manufactured_home_secured_property_type_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.manufactured_home_secured_property_type == 1,
@@ -263,7 +263,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['manufactured_home_land_property_interest_desc'] = pd.Series(
+    data['manufactured_home_land_property_interest_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.manufactured_home_land_property_interest == 1,
@@ -281,7 +281,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_credit_score_type_desc'] = pd.Series(
+    data['applicant_credit_score_type_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_credit_score_type == 1,
@@ -311,7 +311,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_credit_score_type_desc'] = pd.Series(
+    data['co_applicant_credit_score_type_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_credit_score_type == 1,
@@ -343,7 +343,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_ethnicity_1_desc'] = pd.Series(
+    data['applicant_ethnicity_1_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_ethnicity_1 == 1,
@@ -369,7 +369,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_ethnicity_2_desc'] = pd.Series(
+    data['applicant_ethnicity_2_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_ethnicity_2 == 1,
@@ -395,7 +395,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_ethnicity_3_desc'] = pd.Series(
+    data['applicant_ethnicity_3_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_ethnicity_3 == 1,
@@ -421,7 +421,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_ethnicity_4_desc'] = pd.Series(
+    data['applicant_ethnicity_4_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_ethnicity_4 == 1,
@@ -447,7 +447,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_ethnicity_5_desc'] = pd.Series(
+    data['applicant_ethnicity_5_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_ethnicity_5 == 1,
@@ -473,7 +473,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_ethnicity_1_desc'] = pd.Series(
+    data['co_applicant_ethnicity_1_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_ethnicity_1 == 1,
@@ -501,7 +501,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_ethnicity_2_desc'] = pd.Series(
+    data['co_applicant_ethnicity_2_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_ethnicity_2 == 1,
@@ -529,7 +529,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_ethnicity_3_desc'] = pd.Series(
+    data['co_applicant_ethnicity_3_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_ethnicity_3 == 1,
@@ -557,7 +557,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_ethnicity_4_desc'] = pd.Series(
+    data['co_applicant_ethnicity_4_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_ethnicity_4 == 1,
@@ -585,7 +585,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_ethnicity_5_desc'] = pd.Series(
+    data['co_applicant_ethnicity_5_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_ethnicity_5 == 1,
@@ -613,7 +613,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_ethnicity_observed_desc'] = pd.Series(
+    data['applicant_ethnicity_observed_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_ethnicity_observed == 1,
@@ -629,7 +629,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_ethnicity_observed_desc'] = pd.Series(
+    data['co_applicant_ethnicity_observed_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_ethnicity_observed == 1,
@@ -647,7 +647,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_race_1_desc'] = pd.Series(
+    data['applicant_race_1_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_race_1 == 1,
@@ -693,7 +693,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_race_2_desc'] = pd.Series(
+    data['applicant_race_2_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_race_2 == 1,
@@ -739,7 +739,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_race_3_desc'] = pd.Series(
+    data['applicant_race_3_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_race_3 == 1,
@@ -785,7 +785,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_race_4_desc'] = pd.Series(
+    data['applicant_race_4_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_race_4 == 1,
@@ -831,7 +831,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_race_5_desc'] = pd.Series(
+    data['applicant_race_5_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_race_5 == 1,
@@ -877,7 +877,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_race_1_desc'] = pd.Series(
+    data['co_applicant_race_1_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_race_1 == 1,
@@ -925,7 +925,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_race_2_desc'] = pd.Series(
+    data['co_applicant_race_2_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_race_2 == 1,
@@ -973,7 +973,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_race_3_desc'] = pd.Series(
+    data['co_applicant_race_3_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_race_3 == 1,
@@ -1021,7 +1021,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_race_4_desc'] = pd.Series(
+    data['co_applicant_race_4_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_race_4 == 1,
@@ -1069,7 +1069,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_race_5_desc'] = pd.Series(
+    data['co_applicant_race_5_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_race_5 == 1,
@@ -1117,7 +1117,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_race_observed_desc'] = pd.Series(
+    data['applicant_race_observed_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_race_observed == 1,
@@ -1133,7 +1133,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_race_observed_desc'] = pd.Series(
+    data['co_applicant_race_observed_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_race_observed == 1,
@@ -1151,7 +1151,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_sex_desc'] = pd.Series(
+    data['applicant_sex_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_sex == 1,
@@ -1169,7 +1169,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_sex_desc'] = pd.Series(
+    data['co_applicant_sex_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_sex == 1,
@@ -1189,7 +1189,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['applicant_sex_observed_desc'] = pd.Series(
+    data['applicant_sex_observed_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.applicant_sex_observed == 1,
@@ -1205,7 +1205,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['co_applicant_sex_observed_desc'] = pd.Series(
+    data['co_applicant_sex_observed_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.co_applicant_sex_observed == 1,
@@ -1223,7 +1223,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['submission_of_application_desc'] = pd.Series(
+    data['submission_of_application_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.submission_of_application == 1,
@@ -1241,7 +1241,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['initially_payable_to_institution_desc'] = pd.Series(
+    data['initially_payable_to_institution_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.initially_payable_to_institution == 1,
@@ -1259,7 +1259,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['aus_1_desc'] = pd.Series(
+    data['aus_1_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.aus_1 == 1,
@@ -1283,7 +1283,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['aus_2_desc'] = pd.Series(
+    data['aus_2_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.aus_2 == 1,
@@ -1307,7 +1307,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['aus_3_desc'] = pd.Series(
+    data['aus_3_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.aus_3 == 1,
@@ -1331,7 +1331,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['aus_4_desc'] = pd.Series(
+    data['aus_4_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.aus_4 == 1,
@@ -1355,7 +1355,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['aus_5_desc'] = pd.Series(
+    data['aus_5_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.aus_5 == 1,
@@ -1379,7 +1379,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['denial_reason_1_desc'] = pd.Series(
+    data['denial_reason_1_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.denial_reason_1 == 1,
@@ -1409,7 +1409,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['denial_reason_2_desc'] = pd.Series(
+    data['denial_reason_2_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.denial_reason_2 == 1,
@@ -1439,7 +1439,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['denial_reason_3_desc'] = pd.Series(
+    data['denial_reason_3_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.denial_reason_3 == 1,
@@ -1469,7 +1469,7 @@ def get_hmda_descriptions(data):
         ),
         dtype='category'
     )
-    data['denial_reason_4_desc'] = pd.Series(
+    data['denial_reason_4_desc'] = pd.Series(index=data.index, data=
         np.select(
             (
                 data.denial_reason_4 == 1,
@@ -1536,6 +1536,10 @@ if __name__ == '__main__':
 
     lar = get_hmda_descriptions(data=lar)
     print(f'Original + Description Variables Data Dimensions: {lar.shape}')
+    # lar["preapproval_desc"].value_counts(dropna=False)
+    # lar["preapproval"].value_counts(dropna=False)
+    # pd.crosstab(lar["preapproval_desc"], lar["preapproval"], dropna=False)
+    # pd.crosstab(lar["preapproval"], lar["preapproval_desc"], dropna=False)
 
     # "total_loan_costs", "purchaser_type", "derived_msa_md", "census_tract"
     keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
@@ -1608,7 +1612,7 @@ if __name__ == '__main__':
                                       np.where(lar_subset["derived_ethnicity"] == 'Not Hispanic or Latino', 0, np.nan))
 
     lar_subset.drop(inplace=True, columns=["derived_race", "derived_ethnicity", "applicant_age_above_62",
-                                           "co_applicant_age_above_62"])
+                                           "co_applicant_age_above_62", "derived_sex"])
 
     var_order = list()
     for vvi in [x for x in lar_subset.columns if x + "_desc" in lar_subset.columns]:
@@ -1616,5 +1620,19 @@ if __name__ == '__main__':
         var_order.append(vvi + "_desc")
     var_order = var_order + [x for x in lar_subset.columns if x not in var_order]
     lar_subset = lar_subset[var_order]
-    lar_sample = lar.sample(n=40000)
-    lar_sample.to_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv')
+
+    make_numeric = ['loan_amount', 'loan_to_value_ratio', 'discount_points', 'lender_credits', 'property_value',
+                    'income']
+
+
+    lar_sample = lar_subset.sample(n=40000, random_state=31415)
+    lar_sample.to_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv', index=False)
+
+    hmda = pd.read_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv')
+
+    hmda['preapproval'].value_counts(dropna=False)
+    hmda['preapproval_desc'].value_counts(dropna=False)
+    from sklearn.linear_model import LogisticRegression
+    log_reg = LogisticRegression(penalty=None, solver="lbfgs")
+
+    test = log_reg.fit
