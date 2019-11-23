@@ -1525,19 +1525,25 @@ if __name__ == '__main__':
                   (lar["balloon_payment"] != 1111) &
                   (lar["applicant_credit_score_type"] != 1111) &
                   (lar["loan_term"] >= 180) & (lar["loan_term"] <= 360) &
-                  (lar["hoepa_status"] == 2)]
+                  (lar["hoepa_status"] == 2) &
+                  (lar["lien_status"] == 1) &
+                  (lar["conforming_loan_limit"] != "U") &
+                  (lar["balloon_payment"] == 2) &
+                  (lar["prepayment_penalty_term"].isnull())]
+
     lar["loan_term"] = lar["loan_term"].astype('object')
     print(f'Subset Data Dimensions: {lar.shape}')
 
     lar = get_hmda_descriptions(data=lar)
     print(f'Original + Description Variables Data Dimensions: {lar.shape}')
 
-    keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio', "purchaser_type",
-                 'discount_points', 'lender_credits', 'loan_term', 'prepayment_penalty_term', 'intro_rate_period',
-                 'interest_only_payment', 'balloon_payment', 'property_value', 'income', "census_tract",
-                 'debt_to_income_ratio', 'applicant_credit_score_type', 'co_applicant_credit_score_type']
-    keep_cols = keep_cols + ["derived_msa_md", "state_code", "county_code", "conforming_loan_limit", "preapproval",
-                             "loan_type", "lien_status", "rate_spread", "total_loan_costs", "interest_rate",
+    # "total_loan_costs", "purchaser_type", "derived_msa_md", "census_tract"
+    keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
+                 'discount_points', 'lender_credits', 'loan_term', 'intro_rate_period',
+                 'interest_only_payment', 'balloon_payment', 'property_value', 'income',
+                 'debt_to_income_ratio']
+    keep_cols = keep_cols + ["state_code", "county_code", "conforming_loan_limit", "preapproval",
+                             "lien_status", "rate_spread", "interest_rate",
                              "applicant_age_above_62", "co_applicant_age_above_62", "derived_ethnicity",
                              "derived_race", "derived_sex", "ffiec_msa_md_median_family_income"] + \
                 [x for x in lar.columns if str.startswith(x, "tract")]
@@ -1557,65 +1563,58 @@ if __name__ == '__main__':
     lar_subset = lar_subset.loc[:, lar_subset.apply(pd.Series.nunique) != 1]
     print(lar_subset.shape)
 
-    lar_subset["census_tract"] = lar_subset["census_tract"].astype('object')
-
+    # lar_subset["census_tract"] = lar_subset["census_tract"].astype('object')
+    x = lar.loc[lar["loan_type_desc"].isnull(), ["loan_type", "loan_type_desc"]]
     var_desc = pd.merge(lar_subset.apply(pd.Series.nunique).to_frame('num_unique'),
                         lar_subset.dtypes.to_frame('dtypes'), left_index=True, right_index=True,
                         how='outer',)
+    var_desc.sort_values(by=["num_unique"], inplace=True)
+    for vi in var_desc.loc[var_desc["num_unique"] <= 20].index:
+        var_freq = lar_subset[vi].value_counts(dropna=False)
+        print(f'******************************************\nVariable {vi} Frequencies:\n{var_freq}')
+    lar_subset["has_co_applicant"] = lar_subset["co_applicant_age_above_62"].isnull().astype('int')
 
+    lar_subset["co_applicant_age_above_62"].value_counts(dropna=False)
+    pd.crosstab(lar_subset["applicant_age_above_62"],  lar_subset["co_applicant_age_above_62"])
 
-    '''
-    sd = lar[keep_cols]
-    print(lar[keep_cols].dtypes)
-    for ki in keep_cols:
-        var_unique = lar[ki].nunique()
-        print(f'\n***********************************************\nUnique Values in {ki}: {var_unique}')
-        if var_unique <= 10:
-            print(f'\nValue counts for Variable {ki}:\n{lar[ki].value_counts(dropna=False)}')
+    lar_subset["agegte62"] = np.where((lar_subset["applicant_age_above_62"] == "No") &
+                                      (lar_subset["co_applicant_age_above_62"] == "No"), 0,
+                                      np.where((lar_subset["applicant_age_above_62"] == "Yes") |
+                                               (lar_subset["co_applicant_age_above_62"] == "Yes"), 1, np.nan))
+    lar_subset["agelt62"] = 1 - lar_subset["agegte62"]
 
-    lar['high_priced'] = np.where(lar.rate_spread >= 1.5, 1, 0)
+    lar_subset["male"] = np.where(lar_subset["derived_sex"] == "Male", 1,
+                                  np.where(lar_subset["derived_sex"] == "Female", 0, np.nan))
+    lar_subset['female'] = 1 - lar_subset["male"]
 
-    lar = lar[output_columns]
+    lar_subset["race"] = np.select([lar_subset["derived_race"] == 'White',
+                                    lar_subset["derived_race"] == 'Race Not Available',
+                                    lar_subset["derived_race"] == 'Asian',
+                                    lar_subset["derived_race"] == 'Black or African American',
+                                    lar_subset["derived_race"] == 'Joint',
+                                    lar_subset["derived_race"] == 'American Indian or Alaska Native',
+                                    lar_subset["derived_race"] == 'Native Hawaiian or Other Pacific Islander',
+                                    lar_subset["derived_race"] == '2 or more minority races',
+                                    lar_subset["derived_race"] == 'Free Form Text Only'],
+                                   ["white", "NA", "asian", "black", "NA", "amind", "hipac", "NA", "NA"])
+    print(lar_subset["race"].value_counts(dropna=False))
+    for racei in ["black", "asian", "white", "amind", "hipac"]:
+        lar_subset[racei] = np.where(lar_subset["race"] == racei, 1,
+                                       np.where(lar_subset["race"] != "NA", 0, np.nan))
+        print(f'\n{lar_subset[racei].value_counts(dropna=False)}\n\n'
+              f'{pd.crosstab(lar_subset[racei], lar_subset["race"], dropna=False)}')
+
+    lar_subset["hispanic"] = np.where(lar_subset["derived_ethnicity"] == 'Hispanic or Latino', 1,
+                                      np.where(lar_subset["derived_ethnicity"] == 'Not Hispanic or Latino', 0, np.nan))
+
+    lar_subset.drop(inplace=True, columns=["derived_race", "derived_ethnicity", "applicant_age_above_62",
+                                           "co_applicant_age_above_62"])
+
+    var_order = list()
+    for vvi in [x for x in lar_subset.columns if x + "_desc" in lar_subset.columns]:
+        var_order.append(vvi)
+        var_order.append(vvi + "_desc")
+    var_order = var_order + [x for x in lar_subset.columns if x not in var_order]
+    lar_subset = lar_subset[var_order]
     lar_sample = lar.sample(n=40000)
     lar_sample.to_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv')
-
-
-    lar = pd.read_csv('/mnt/ldrive/census/hmda data 2018-static/2018_public_lar_csv2.csv.gz',
-                      low_memory=False)
-    print(f'Original Data Dimensions: {lar.shape}')
-
-    for vli in ['action_taken', 'loan_purpose', 'derived_dwelling_category', 'open_end_line_of_credit',
-                'business_or_commercial_purpose', 'construction_method', 'occupancy_type']:
-        print(f'Variable {vli} Frequencies:\n{lar[vli].value_counts(dropna=False)}')
-
-    lar = lar.loc[(lar["action_taken"] == 1) &
-                  (lar['loan_purpose'] == 1) &
-                  (lar["derived_dwelling_category"] == "Single Family (1-4 Units):Site-Built") &
-                  (lar["open_end_line_of_credit"] == 2) &
-                  (lar["business_or_commercial_purpose"] == 2) &
-                  (lar["construction_method"] == 1) &
-                  (lar["occupancy_type"] == 1) &
-                  (lar["reverse_mortgage"] == 2) &
-                  (lar["negative_amortization"] == 2) &
-                  (lar["interest_only_payment"] != 1111) &
-                  (lar["balloon_payment"] != 1111) &
-                  (lar["applicant_credit_score_type"] != 1111)]
-    print(f'Subset Data Dimensions: {lar.shape}')
-
-    # 'reverse_mortgage'
-    # 'negative_amortization'
-
-    keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
-                 'discount_points', 'lender_credits', 'loan_term', 'prepayment_penalty_term', 'intro_rate_period',
-                 'interest_only_payment', 'balloon_payment', 'property_value', 'income',
-                 'debt_to_income_ratio', 'applicant_credit_score_type', 'co_applicant_credit_score_type']
-
-    sd = lar[keep_cols]
-    print(lar[keep_cols].dtypes)
-    for ki in keep_cols:
-        var_unique = lar[ki].nunique()
-        print(f'\n***********************************************\nUnique Values in {ki}: {var_unique}')
-        if var_unique <= 10:
-            print(f'\nValue counts for Variable {ki}:\n{lar[ki].value_counts(dropna=False)}')
-    lar["lien_status"].value_counts(dropna=False)
-    '''
