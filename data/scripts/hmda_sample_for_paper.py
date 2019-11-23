@@ -1510,8 +1510,16 @@ if __name__ == '__main__':
     lar_imported_copy = lar.copy()  # delete this line after code is completed
     # lar = lar_imported_copy.copy()
 
-    lar["loan_term"] = np.where(lar["loan_term"] == "Exempt", np.nan, lar["loan_term"])
-    lar["loan_term"] = lar["loan_term"].astype('float')
+    # lar = lar.loc[(lar["rate_spread"] != "Exempt") & (lar["loan_term"] != "Exempt"), :]
+
+    make_numeric = ['loan_amount', 'loan_to_value_ratio', 'discount_points', 'lender_credits', 'property_value',
+                    'income', "rate_spread", "loan_term"]
+    for mni in make_numeric:
+        lar = lar.loc[lar[mni] != "Exempt", :]
+        lar[mni] = lar[mni].astype(dtype='float64')
+
+    lar['high_priced'] = np.where(lar["rate_spread"] >= 1.5, 1, 0)
+
     lar = lar.loc[(lar["action_taken"] == 1) &
                   (lar['loan_purpose'] == 1) &
                   (lar["derived_dwelling_category"] == "Single Family (1-4 Units):Site-Built") &
@@ -1542,7 +1550,7 @@ if __name__ == '__main__':
     # pd.crosstab(lar["preapproval"], lar["preapproval_desc"], dropna=False)
 
     # "total_loan_costs", "purchaser_type", "derived_msa_md", "census_tract"
-    keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
+    keep_cols = ['high_priced', 'derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
                  'discount_points', 'lender_credits', 'loan_term', 'intro_rate_period',
                  'interest_only_payment', 'balloon_payment', 'property_value', 'income',
                  'debt_to_income_ratio']
@@ -1620,10 +1628,6 @@ if __name__ == '__main__':
         var_order.append(vvi + "_desc")
     var_order = var_order + [x for x in lar_subset.columns if x not in var_order]
     lar_subset = lar_subset[var_order]
-
-    make_numeric = ['loan_amount', 'loan_to_value_ratio', 'discount_points', 'lender_credits', 'property_value',
-                    'income']
-
 
     lar_sample = lar_subset.sample(n=40000, random_state=31415)
     lar_sample.to_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv', index=False)
