@@ -18,6 +18,7 @@ $ cd notebooks
 $ virtualenv -p python3.6 env
 $ source env/bin/activate
 $ pip install -r requirements.txt
+$ ipython kernel install --user --name=information-article # Set up Jupyter kernel based on virtualenv
 $ jupyter notebook
 ```
 
