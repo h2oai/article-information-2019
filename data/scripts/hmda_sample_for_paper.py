@@ -1517,7 +1517,8 @@ if __name__ == '__main__':
         lar = lar.loc[lar[mni] != "Exempt", :]
         lar[mni] = lar[mni].astype(dtype='float64')
 
-    # lar['high_priced'] = np.where(lar["rate_spread"].isnull(), np.nan, np.where(lar["rate_spread"] >= 1.5, 1, 0))
+    lar['high_priced'] = np.where(lar["rate_spread"].isnull(), np.nan,
+                                  np.where(lar["rate_spread"] >= 1.5, 1, 0))
 
     lar = lar.loc[(lar["action_taken"] == 1) &
                   (lar['loan_purpose'] == 1) &
@@ -1537,7 +1538,7 @@ if __name__ == '__main__':
                   (lar["conforming_loan_limit"] != "U") &
                   (lar["balloon_payment"] == 2) &
                   lar["prepayment_penalty_term"].isnull() &
-                  ~lar["rate_spread"].isnull()]
+                  ~lar["rate_spread"].isnull(), :]
 
     lar["loan_term"] = lar["loan_term"].astype('object')
     print(f'Subset Data Dimensions: {lar.shape}')
@@ -1550,7 +1551,7 @@ if __name__ == '__main__':
     # pd.crosstab(lar["preapproval"], lar["preapproval_desc"], dropna=False)
 
     # "total_loan_costs", "purchaser_type", "derived_msa_md", "census_tract", 'discount_points', 'lender_credits',
-    keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
+    keep_cols = ['high_priced', 'derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
                  'loan_term', 'intro_rate_period',
                  'interest_only_payment', 'balloon_payment', 'property_value', 'income',
                  'debt_to_income_ratio']
@@ -1637,13 +1638,17 @@ if __name__ == '__main__':
         var_order.append(vvi + "_desc")
     var_order = var_order + [x for x in lar_subset.columns if x not in var_order]
     lar_subset = lar_subset[var_order]
-    lar_subset["above_spread"] = np.where(lar_subset["rate_spread"] > lar_subset["rate_spread"].quantile(), 1, 0)
-    print(f'High-Priced Loan Percentages:\n{lar_subset["above_spread"].value_counts(dropna=False, normalize=True)}')
+    # lar_subset["above_spread"] = np.where(lar_subset["rate_spread"] > lar_subset["rate_spread"].quantile(), 1, 0)
+    # print(f'High-Priced Loan Percentages:\n{lar_subset["above_spread"].value_counts(dropna=False, normalize=True)}')
 
-    # "rate_spread", "interest_rate"
+    lar_subset["conforming"] = np.where(lar_subset["conforming_loan_limit"] == "C", 1,
+                                        np.where(lar_subset["conforming_loan_limit"] == "NC", 0, np.nan))
+    lar_subset["term_360"] = np.where(lar_subset["loan_term"] == 360, 1,
+                                      np.where(lar_subset["loan_term"] == 180, 0, np.nan))
+    # "rate_spread", "interest_rate",  "state_code",
     final_keep_vars = ['loan_amount', 'loan_to_value_ratio', 'no_intro_rate_period', 'intro_rate_period',
-                       'property_value', 'income', "above_spread", "state_code",
-                       "debt_to_income_ratio", "loan_term", "conforming_loan_limit",
+                       'property_value', 'income', "debt_to_income_ratio", "term_360", "conforming",
+                       "high_priced",
                        "black", "asian", "white", "amind", "hipac", "hispanic", "non_hispanic",
                        "male", "female",
                        "agegte62", "agelt62"]
@@ -1655,6 +1660,8 @@ if __name__ == '__main__':
     train, test = lar_sample[tts].copy(), lar_sample[~tts].copy()
     print(train.shape, test.shape)
     train['cv_fold'] = pd.Series(np.random.randint(low=1, high=6, size=len(train)), index=train.index)
+
+    review_sample = train.sample(n=100)
 
     train.to_csv('./data/output/hmda_train.csv')
     test.to_csv('./data/output/hmda_test.csv')
