@@ -1640,69 +1640,21 @@ if __name__ == '__main__':
     lar_subset["above_spread"] = np.where(lar_subset["rate_spread"] > lar_subset["rate_spread"].quantile(), 1, 0)
     print(f'High-Priced Loan Percentages:\n{lar_subset["above_spread"].value_counts(dropna=False, normalize=True)}')
 
+    # "rate_spread", "interest_rate"
     final_keep_vars = ['loan_amount', 'loan_to_value_ratio', 'no_intro_rate_period', 'intro_rate_period',
-                       'property_value', 'income', "above_spread", "rate_spread", "interest_rate", "state_code",
-                       "debt_to_income_ratio", "loan_term", "conforming_loan_limit", "conforming_loan_limit_desc",
+                       'property_value', 'income', "above_spread", "state_code",
+                       "debt_to_income_ratio", "loan_term", "conforming_loan_limit",
                        "black", "asian", "white", "amind", "hipac", "hispanic", "non_hispanic",
                        "male", "female",
                        "agegte62", "agelt62"]
 
-    lar_sample = lar_subset.sample(n=200000, random_state=31415)
+    lar_sample = lar_subset.loc[:, final_keep_vars].sample(n=200000, random_state=31415)
 
     np.random.seed(27182845)
-    lar_sample['cv_fold'] = np.random.randint(low=1, high=6, size=len(lar_sample))
-
-
-    train, test = train_test_split(lar_sample, train_size=0.8)
-    test.drop(inplace=True, columns=["cv_fold"])
+    tts = (np.random.rand(len(lar_sample)) <= 0.8)
+    train, test = lar_sample[tts].copy(), lar_sample[~tts].copy()
+    print(train.shape, test.shape)
+    train['cv_fold'] = pd.Series(np.random.randint(low=1, high=6, size=len(train)), index=train.index)
 
     train.to_csv('./data/output/hmda_train.csv')
     test.to_csv('./data/output/hmda_test.csv')
-
-    hmda = pd.read_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv')
-
-    small_hmda = hmda.sample(n=100)
-
-    label = 'above_spread'
-    make_dummies = ['derived_loan_product_type', "loan_term", "debt_to_income_ratio",
-                    'state_code'] + \
-                   [x for x in hmda.columns if x + "_desc" in hmda.columns]
-    dummy_me = hmda[make_dummies].copy()
-    dummy_me = dummy_me.astype('object')
-
-    hmda_dummies = pd.get_dummies(dummy_me, dummy_na=True, drop_first=False)
-    dummy_detail = hmda_dummies.describe().T
-    hmda_dummies.drop(inplace=True, columns=dummy_detail.loc[dummy_detail["max"] == 0].index)
-    hmda_ready = pd.concat([hmda.drop(columns=make_dummies + [x for x in hmda.columns if str.endswith(x, "_desc")]),
-                            hmda_dummies], axis=1)
-    missing_values = hmda_ready.isnull().sum().to_frame('missing')
-    missing_values = missing_values.loc[missing_values["missing"] > 0]
-
-    features = ['loan_amount', 'loan_to_value_ratio',
-                'no_intro_rate_period', 'intro_rate_period', 'property_value',
-                'income']
-    '''
-    
-              # + list(hmda_dummies.columns)
-    '''
-
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.metrics import roc_auc_score
-    from sklearn.model_selection import train_test_split
-    from sklearn.linear_model import LogisticRegression
-
-    train, test = train_test_split(hmda_ready, train_size=0.7, random_state=8675309)
-    rfc = RandomForestClassifier(n_estimators=20, n_jobs=-1)
-    rfc_fit = rfc.fit(X=train[features], y=train[label])
-    pred = pd.Series(rfc_fit.predict_proba(X=test[features])[:, 1],
-                     index=test.index, name="pred")
-    print(roc_auc_score(y_true=test[label], y_score=pred))
-    print(f'Feature Importance:\n{pd.Series(rfc_fit.feature_importances_, index=features, name="feature importance")}')
-
-    log_reg = LogisticRegression(penalty='none', solver='lbfgs')
-
-    lrf_fit = log_reg.fit(X=train[features], y=train[label])
-    pred = pd.Series(lrf_fit.predict_proba(X=test[features])[:, 1],
-                     index=test.index, name="pred")
-    print(roc_auc_score(y_true=test[label], y_score=pred))
-
