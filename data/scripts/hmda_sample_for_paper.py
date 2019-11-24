@@ -1,8 +1,7 @@
 
-
 import numpy as np
 import pandas as pd
-
+from sklearn.model_selection import train_test_split
 
 def get_hmda_descriptions(data):
     data['conforming_loan_limit_desc'] = pd.Series(index=data.index, data=
@@ -1518,7 +1517,7 @@ if __name__ == '__main__':
         lar = lar.loc[lar[mni] != "Exempt", :]
         lar[mni] = lar[mni].astype(dtype='float64')
 
-    lar['high_priced'] = np.where(lar["rate_spread"] >= 1.5, 1, 0)
+    # lar['high_priced'] = np.where(lar["rate_spread"].isnull(), np.nan, np.where(lar["rate_spread"] >= 1.5, 1, 0))
 
     lar = lar.loc[(lar["action_taken"] == 1) &
                   (lar['loan_purpose'] == 1) &
@@ -1529,15 +1528,16 @@ if __name__ == '__main__':
                   (lar["occupancy_type"] == 1) &
                   (lar["reverse_mortgage"] == 2) &
                   (lar["negative_amortization"] == 2) &
-                  (lar["interest_only_payment"] != 1111) &
+                  (lar["interest_only_payment"] == 2) &
                   (lar["balloon_payment"] != 1111) &
                   (lar["applicant_credit_score_type"] != 1111) &
-                  (lar["loan_term"] >= 180) & (lar["loan_term"] <= 360) &
+                  ((lar["loan_term"] == 180) | (lar["loan_term"] == 360)) &
                   (lar["hoepa_status"] == 2) &
                   (lar["lien_status"] == 1) &
                   (lar["conforming_loan_limit"] != "U") &
                   (lar["balloon_payment"] == 2) &
-                  (lar["prepayment_penalty_term"].isnull())]
+                  lar["prepayment_penalty_term"].isnull() &
+                  ~lar["rate_spread"].isnull()]
 
     lar["loan_term"] = lar["loan_term"].astype('object')
     print(f'Subset Data Dimensions: {lar.shape}')
@@ -1549,9 +1549,9 @@ if __name__ == '__main__':
     # pd.crosstab(lar["preapproval_desc"], lar["preapproval"], dropna=False)
     # pd.crosstab(lar["preapproval"], lar["preapproval_desc"], dropna=False)
 
-    # "total_loan_costs", "purchaser_type", "derived_msa_md", "census_tract"
-    keep_cols = ['high_priced', 'derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
-                 'discount_points', 'lender_credits', 'loan_term', 'intro_rate_period',
+    # "total_loan_costs", "purchaser_type", "derived_msa_md", "census_tract", 'discount_points', 'lender_credits',
+    keep_cols = ['derived_loan_product_type', 'loan_amount', 'loan_to_value_ratio',
+                 'loan_term', 'intro_rate_period',
                  'interest_only_payment', 'balloon_payment', 'property_value', 'income',
                  'debt_to_income_ratio']
     keep_cols = keep_cols + ["state_code", "county_code", "conforming_loan_limit", "preapproval",
@@ -1579,12 +1579,11 @@ if __name__ == '__main__':
     x = lar.loc[lar["loan_type_desc"].isnull(), ["loan_type", "loan_type_desc"]]
     var_desc = pd.merge(lar_subset.apply(pd.Series.nunique).to_frame('num_unique'),
                         lar_subset.dtypes.to_frame('dtypes'), left_index=True, right_index=True,
-                        how='outer',)
+                        how='outer' ,)
     var_desc.sort_values(by=["num_unique"], inplace=True)
     for vi in var_desc.loc[var_desc["num_unique"] <= 20].index:
         var_freq = lar_subset[vi].value_counts(dropna=False)
         print(f'******************************************\nVariable {vi} Frequencies:\n{var_freq}')
-    lar_subset["has_co_applicant"] = lar_subset["co_applicant_age_above_62"].isnull().astype('int')
 
     lar_subset["co_applicant_age_above_62"].value_counts(dropna=False)
     pd.crosstab(lar_subset["applicant_age_above_62"],  lar_subset["co_applicant_age_above_62"])
@@ -1618,25 +1617,92 @@ if __name__ == '__main__':
 
     lar_subset["hispanic"] = np.where(lar_subset["derived_ethnicity"] == 'Hispanic or Latino', 1,
                                       np.where(lar_subset["derived_ethnicity"] == 'Not Hispanic or Latino', 0, np.nan))
+    lar_subset["non_hispanic"] = 1 - lar_subset["hispanic"]
 
     lar_subset.drop(inplace=True, columns=["derived_race", "derived_ethnicity", "applicant_age_above_62",
-                                           "co_applicant_age_above_62", "derived_sex"])
+                                           "co_applicant_age_above_62", "derived_sex",
+                                           "tract_population", "tract_minority_population_percent",
+                                           "tract_owner_occupied_units", "tract_one_to_four_family_homes",
+                                           "county_code", 'ffiec_msa_md_median_family_income',
+                                           "tract_to_msa_income_percentage", 'tract_median_age_of_housing_units'])
 
+    lar_subset["no_intro_rate_period"] = (lar_subset["intro_rate_period"].isnull()).astype('int8')
+    lar_subset.loc[lar_subset["intro_rate_period"].isnull(), "intro_rate_period"] = 0
+
+    lar_subset.dropna(axis=0, how='any', subset=['loan_to_value_ratio', 'property_value', 'income',
+                                                 'rate_spread', 'interest_rate'], inplace=True)
     var_order = list()
     for vvi in [x for x in lar_subset.columns if x + "_desc" in lar_subset.columns]:
         var_order.append(vvi)
         var_order.append(vvi + "_desc")
     var_order = var_order + [x for x in lar_subset.columns if x not in var_order]
     lar_subset = lar_subset[var_order]
+    lar_subset["above_spread"] = np.where(lar_subset["rate_spread"] > lar_subset["rate_spread"].quantile(), 1, 0)
+    print(f'High-Priced Loan Percentages:\n{lar_subset["above_spread"].value_counts(dropna=False, normalize=True)}')
 
-    lar_sample = lar_subset.sample(n=40000, random_state=31415)
-    lar_sample.to_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv', index=False)
+    final_keep_vars = ['loan_amount', 'loan_to_value_ratio', 'no_intro_rate_period', 'intro_rate_period',
+                       'property_value', 'income', "above_spread", "rate_spread", "interest_rate", "state_code",
+                       "debt_to_income_ratio", "loan_term", "conforming_loan_limit", "conforming_loan_limit_desc",
+                       "black", "asian", "white", "amind", "hipac", "hispanic", "non_hispanic",
+                       "male", "female",
+                       "agegte62", "agelt62"]
+
+    lar_sample = lar_subset.sample(n=200000, random_state=31415)
+
+    np.random.seed(27182845)
+    lar_sample['cv_fold'] = np.random.randint(low=1, high=6, size=len(lar_sample))
+
+
+    train, test = train_test_split(lar_sample, train_size=0.8)
+    test.drop(inplace=True, columns=["cv_fold"])
+
+    train.to_csv('./data/output/hmda_train.csv')
+    test.to_csv('./data/output/hmda_test.csv')
 
     hmda = pd.read_csv('./data/output/hmda_lar_2018_orig_mtg_sample.csv')
 
-    hmda['preapproval'].value_counts(dropna=False)
-    hmda['preapproval_desc'].value_counts(dropna=False)
-    from sklearn.linear_model import LogisticRegression
-    log_reg = LogisticRegression(penalty=None, solver="lbfgs")
+    small_hmda = hmda.sample(n=100)
 
-    test = log_reg.fit
+    label = 'above_spread'
+    make_dummies = ['derived_loan_product_type', "loan_term", "debt_to_income_ratio",
+                    'state_code'] + \
+                   [x for x in hmda.columns if x + "_desc" in hmda.columns]
+    dummy_me = hmda[make_dummies].copy()
+    dummy_me = dummy_me.astype('object')
+
+    hmda_dummies = pd.get_dummies(dummy_me, dummy_na=True, drop_first=False)
+    dummy_detail = hmda_dummies.describe().T
+    hmda_dummies.drop(inplace=True, columns=dummy_detail.loc[dummy_detail["max"] == 0].index)
+    hmda_ready = pd.concat([hmda.drop(columns=make_dummies + [x for x in hmda.columns if str.endswith(x, "_desc")]),
+                            hmda_dummies], axis=1)
+    missing_values = hmda_ready.isnull().sum().to_frame('missing')
+    missing_values = missing_values.loc[missing_values["missing"] > 0]
+
+    features = ['loan_amount', 'loan_to_value_ratio',
+                'no_intro_rate_period', 'intro_rate_period', 'property_value',
+                'income']
+    '''
+    
+              # + list(hmda_dummies.columns)
+    '''
+
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import roc_auc_score
+    from sklearn.model_selection import train_test_split
+    from sklearn.linear_model import LogisticRegression
+
+    train, test = train_test_split(hmda_ready, train_size=0.7, random_state=8675309)
+    rfc = RandomForestClassifier(n_estimators=20, n_jobs=-1)
+    rfc_fit = rfc.fit(X=train[features], y=train[label])
+    pred = pd.Series(rfc_fit.predict_proba(X=test[features])[:, 1],
+                     index=test.index, name="pred")
+    print(roc_auc_score(y_true=test[label], y_score=pred))
+    print(f'Feature Importance:\n{pd.Series(rfc_fit.feature_importances_, index=features, name="feature importance")}')
+
+    log_reg = LogisticRegression(penalty='none', solver='lbfgs')
+
+    lrf_fit = log_reg.fit(X=train[features], y=train[label])
+    pred = pd.Series(lrf_fit.predict_proba(X=test[features])[:, 1],
+                     index=test.index, name="pred")
+    print(roc_auc_score(y_true=test[label], y_score=pred))
+
