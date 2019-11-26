@@ -16,19 +16,15 @@ from keras.models import Model
 import subprocess
 import sys
 
-def install(library):
-    subprocess.call([sys.executable, "-m", "pip", "install", library])
-
 import pydot
     
-
 from timeit import default_timer as timer
 import tensorflow as tf
 from keras import backend as K
 
 
 # Output file label
-lll="quick_info_first_"
+lll="quick_retest_"
 
 
 seed = 12345
@@ -242,7 +238,7 @@ xnn.print_architecture()
 
 
 # Train the xnn
-xnn.fit(X, Y, epochs=10, batch_size=32, validation_split=0.25, verbose=1)
+xnn.fit(X, Y, epochs=10000, batch_size=1024, validation_split=0.25, verbose=1)
 
 
 
