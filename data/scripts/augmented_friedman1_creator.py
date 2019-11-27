@@ -37,6 +37,11 @@ if __name__ == "__main__":
     # Creates matrix of correlated normal variables, first by creating the
     # positive definite matrix, which serves as the variance-covariance matrix.
     var_covar_cor_normal = ds.make_spd_matrix(n_dim=n_corr_normal, random_state=rand_seed_list.pop())
+
+    ###################################################
+    # var_covar_cor_normal = np.identity(n=n_corr_normal)
+    ###################################################
+    
     np.random.seed(rand_seed_list.pop())
     features_cor_normal = pd.DataFrame(np.random.multivariate_normal(mean=[0] * n_corr_normal,
                                                                      cov=var_covar_cor_normal,
@@ -102,9 +107,12 @@ if __name__ == "__main__":
     X["intercept"] = intercept
 
     np.random.seed(rand_seed_list.pop())
-    X["logistic_noise"] = np.random.logistic(scale=3, size=len(X))
+    X["logistic_noise"] = np.random.logistic(scale=24, size=len(X))
     X["logistic_noise"] = X["logistic_noise"] - X["logistic_noise"].mean()
     X['latent_with_noise'] = X["latent_no_noise"] + X["logistic_noise"]
+    X["latent_no_noise"].hist()
+    X["latent_with_noise"].hist()
+    X["logistic_noise"].hist()
     X["outcome"] = pd.DataFrame(np.where(X["latent_with_noise"] > 0, 1, 0))
 
     print(f'Outcome Variable Frequency:\n{X["outcome"].value_counts(normalize=True)}')
@@ -143,7 +151,29 @@ if __name__ == "__main__":
     X_train = X[:int(round(n_obs) * (4 / 5))].copy()
     np.random.seed(rand_seed_list.pop())
     X_train["fold"] = np.random.randint(low=1, high=6, size=len(X_train))
-    X_test = X[int(round(n_obs) * (4 / 5)) + 1:].copy()
+    X_test = X[:int(round(n_obs) * (1 / 5))].copy()
+    print(X_train.shape, X_test.shape)
 
     X_train.to_csv("./data/output/simu_train.csv")
     X_test.to_csv("./data/output/simu_test.csv")
+
+    from sklearn.metrics import roc_auc_score
+    from sklearn.ensemble import RandomForestClassifier
+
+    rfc = RandomForestClassifier(n_estimators=100, n_jobs=-1, oob_score=True)
+    features = list(X.columns[1:9])
+    train = X_train[["outcome"] + features].copy()
+    train["cat1"] = train["cat1"].astype('object')
+    train = pd.get_dummies(train)
+
+    test = X_test[["outcome"] + features].copy()
+    test["cat1"] = test["cat1"].astype('object')
+    test = pd.get_dummies(test)
+
+    features = [x for x in train.columns if x not in ["cat1", "outcome"]]
+    rfc.fit(X=train[features], y=train["outcome"])
+    pred_test = rfc.predict_proba(X=test[features])[:, 1]
+    pred_train = rfc.predict_proba(X=train[features])[:, 1]
+    print(f'\nTrain AUC: {roc_auc_score(y_true=test["outcome"], y_score=pred_test)}\n'
+          f'Test AUC: {roc_auc_score(y_true=test["outcome"], y_score=pred_test)}')
+
