@@ -145,5 +145,5 @@ if __name__ == "__main__":
     X_train["fold"] = np.random.randint(low=1, high=6, size=len(X_train))
     X_test = X[int(round(n_obs) * (4 / 5)) + 1:].copy()
 
-    X_train.to_csv("./data/output/X_train.csv")
-    X_test.to_csv("./data/output/X_test.csv")
+    X_train.to_csv("./data/output/simu_train.csv")
+    X_test.to_csv("./data/output/simu_test.csv")
