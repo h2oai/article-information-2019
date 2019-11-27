@@ -76,9 +76,9 @@ class DisparateImpactTesting(object):
         di_table.loc[di_table["class"].isin(self.pg_names), "Control Class"] = self.cg_names
 
         if self.lower_value_favorable:
-            outcome = data[label].to_numpy().reshape(-1, 1)
-        else:
             outcome = (1 - data[label]).to_numpy().reshape(-1, 1)
+        else:
+            outcome = data[label].to_numpy().reshape(-1, 1)
 
         di_table["Total"] = data[self.pgcg_names].sum(axis=0)
         di_table["Total Favorable"] = np.sum(outcome * data[self.pgcg_names])
