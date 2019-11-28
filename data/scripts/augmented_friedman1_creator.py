@@ -18,7 +18,8 @@ import pandas as pd
 from sklearn import datasets as ds
 from scipy import stats
 from data.scripts import di_testing
-
+from sklearn.metrics import roc_auc_score, classification_report
+from sklearn.ensemble import RandomForestClassifier
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -38,9 +39,10 @@ if __name__ == "__main__":
     # positive definite matrix, which serves as the variance-covariance matrix.
     var_covar_cor_normal = ds.make_spd_matrix(n_dim=n_corr_normal, random_state=rand_seed_list.pop())
 
-    ###################################################
+    #####################################################
+    # Test uncorrelated version
     # var_covar_cor_normal = np.identity(n=n_corr_normal)
-    ###################################################
+    #####################################################
     
     np.random.seed(rand_seed_list.pop())
     features_cor_normal = pd.DataFrame(np.random.multivariate_normal(mean=[0] * n_corr_normal,
@@ -96,6 +98,9 @@ if __name__ == "__main__":
     contrib["c1_3"] = coefficients["c1_3"] * X["cat1_3"]
     contrib["c1_4"] = coefficients["c1_4"] * X["cat1_4"]
     intercept = -1 * contrib.sum(axis=1).mean()
+    ############
+    # intercept = -30
+    ############
     contrib["intercept"] = intercept
 
     print(f'Contributions Statistics:\n{contrib.describe()}')
@@ -109,13 +114,17 @@ if __name__ == "__main__":
     np.random.seed(rand_seed_list.pop())
     X["logistic_noise"] = np.random.logistic(scale=24, size=len(X))
     X["logistic_noise"] = X["logistic_noise"] - X["logistic_noise"].mean()
+    print(f'Logistic Random Noise Distribution Characteristics:\n{X["logistic_noise"].agg(["mean", "std"])}')
     X['latent_with_noise'] = X["latent_no_noise"] + X["logistic_noise"]
     X["latent_no_noise"].hist()
     X["latent_with_noise"].hist()
     X["logistic_noise"].hist()
     X["outcome"] = pd.DataFrame(np.where(X["latent_with_noise"] > 0, 1, 0))
+    X["outcome_no_noise"] = pd.DataFrame(np.where(X["latent_no_noise"] > 0, 1, 0))
 
-    print(f'Outcome Variable Frequency:\n{X["outcome"].value_counts(normalize=True)}')
+    print(f'Outcome with Noise Frequency:\n{X["outcome"].value_counts(normalize=True)}')
+    print(f'Outcome: Noise v. No-Noise Comparison:\n'
+          f'{pd.crosstab(X["outcome"], X["outcome_no_noise"], normalize=True, margins=True)}')
 
     X["prot_class1"], X["prot_class2"] = 0, 0
     X.loc[(X["pc1"] <= 0.20) & (X["outcome"] == 0), "prot_class1"] = 1
@@ -142,10 +151,10 @@ if __name__ == "__main__":
                                                                 "prot_class2", "ctrl_class2"])
     print(f'\nResults of DI Analysis:\n{di_analysis.adverse_impact_ratio(data=X, label="outcome")}')
 
-    X = X[['outcome'] + ["fried" + str(x) for x in range(1, 6)] + ["binary1", "binary2", "cat1", 'intercept',
-                                                                   "prot_class1", "ctrl_class1", "prot_class2",
-                                                                   "ctrl_class2", "latent_no_noise",
-                                                                   "logistic_noise"]]
+    X = X[['outcome', "outcome_no_noise"] + 
+          ["fried" + str(x) for x in range(1, 6)] +
+          ["binary1", "binary2", "cat1", 'intercept', "prot_class1", "ctrl_class1", "prot_class2", "ctrl_class2",
+           "latent_no_noise", "logistic_noise"]]
     print(X.head())
 
     X_train = X[:int(round(n_obs) * (4 / 5))].copy()
@@ -157,23 +166,22 @@ if __name__ == "__main__":
     X_train.to_csv("./data/output/simu_train.csv")
     X_test.to_csv("./data/output/simu_test.csv")
 
-    from sklearn.metrics import roc_auc_score
-    from sklearn.ensemble import RandomForestClassifier
-
-    rfc = RandomForestClassifier(n_estimators=100, n_jobs=-1, oob_score=True)
-    features = list(X.columns[1:9])
-    train = X_train[["outcome"] + features].copy()
+    rfc = RandomForestClassifier(n_estimators=5, n_jobs=-1)
+    features = ["fried" + str(x) for x in range(1, 6)] + ["binary1", "binary2", "cat1"]
+    label = "outcome_no_noise"
+    label = "outcome"
+    train = X_train[[label] + features].copy()
     train["cat1"] = train["cat1"].astype('object')
     train = pd.get_dummies(train)
 
-    test = X_test[["outcome"] + features].copy()
+    test = X_test[[label] + features].copy()
     test["cat1"] = test["cat1"].astype('object')
     test = pd.get_dummies(test)
 
-    features = [x for x in train.columns if x not in ["cat1", "outcome"]]
-    rfc.fit(X=train[features], y=train["outcome"])
+    features = [x for x in train.columns if x not in ["cat1", label]]
+    rfc.fit(X=train[features], y=train[label])
     pred_test = rfc.predict_proba(X=test[features])[:, 1]
     pred_train = rfc.predict_proba(X=train[features])[:, 1]
-    print(f'\nTrain AUC: {roc_auc_score(y_true=test["outcome"], y_score=pred_test)}\n'
-          f'Test AUC: {roc_auc_score(y_true=test["outcome"], y_score=pred_test)}')
-
+    print(f'\nTrain AUC: {roc_auc_score(y_true=test[label], y_score=pred_test)}\n'
+          f'Test AUC: {roc_auc_score(y_true=test[label], y_score=pred_test)}')
+    print(f'Classification Report:\n{classification_report(y_true=test[label], y_pred=(pred_test > 0.5))}')
