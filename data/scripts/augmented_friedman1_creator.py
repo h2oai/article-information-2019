@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
     rfc = RandomForestClassifier(n_estimators=5, n_jobs=-1)
     features = ["fried" + str(x) for x in range(1, 6)] + ["binary1", "binary2", "cat1"]
-    label = "outcome_no_noise"
+    # label = "outcome_no_noise"
     label = "outcome"
     train = X_train[[label] + features].copy()
     train["cat1"] = train["cat1"].astype('object')
