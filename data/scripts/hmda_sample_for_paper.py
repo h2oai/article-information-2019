@@ -1,4 +1,3 @@
-
 """
 License
 Copyright 2019 Navdeep Gill, Patrick Hall, Kim Montgomery, Nick Schmidt
@@ -15,1503 +14,1505 @@ DISCLAIMER: This notebook is not legal compliance advice.
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from scipy import optimize
+import matplotlib.pyplot as plt
+
 
 def get_hmda_descriptions(data):
     data['conforming_loan_limit_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            [
-                data.conforming_loan_limit == 'C',
-                data.conforming_loan_limit == 'NC',
-                data.conforming_loan_limit == 'U',
-                data.conforming_loan_limit == 'NA'
-            ],
-            [
-                'Conforming',
-                'Nonconforming',
-                'Undetermined',
-                'Not applicable'
-            ],
-            ''
-        ),
-        dtype='category'
-    )
+    np.select(
+        [
+            data.conforming_loan_limit == 'C',
+            data.conforming_loan_limit == 'NC',
+            data.conforming_loan_limit == 'U',
+            data.conforming_loan_limit == 'NA'
+        ],
+        [
+            'Conforming',
+            'Nonconforming',
+            'Undetermined',
+            'Not applicable'
+        ],
+        ''
+    ),
+                                                   dtype='category'
+                                                   )
     data['action_taken_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.action_taken == 1, data.action_taken == 2, data.action_taken == 3,
-                data.action_taken == 4, data.action_taken == 5, data.action_taken == 6,
-                data.action_taken == 7, data.action_taken == 8
-            ),
-            (
-                'Loan originated', 'Application approved but not accepted',
-                'Application denied', 'Application withdrawn by applicant',
-                'File closed for incompleteness', 'Purchased loan',
-                'Preapproval request denied',
-                'Preapproval request approved but not accepted'
-            ),
-            default=''
+    np.select(
+        (
+            data.action_taken == 1, data.action_taken == 2, data.action_taken == 3,
+            data.action_taken == 4, data.action_taken == 5, data.action_taken == 6,
+            data.action_taken == 7, data.action_taken == 8
         ),
-        dtype='category'
-    )
+        (
+            'Loan originated', 'Application approved but not accepted',
+            'Application denied', 'Application withdrawn by applicant',
+            'File closed for incompleteness', 'Purchased loan',
+            'Preapproval request denied',
+            'Preapproval request approved but not accepted'
+        ),
+        default=''
+    ),
+                                          dtype='category'
+                                          )
     data['purchaser_type_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.purchaser_type == 0, data.purchaser_type == 1, data.purchaser_type == 2,
-                data.purchaser_type == 3, data.purchaser_type == 4, data.purchaser_type == 5,
-                data.purchaser_type == 6, data.purchaser_type == 71, data.purchaser_type == 72,
-                data.purchaser_type == 8, data.purchaser_type == 9
-            ),
-            (
-                'Not applicable', 'Fannie Mae', 'Ginnie Mae', 'Freddie Mac',
-                'Farmer Mac', 'Private securitizer',
-                'Commercial bank, savings bank, or savings association',
-                'Credit union, mortgage company, or finance company',
-                'Life insurance company', 'Affiliate institution',
-                'Other type of purchaser',
-            ),
-            default=''
+    np.select(
+        (
+            data.purchaser_type == 0, data.purchaser_type == 1, data.purchaser_type == 2,
+            data.purchaser_type == 3, data.purchaser_type == 4, data.purchaser_type == 5,
+            data.purchaser_type == 6, data.purchaser_type == 71, data.purchaser_type == 72,
+            data.purchaser_type == 8, data.purchaser_type == 9
         ),
-        dtype='category'
-    )
+        (
+            'Not applicable', 'Fannie Mae', 'Ginnie Mae', 'Freddie Mac',
+            'Farmer Mac', 'Private securitizer',
+            'Commercial bank, savings bank, or savings association',
+            'Credit union, mortgage company, or finance company',
+            'Life insurance company', 'Affiliate institution',
+            'Other type of purchaser',
+        ),
+        default=''
+    ),
+                                            dtype='category'
+                                            )
     data['preapproval_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (data['preapproval'] == 1, data['preapproval'] == 2),
-            ('Preapproval requested', 'Preapproval not requested'),
-            default=''
-        ),
-        dtype='object'
-    )
+    np.select(
+        (data['preapproval'] == 1, data['preapproval'] == 2),
+        ('Preapproval requested', 'Preapproval not requested'),
+        default=''
+    ),
+                                         dtype='object'
+                                         )
     data['loan_type_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.loan_type == 1,
-                data.loan_type == 2,
-                data.loan_type == 3,
-                data.loan_type == 4
-            ),
-            (
-                'Conventional (not insured or guaranteed by FHA, VA, RHS, or FSA)',
-                'Federal Housing Administration insured (FHA)',
-                'Veterans Affairs guaranteed (VA)',
-                'USDA Rural Housing Service or Farm Service Agency guaranteed (RHS or FSA)',
-            ),
-            default=''
+    np.select(
+        (
+            data.loan_type == 1,
+            data.loan_type == 2,
+            data.loan_type == 3,
+            data.loan_type == 4
         ),
-        dtype='category'
-    )
+        (
+            'Conventional (not insured or guaranteed by FHA, VA, RHS, or FSA)',
+            'Federal Housing Administration insured (FHA)',
+            'Veterans Affairs guaranteed (VA)',
+            'USDA Rural Housing Service or Farm Service Agency guaranteed (RHS or FSA)',
+        ),
+        default=''
+    ),
+                                       dtype='category'
+                                       )
     data['loan_purpose_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.loan_purpose == 1, data.loan_purpose == 2, data.loan_purpose == 31,
-                data.loan_purpose == 32, data.loan_purpose == 4, data.loan_purpose == 5,
-            ),
-            (
-                'Home purchase', 'Home improvement', 'Refinancing',
-                'Cash-out refinancing', 'Other purpose', 'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.loan_purpose == 1, data.loan_purpose == 2, data.loan_purpose == 31,
+            data.loan_purpose == 32, data.loan_purpose == 4, data.loan_purpose == 5,
         ),
-        dtype='category'
-    )
+        (
+            'Home purchase', 'Home improvement', 'Refinancing',
+            'Cash-out refinancing', 'Other purpose', 'Not applicable',
+        ),
+        default=''
+    ),
+                                          dtype='category'
+                                          )
     data['lien_status_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (data.lien_status == 1, data.lien_status == 2),
-            ('Secured by a first lien', 'Secured by a subordinate lien'),
-            default=''
-        ),
-        dtype='category'
-    )
+    np.select(
+        (data.lien_status == 1, data.lien_status == 2),
+        ('Secured by a first lien', 'Secured by a subordinate lien'),
+        default=''
+    ),
+                                         dtype='category'
+                                         )
     data['reverse_mortgage_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.reverse_mortgage == 1, data.reverse_mortgage == 2,
-                data.reverse_mortgage == 1111
-            ),
-            ('Reverse mortgage', 'Not a reverse mortgage', 'Exempt'),
-            default=''
+    np.select(
+        (
+            data.reverse_mortgage == 1, data.reverse_mortgage == 2,
+            data.reverse_mortgage == 1111
         ),
-        dtype='category'
-    )
+        ('Reverse mortgage', 'Not a reverse mortgage', 'Exempt'),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['open_end_line_of_credit_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.open_end_line_of_credit == 1,
-                data.open_end_line_of_credit == 2,
-                data.open_end_line_of_credit == 1111
-            ),
-            (
-                'Open-end line of credit',
-                'Not an open-end line of credit',
-                'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.open_end_line_of_credit == 1,
+            data.open_end_line_of_credit == 2,
+            data.open_end_line_of_credit == 1111
         ),
-        dtype='category'
-    )
+        (
+            'Open-end line of credit',
+            'Not an open-end line of credit',
+            'Exempt'
+        ),
+        default=''
+    ),
+                                                     dtype='category'
+                                                     )
     data['business_or_commercial_purpose_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.business_or_commercial_purpose == 1,
-                data.business_or_commercial_purpose == 2,
-                data.business_or_commercial_purpose == 1111,
-            ),
-            (
-                'Primarily for a business or commercial purpose',
-                'Not primarily for a business or commercial purpose',
-                'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.business_or_commercial_purpose == 1,
+            data.business_or_commercial_purpose == 2,
+            data.business_or_commercial_purpose == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Primarily for a business or commercial purpose',
+            'Not primarily for a business or commercial purpose',
+            'Exempt'
+        ),
+        default=''
+    ),
+                                                            dtype='category'
+                                                            )
     data['hoepa_status_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (data.hoepa_status == 1, data.hoepa_status == 2, data.hoepa_status == 3),
-            ('High-cost mortgage', 'Not a high-cost mortgage', 'Not Applicable'),
-            default=''
-        ),
-        dtype='category'
-    )
+    np.select(
+        (data.hoepa_status == 1, data.hoepa_status == 2, data.hoepa_status == 3),
+        ('High-cost mortgage', 'Not a high-cost mortgage', 'Not Applicable'),
+        default=''
+    ),
+                                          dtype='category'
+                                          )
     data['negative_amortization_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.negative_amortization == 1,
-                data.negative_amortization == 2,
-                data.negative_amortization == 1111
-            ),
-            (
-                'Negative amortization', 'No negative amortization', 'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.negative_amortization == 1,
+            data.negative_amortization == 2,
+            data.negative_amortization == 1111
         ),
-        dtype='category'
-    )
+        (
+            'Negative amortization', 'No negative amortization', 'Exempt'
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['interest_only_payment_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.interest_only_payment == 1,
-                data.interest_only_payment == 2,
-                data.interest_only_payment == 1111,
-            ),
-            (
-                'Interest-only payments',
-                'No interest-only payments',
-                'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.interest_only_payment == 1,
+            data.interest_only_payment == 2,
+            data.interest_only_payment == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Interest-only payments',
+            'No interest-only payments',
+            'Exempt'
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['balloon_payment_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.balloon_payment == 1,
-                data.balloon_payment == 2,
-                data.balloon_payment == 1111,
-            ),
-            ('Balloon Payment', 'No balloon payment', 'Exempt'),
-            default=''
+    np.select(
+        (
+            data.balloon_payment == 1,
+            data.balloon_payment == 2,
+            data.balloon_payment == 1111,
         ),
-        dtype='category'
-    )
+        ('Balloon Payment', 'No balloon payment', 'Exempt'),
+        default=''
+    ),
+                                             dtype='category'
+                                             )
     data['other_nonamortizing_features_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.other_nonamortizing_features == 1,
-                data.other_nonamortizing_features == 2,
-                data.other_nonamortizing_features == 1111,
-            ),
-            (
-                'Other non-fully amortizing features',
-                'No other non-fully amortizing features',
-                'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.other_nonamortizing_features == 1,
+            data.other_nonamortizing_features == 2,
+            data.other_nonamortizing_features == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Other non-fully amortizing features',
+            'No other non-fully amortizing features',
+            'Exempt'
+        ),
+        default=''
+    ),
+                                                          dtype='category'
+                                                          )
     data['construction_method_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.construction_method == 1,
-                data.construction_method == 2
-            ),
-            ('Site-built', 'Manufactured home'),
-            default=''
+    np.select(
+        (
+            data.construction_method == 1,
+            data.construction_method == 2
         ),
-        dtype='category'
-    )
+        ('Site-built', 'Manufactured home'),
+        default=''
+    ),
+                                                 dtype='category'
+                                                 )
     data['occupancy_type_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.occupancy_type == 1,
-                data.occupancy_type == 2,
-                data.occupancy_type == 3,
-            ),
-            (
-                'Principal residence',
-                'Second residence',
-                'Investment property',
-            ),
-            default=''
+    np.select(
+        (
+            data.occupancy_type == 1,
+            data.occupancy_type == 2,
+            data.occupancy_type == 3,
         ),
-        dtype='category'
-    )
+        (
+            'Principal residence',
+            'Second residence',
+            'Investment property',
+        ),
+        default=''
+    ),
+                                            dtype='category'
+                                            )
     data['manufactured_home_secured_property_type_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.manufactured_home_secured_property_type == 1,
-                data.manufactured_home_secured_property_type == 2,
-                data.manufactured_home_secured_property_type == 3,
-                data.manufactured_home_secured_property_type == 1111,
-            ),
-            (
-                'Manufactured home and land',
-                'Manufactured home and not land',
-                'Not Applicable',
-                'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.manufactured_home_secured_property_type == 1,
+            data.manufactured_home_secured_property_type == 2,
+            data.manufactured_home_secured_property_type == 3,
+            data.manufactured_home_secured_property_type == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Manufactured home and land',
+            'Manufactured home and not land',
+            'Not Applicable',
+            'Exempt'
+        ),
+        default=''
+    ),
+                                                                     dtype='category'
+                                                                     )
     data['manufactured_home_land_property_interest_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.manufactured_home_land_property_interest == 1,
-                data.manufactured_home_land_property_interest == 2,
-                data.manufactured_home_land_property_interest == 3,
-                data.manufactured_home_land_property_interest == 4,
-                data.manufactured_home_land_property_interest == 5,
-                data.manufactured_home_land_property_interest == 1111,
-            ),
-            (
-                'Direct ownership', 'Indirect ownership', 'Paid leasehold',
-                'Unpaid leasehold', 'Not Applicable', 'Exempt'
-            ),
-            default=''
+    np.select(
+        (
+            data.manufactured_home_land_property_interest == 1,
+            data.manufactured_home_land_property_interest == 2,
+            data.manufactured_home_land_property_interest == 3,
+            data.manufactured_home_land_property_interest == 4,
+            data.manufactured_home_land_property_interest == 5,
+            data.manufactured_home_land_property_interest == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Direct ownership', 'Indirect ownership', 'Paid leasehold',
+            'Unpaid leasehold', 'Not Applicable', 'Exempt'
+        ),
+        default=''
+    ),
+                                                                      dtype='category'
+                                                                      )
     data['applicant_credit_score_type_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_credit_score_type == 1,
-                data.applicant_credit_score_type == 2,
-                data.applicant_credit_score_type == 3,
-                data.applicant_credit_score_type == 4,
-                data.applicant_credit_score_type == 5,
-                data.applicant_credit_score_type == 6,
-                data.applicant_credit_score_type == 7,
-                data.applicant_credit_score_type == 8,
-                data.applicant_credit_score_type == 9,
-                data.applicant_credit_score_type == 1111,
-            ),
-            (
-                'Equifax Beacon 5.0',
-                'Experian Fair Isaac',
-                'FICO Risk Score Classic 04',
-                'FICO Risk Score Classic 98',
-                'VantageScore 2.0',
-                'VantageScore 3.0',
-                'More than one credit scoring model',
-                'Other credit scoring model',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_credit_score_type == 1,
+            data.applicant_credit_score_type == 2,
+            data.applicant_credit_score_type == 3,
+            data.applicant_credit_score_type == 4,
+            data.applicant_credit_score_type == 5,
+            data.applicant_credit_score_type == 6,
+            data.applicant_credit_score_type == 7,
+            data.applicant_credit_score_type == 8,
+            data.applicant_credit_score_type == 9,
+            data.applicant_credit_score_type == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Equifax Beacon 5.0',
+            'Experian Fair Isaac',
+            'FICO Risk Score Classic 04',
+            'FICO Risk Score Classic 98',
+            'VantageScore 2.0',
+            'VantageScore 3.0',
+            'More than one credit scoring model',
+            'Other credit scoring model',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                                         dtype='category'
+                                                         )
     data['co_applicant_credit_score_type_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_credit_score_type == 1,
-                data.co_applicant_credit_score_type == 2,
-                data.co_applicant_credit_score_type == 3,
-                data.co_applicant_credit_score_type == 4,
-                data.co_applicant_credit_score_type == 5,
-                data.co_applicant_credit_score_type == 6,
-                data.co_applicant_credit_score_type == 7,
-                data.co_applicant_credit_score_type == 8,
-                data.co_applicant_credit_score_type == 9,
-                data.co_applicant_credit_score_type == 10,
-                data.co_applicant_credit_score_type == 1111,
-            ),
-            (
-                'Equifax Beacon 5.0',
-                'Experian Fair Isaac',
-                'FICO Risk Score Classic 04',
-                'FICO Risk Score Classic 98',
-                'VantageScore 2.0',
-                'VantageScore 3.0',
-                'More than one credit scoring model',
-                'Other credit scoring model',
-                'Not applicable',
-                'No co-applicant',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_credit_score_type == 1,
+            data.co_applicant_credit_score_type == 2,
+            data.co_applicant_credit_score_type == 3,
+            data.co_applicant_credit_score_type == 4,
+            data.co_applicant_credit_score_type == 5,
+            data.co_applicant_credit_score_type == 6,
+            data.co_applicant_credit_score_type == 7,
+            data.co_applicant_credit_score_type == 8,
+            data.co_applicant_credit_score_type == 9,
+            data.co_applicant_credit_score_type == 10,
+            data.co_applicant_credit_score_type == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Equifax Beacon 5.0',
+            'Experian Fair Isaac',
+            'FICO Risk Score Classic 04',
+            'FICO Risk Score Classic 98',
+            'VantageScore 2.0',
+            'VantageScore 3.0',
+            'More than one credit scoring model',
+            'Other credit scoring model',
+            'Not applicable',
+            'No co-applicant',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                                            dtype='category'
+                                                            )
     data['applicant_ethnicity_1_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_ethnicity_1 == 1,
-                data.applicant_ethnicity_1 == 11,
-                data.applicant_ethnicity_1 == 12,
-                data.applicant_ethnicity_1 == 13,
-                data.applicant_ethnicity_1 == 14,
-                data.applicant_ethnicity_1 == 2,
-                data.applicant_ethnicity_1 == 3,
-                data.applicant_ethnicity_1 == 4,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_ethnicity_1 == 1,
+            data.applicant_ethnicity_1 == 11,
+            data.applicant_ethnicity_1 == 12,
+            data.applicant_ethnicity_1 == 13,
+            data.applicant_ethnicity_1 == 14,
+            data.applicant_ethnicity_1 == 2,
+            data.applicant_ethnicity_1 == 3,
+            data.applicant_ethnicity_1 == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['applicant_ethnicity_2_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_ethnicity_2 == 1,
-                data.applicant_ethnicity_2 == 11,
-                data.applicant_ethnicity_2 == 12,
-                data.applicant_ethnicity_2 == 13,
-                data.applicant_ethnicity_2 == 14,
-                data.applicant_ethnicity_2 == 2,
-                data.applicant_ethnicity_2 == 3,
-                data.applicant_ethnicity_2 == 4,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_ethnicity_2 == 1,
+            data.applicant_ethnicity_2 == 11,
+            data.applicant_ethnicity_2 == 12,
+            data.applicant_ethnicity_2 == 13,
+            data.applicant_ethnicity_2 == 14,
+            data.applicant_ethnicity_2 == 2,
+            data.applicant_ethnicity_2 == 3,
+            data.applicant_ethnicity_2 == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['applicant_ethnicity_3_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_ethnicity_3 == 1,
-                data.applicant_ethnicity_3 == 11,
-                data.applicant_ethnicity_3 == 12,
-                data.applicant_ethnicity_3 == 13,
-                data.applicant_ethnicity_3 == 14,
-                data.applicant_ethnicity_3 == 2,
-                data.applicant_ethnicity_3 == 3,
-                data.applicant_ethnicity_3 == 4,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_ethnicity_3 == 1,
+            data.applicant_ethnicity_3 == 11,
+            data.applicant_ethnicity_3 == 12,
+            data.applicant_ethnicity_3 == 13,
+            data.applicant_ethnicity_3 == 14,
+            data.applicant_ethnicity_3 == 2,
+            data.applicant_ethnicity_3 == 3,
+            data.applicant_ethnicity_3 == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['applicant_ethnicity_4_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_ethnicity_4 == 1,
-                data.applicant_ethnicity_4 == 11,
-                data.applicant_ethnicity_4 == 12,
-                data.applicant_ethnicity_4 == 13,
-                data.applicant_ethnicity_4 == 14,
-                data.applicant_ethnicity_4 == 2,
-                data.applicant_ethnicity_4 == 3,
-                data.applicant_ethnicity_4 == 4,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_ethnicity_4 == 1,
+            data.applicant_ethnicity_4 == 11,
+            data.applicant_ethnicity_4 == 12,
+            data.applicant_ethnicity_4 == 13,
+            data.applicant_ethnicity_4 == 14,
+            data.applicant_ethnicity_4 == 2,
+            data.applicant_ethnicity_4 == 3,
+            data.applicant_ethnicity_4 == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['applicant_ethnicity_5_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_ethnicity_5 == 1,
-                data.applicant_ethnicity_5 == 11,
-                data.applicant_ethnicity_5 == 12,
-                data.applicant_ethnicity_5 == 13,
-                data.applicant_ethnicity_5 == 14,
-                data.applicant_ethnicity_5 == 2,
-                data.applicant_ethnicity_5 == 3,
-                data.applicant_ethnicity_5 == 4,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_ethnicity_5 == 1,
+            data.applicant_ethnicity_5 == 11,
+            data.applicant_ethnicity_5 == 12,
+            data.applicant_ethnicity_5 == 13,
+            data.applicant_ethnicity_5 == 14,
+            data.applicant_ethnicity_5 == 2,
+            data.applicant_ethnicity_5 == 3,
+            data.applicant_ethnicity_5 == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                                   dtype='category'
+                                                   )
     data['co_applicant_ethnicity_1_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_ethnicity_1 == 1,
-                data.co_applicant_ethnicity_1 == 11,
-                data.co_applicant_ethnicity_1 == 12,
-                data.co_applicant_ethnicity_1 == 13,
-                data.co_applicant_ethnicity_1 == 14,
-                data.co_applicant_ethnicity_1 == 2,
-                data.co_applicant_ethnicity_1 == 3,
-                data.co_applicant_ethnicity_1 == 4,
-                data.co_applicant_ethnicity_1 == 5,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_ethnicity_1 == 1,
+            data.co_applicant_ethnicity_1 == 11,
+            data.co_applicant_ethnicity_1 == 12,
+            data.co_applicant_ethnicity_1 == 13,
+            data.co_applicant_ethnicity_1 == 14,
+            data.co_applicant_ethnicity_1 == 2,
+            data.co_applicant_ethnicity_1 == 3,
+            data.co_applicant_ethnicity_1 == 4,
+            data.co_applicant_ethnicity_1 == 5,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                      dtype='category'
+                                                      )
     data['co_applicant_ethnicity_2_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_ethnicity_2 == 1,
-                data.co_applicant_ethnicity_2 == 11,
-                data.co_applicant_ethnicity_2 == 12,
-                data.co_applicant_ethnicity_2 == 13,
-                data.co_applicant_ethnicity_2 == 14,
-                data.co_applicant_ethnicity_2 == 2,
-                data.co_applicant_ethnicity_2 == 3,
-                data.co_applicant_ethnicity_2 == 4,
-                data.co_applicant_ethnicity_2 == 5,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_ethnicity_2 == 1,
+            data.co_applicant_ethnicity_2 == 11,
+            data.co_applicant_ethnicity_2 == 12,
+            data.co_applicant_ethnicity_2 == 13,
+            data.co_applicant_ethnicity_2 == 14,
+            data.co_applicant_ethnicity_2 == 2,
+            data.co_applicant_ethnicity_2 == 3,
+            data.co_applicant_ethnicity_2 == 4,
+            data.co_applicant_ethnicity_2 == 5,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                      dtype='category'
+                                                      )
     data['co_applicant_ethnicity_3_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_ethnicity_3 == 1,
-                data.co_applicant_ethnicity_3 == 11,
-                data.co_applicant_ethnicity_3 == 12,
-                data.co_applicant_ethnicity_3 == 13,
-                data.co_applicant_ethnicity_3 == 14,
-                data.co_applicant_ethnicity_3 == 2,
-                data.co_applicant_ethnicity_3 == 3,
-                data.co_applicant_ethnicity_3 == 4,
-                data.co_applicant_ethnicity_3 == 5,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_ethnicity_3 == 1,
+            data.co_applicant_ethnicity_3 == 11,
+            data.co_applicant_ethnicity_3 == 12,
+            data.co_applicant_ethnicity_3 == 13,
+            data.co_applicant_ethnicity_3 == 14,
+            data.co_applicant_ethnicity_3 == 2,
+            data.co_applicant_ethnicity_3 == 3,
+            data.co_applicant_ethnicity_3 == 4,
+            data.co_applicant_ethnicity_3 == 5,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                      dtype='category'
+                                                      )
     data['co_applicant_ethnicity_4_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_ethnicity_4 == 1,
-                data.co_applicant_ethnicity_4 == 11,
-                data.co_applicant_ethnicity_4 == 12,
-                data.co_applicant_ethnicity_4 == 13,
-                data.co_applicant_ethnicity_4 == 14,
-                data.co_applicant_ethnicity_4 == 2,
-                data.co_applicant_ethnicity_4 == 3,
-                data.co_applicant_ethnicity_4 == 4,
-                data.co_applicant_ethnicity_4 == 5,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_ethnicity_4 == 1,
+            data.co_applicant_ethnicity_4 == 11,
+            data.co_applicant_ethnicity_4 == 12,
+            data.co_applicant_ethnicity_4 == 13,
+            data.co_applicant_ethnicity_4 == 14,
+            data.co_applicant_ethnicity_4 == 2,
+            data.co_applicant_ethnicity_4 == 3,
+            data.co_applicant_ethnicity_4 == 4,
+            data.co_applicant_ethnicity_4 == 5,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                      dtype='category'
+                                                      )
     data['co_applicant_ethnicity_5_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_ethnicity_5 == 1,
-                data.co_applicant_ethnicity_5 == 11,
-                data.co_applicant_ethnicity_5 == 12,
-                data.co_applicant_ethnicity_5 == 13,
-                data.co_applicant_ethnicity_5 == 14,
-                data.co_applicant_ethnicity_5 == 2,
-                data.co_applicant_ethnicity_5 == 3,
-                data.co_applicant_ethnicity_5 == 4,
-                data.co_applicant_ethnicity_5 == 5,
-            ),
-            (
-                'Hispanic or Latino',
-                'Mexican',
-                'Puerto Rican',
-                'Cuban',
-                'Other Hispanic or Latino',
-                'Not Hispanic or Latino',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_ethnicity_5 == 1,
+            data.co_applicant_ethnicity_5 == 11,
+            data.co_applicant_ethnicity_5 == 12,
+            data.co_applicant_ethnicity_5 == 13,
+            data.co_applicant_ethnicity_5 == 14,
+            data.co_applicant_ethnicity_5 == 2,
+            data.co_applicant_ethnicity_5 == 3,
+            data.co_applicant_ethnicity_5 == 4,
+            data.co_applicant_ethnicity_5 == 5,
         ),
-        dtype='category'
-    )
+        (
+            'Hispanic or Latino',
+            'Mexican',
+            'Puerto Rican',
+            'Cuban',
+            'Other Hispanic or Latino',
+            'Not Hispanic or Latino',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                      dtype='category'
+                                                      )
     data['applicant_ethnicity_observed_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_ethnicity_observed == 1,
-                data.applicant_ethnicity_observed == 2,
-                data.applicant_ethnicity_observed == 3,
-            ),
-            (
-                'Collected on the basis of visual observation or surname',
-                'Not collected on the basis of visual observation or surname',
-                'Not Applicable'
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_ethnicity_observed == 1,
+            data.applicant_ethnicity_observed == 2,
+            data.applicant_ethnicity_observed == 3,
         ),
-        dtype='category'
-    )
+        (
+            'Collected on the basis of visual observation or surname',
+            'Not collected on the basis of visual observation or surname',
+            'Not Applicable'
+        ),
+        default=''
+    ),
+                                                          dtype='category'
+                                                          )
     data['co_applicant_ethnicity_observed_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_ethnicity_observed == 1,
-                data.co_applicant_ethnicity_observed == 2,
-                data.co_applicant_ethnicity_observed == 3,
-                data.co_applicant_ethnicity_observed == 4,
-            ),
-            (
-                'Collected on the basis of visual observation or surname',
-                'Not collected on the basis of visual observation or surname',
-                'Not Applicable',
-                'No co-applicant'
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_ethnicity_observed == 1,
+            data.co_applicant_ethnicity_observed == 2,
+            data.co_applicant_ethnicity_observed == 3,
+            data.co_applicant_ethnicity_observed == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Collected on the basis of visual observation or surname',
+            'Not collected on the basis of visual observation or surname',
+            'Not Applicable',
+            'No co-applicant'
+        ),
+        default=''
+    ),
+                                                             dtype='category'
+                                                             )
     data['applicant_race_1_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_race_1 == 1,
-                data.applicant_race_1 == 2,
-                data.applicant_race_1 == 21,
-                data.applicant_race_1 == 22,
-                data.applicant_race_1 == 23,
-                data.applicant_race_1 == 24,
-                data.applicant_race_1 == 25,
-                data.applicant_race_1 == 26,
-                data.applicant_race_1 == 27,
-                data.applicant_race_1 == 3,
-                data.applicant_race_1 == 4,
-                data.applicant_race_1 == 41,
-                data.applicant_race_1 == 42,
-                data.applicant_race_1 == 43,
-                data.applicant_race_1 == 44,
-                data.applicant_race_1 == 5,
-                data.applicant_race_1 == 6,
-                data.applicant_race_1 == 7,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_race_1 == 1,
+            data.applicant_race_1 == 2,
+            data.applicant_race_1 == 21,
+            data.applicant_race_1 == 22,
+            data.applicant_race_1 == 23,
+            data.applicant_race_1 == 24,
+            data.applicant_race_1 == 25,
+            data.applicant_race_1 == 26,
+            data.applicant_race_1 == 27,
+            data.applicant_race_1 == 3,
+            data.applicant_race_1 == 4,
+            data.applicant_race_1 == 41,
+            data.applicant_race_1 == 42,
+            data.applicant_race_1 == 43,
+            data.applicant_race_1 == 44,
+            data.applicant_race_1 == 5,
+            data.applicant_race_1 == 6,
+            data.applicant_race_1 == 7,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['applicant_race_2_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_race_2 == 1,
-                data.applicant_race_2 == 2,
-                data.applicant_race_2 == 21,
-                data.applicant_race_2 == 22,
-                data.applicant_race_2 == 23,
-                data.applicant_race_2 == 24,
-                data.applicant_race_2 == 25,
-                data.applicant_race_2 == 26,
-                data.applicant_race_2 == 27,
-                data.applicant_race_2 == 3,
-                data.applicant_race_2 == 4,
-                data.applicant_race_2 == 41,
-                data.applicant_race_2 == 42,
-                data.applicant_race_2 == 43,
-                data.applicant_race_2 == 44,
-                data.applicant_race_2 == 5,
-                data.applicant_race_2 == 6,
-                data.applicant_race_2 == 7,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_race_2 == 1,
+            data.applicant_race_2 == 2,
+            data.applicant_race_2 == 21,
+            data.applicant_race_2 == 22,
+            data.applicant_race_2 == 23,
+            data.applicant_race_2 == 24,
+            data.applicant_race_2 == 25,
+            data.applicant_race_2 == 26,
+            data.applicant_race_2 == 27,
+            data.applicant_race_2 == 3,
+            data.applicant_race_2 == 4,
+            data.applicant_race_2 == 41,
+            data.applicant_race_2 == 42,
+            data.applicant_race_2 == 43,
+            data.applicant_race_2 == 44,
+            data.applicant_race_2 == 5,
+            data.applicant_race_2 == 6,
+            data.applicant_race_2 == 7,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['applicant_race_3_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_race_3 == 1,
-                data.applicant_race_3 == 2,
-                data.applicant_race_3 == 21,
-                data.applicant_race_3 == 22,
-                data.applicant_race_3 == 23,
-                data.applicant_race_3 == 24,
-                data.applicant_race_3 == 25,
-                data.applicant_race_3 == 26,
-                data.applicant_race_3 == 27,
-                data.applicant_race_3 == 3,
-                data.applicant_race_3 == 4,
-                data.applicant_race_3 == 41,
-                data.applicant_race_3 == 42,
-                data.applicant_race_3 == 43,
-                data.applicant_race_3 == 44,
-                data.applicant_race_3 == 5,
-                data.applicant_race_3 == 6,
-                data.applicant_race_3 == 7,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_race_3 == 1,
+            data.applicant_race_3 == 2,
+            data.applicant_race_3 == 21,
+            data.applicant_race_3 == 22,
+            data.applicant_race_3 == 23,
+            data.applicant_race_3 == 24,
+            data.applicant_race_3 == 25,
+            data.applicant_race_3 == 26,
+            data.applicant_race_3 == 27,
+            data.applicant_race_3 == 3,
+            data.applicant_race_3 == 4,
+            data.applicant_race_3 == 41,
+            data.applicant_race_3 == 42,
+            data.applicant_race_3 == 43,
+            data.applicant_race_3 == 44,
+            data.applicant_race_3 == 5,
+            data.applicant_race_3 == 6,
+            data.applicant_race_3 == 7,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['applicant_race_4_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_race_4 == 1,
-                data.applicant_race_4 == 2,
-                data.applicant_race_4 == 21,
-                data.applicant_race_4 == 22,
-                data.applicant_race_4 == 23,
-                data.applicant_race_4 == 24,
-                data.applicant_race_4 == 25,
-                data.applicant_race_4 == 26,
-                data.applicant_race_4 == 27,
-                data.applicant_race_4 == 3,
-                data.applicant_race_4 == 4,
-                data.applicant_race_4 == 41,
-                data.applicant_race_4 == 42,
-                data.applicant_race_4 == 43,
-                data.applicant_race_4 == 44,
-                data.applicant_race_4 == 5,
-                data.applicant_race_4 == 6,
-                data.applicant_race_4 == 7,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_race_4 == 1,
+            data.applicant_race_4 == 2,
+            data.applicant_race_4 == 21,
+            data.applicant_race_4 == 22,
+            data.applicant_race_4 == 23,
+            data.applicant_race_4 == 24,
+            data.applicant_race_4 == 25,
+            data.applicant_race_4 == 26,
+            data.applicant_race_4 == 27,
+            data.applicant_race_4 == 3,
+            data.applicant_race_4 == 4,
+            data.applicant_race_4 == 41,
+            data.applicant_race_4 == 42,
+            data.applicant_race_4 == 43,
+            data.applicant_race_4 == 44,
+            data.applicant_race_4 == 5,
+            data.applicant_race_4 == 6,
+            data.applicant_race_4 == 7,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['applicant_race_5_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_race_5 == 1,
-                data.applicant_race_5 == 2,
-                data.applicant_race_5 == 21,
-                data.applicant_race_5 == 22,
-                data.applicant_race_5 == 23,
-                data.applicant_race_5 == 24,
-                data.applicant_race_5 == 25,
-                data.applicant_race_5 == 26,
-                data.applicant_race_5 == 27,
-                data.applicant_race_5 == 3,
-                data.applicant_race_5 == 4,
-                data.applicant_race_5 == 41,
-                data.applicant_race_5 == 42,
-                data.applicant_race_5 == 43,
-                data.applicant_race_5 == 44,
-                data.applicant_race_5 == 5,
-                data.applicant_race_5 == 6,
-                data.applicant_race_5 == 7,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_race_5 == 1,
+            data.applicant_race_5 == 2,
+            data.applicant_race_5 == 21,
+            data.applicant_race_5 == 22,
+            data.applicant_race_5 == 23,
+            data.applicant_race_5 == 24,
+            data.applicant_race_5 == 25,
+            data.applicant_race_5 == 26,
+            data.applicant_race_5 == 27,
+            data.applicant_race_5 == 3,
+            data.applicant_race_5 == 4,
+            data.applicant_race_5 == 41,
+            data.applicant_race_5 == 42,
+            data.applicant_race_5 == 43,
+            data.applicant_race_5 == 44,
+            data.applicant_race_5 == 5,
+            data.applicant_race_5 == 6,
+            data.applicant_race_5 == 7,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['co_applicant_race_1_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_race_1 == 1,
-                data.co_applicant_race_1 == 2,
-                data.co_applicant_race_1 == 21,
-                data.co_applicant_race_1 == 22,
-                data.co_applicant_race_1 == 23,
-                data.co_applicant_race_1 == 24,
-                data.co_applicant_race_1 == 25,
-                data.co_applicant_race_1 == 26,
-                data.co_applicant_race_1 == 27,
-                data.co_applicant_race_1 == 3,
-                data.co_applicant_race_1 == 4,
-                data.co_applicant_race_1 == 41,
-                data.co_applicant_race_1 == 42,
-                data.co_applicant_race_1 == 43,
-                data.co_applicant_race_1 == 44,
-                data.co_applicant_race_1 == 5,
-                data.co_applicant_race_1 == 6,
-                data.co_applicant_race_1 == 7,
-                data.co_applicant_race_1 == 8,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_race_1 == 1,
+            data.co_applicant_race_1 == 2,
+            data.co_applicant_race_1 == 21,
+            data.co_applicant_race_1 == 22,
+            data.co_applicant_race_1 == 23,
+            data.co_applicant_race_1 == 24,
+            data.co_applicant_race_1 == 25,
+            data.co_applicant_race_1 == 26,
+            data.co_applicant_race_1 == 27,
+            data.co_applicant_race_1 == 3,
+            data.co_applicant_race_1 == 4,
+            data.co_applicant_race_1 == 41,
+            data.co_applicant_race_1 == 42,
+            data.co_applicant_race_1 == 43,
+            data.co_applicant_race_1 == 44,
+            data.co_applicant_race_1 == 5,
+            data.co_applicant_race_1 == 6,
+            data.co_applicant_race_1 == 7,
+            data.co_applicant_race_1 == 8,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                 dtype='category'
+                                                 )
     data['co_applicant_race_2_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_race_2 == 1,
-                data.co_applicant_race_2 == 2,
-                data.co_applicant_race_2 == 21,
-                data.co_applicant_race_2 == 22,
-                data.co_applicant_race_2 == 23,
-                data.co_applicant_race_2 == 24,
-                data.co_applicant_race_2 == 25,
-                data.co_applicant_race_2 == 26,
-                data.co_applicant_race_2 == 27,
-                data.co_applicant_race_2 == 3,
-                data.co_applicant_race_2 == 4,
-                data.co_applicant_race_2 == 41,
-                data.co_applicant_race_2 == 42,
-                data.co_applicant_race_2 == 43,
-                data.co_applicant_race_2 == 44,
-                data.co_applicant_race_2 == 5,
-                data.co_applicant_race_2 == 6,
-                data.co_applicant_race_2 == 7,
-                data.co_applicant_race_2 == 8,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_race_2 == 1,
+            data.co_applicant_race_2 == 2,
+            data.co_applicant_race_2 == 21,
+            data.co_applicant_race_2 == 22,
+            data.co_applicant_race_2 == 23,
+            data.co_applicant_race_2 == 24,
+            data.co_applicant_race_2 == 25,
+            data.co_applicant_race_2 == 26,
+            data.co_applicant_race_2 == 27,
+            data.co_applicant_race_2 == 3,
+            data.co_applicant_race_2 == 4,
+            data.co_applicant_race_2 == 41,
+            data.co_applicant_race_2 == 42,
+            data.co_applicant_race_2 == 43,
+            data.co_applicant_race_2 == 44,
+            data.co_applicant_race_2 == 5,
+            data.co_applicant_race_2 == 6,
+            data.co_applicant_race_2 == 7,
+            data.co_applicant_race_2 == 8,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                 dtype='category'
+                                                 )
     data['co_applicant_race_3_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_race_3 == 1,
-                data.co_applicant_race_3 == 2,
-                data.co_applicant_race_3 == 21,
-                data.co_applicant_race_3 == 22,
-                data.co_applicant_race_3 == 23,
-                data.co_applicant_race_3 == 24,
-                data.co_applicant_race_3 == 25,
-                data.co_applicant_race_3 == 26,
-                data.co_applicant_race_3 == 27,
-                data.co_applicant_race_3 == 3,
-                data.co_applicant_race_3 == 4,
-                data.co_applicant_race_3 == 41,
-                data.co_applicant_race_3 == 42,
-                data.co_applicant_race_3 == 43,
-                data.co_applicant_race_3 == 44,
-                data.co_applicant_race_3 == 5,
-                data.co_applicant_race_3 == 6,
-                data.co_applicant_race_3 == 7,
-                data.co_applicant_race_3 == 8,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_race_3 == 1,
+            data.co_applicant_race_3 == 2,
+            data.co_applicant_race_3 == 21,
+            data.co_applicant_race_3 == 22,
+            data.co_applicant_race_3 == 23,
+            data.co_applicant_race_3 == 24,
+            data.co_applicant_race_3 == 25,
+            data.co_applicant_race_3 == 26,
+            data.co_applicant_race_3 == 27,
+            data.co_applicant_race_3 == 3,
+            data.co_applicant_race_3 == 4,
+            data.co_applicant_race_3 == 41,
+            data.co_applicant_race_3 == 42,
+            data.co_applicant_race_3 == 43,
+            data.co_applicant_race_3 == 44,
+            data.co_applicant_race_3 == 5,
+            data.co_applicant_race_3 == 6,
+            data.co_applicant_race_3 == 7,
+            data.co_applicant_race_3 == 8,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                 dtype='category'
+                                                 )
     data['co_applicant_race_4_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_race_4 == 1,
-                data.co_applicant_race_4 == 2,
-                data.co_applicant_race_4 == 21,
-                data.co_applicant_race_4 == 22,
-                data.co_applicant_race_4 == 23,
-                data.co_applicant_race_4 == 24,
-                data.co_applicant_race_4 == 25,
-                data.co_applicant_race_4 == 26,
-                data.co_applicant_race_4 == 27,
-                data.co_applicant_race_4 == 3,
-                data.co_applicant_race_4 == 4,
-                data.co_applicant_race_4 == 41,
-                data.co_applicant_race_4 == 42,
-                data.co_applicant_race_4 == 43,
-                data.co_applicant_race_4 == 44,
-                data.co_applicant_race_4 == 5,
-                data.co_applicant_race_4 == 6,
-                data.co_applicant_race_4 == 7,
-                data.co_applicant_race_4 == 8,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_race_4 == 1,
+            data.co_applicant_race_4 == 2,
+            data.co_applicant_race_4 == 21,
+            data.co_applicant_race_4 == 22,
+            data.co_applicant_race_4 == 23,
+            data.co_applicant_race_4 == 24,
+            data.co_applicant_race_4 == 25,
+            data.co_applicant_race_4 == 26,
+            data.co_applicant_race_4 == 27,
+            data.co_applicant_race_4 == 3,
+            data.co_applicant_race_4 == 4,
+            data.co_applicant_race_4 == 41,
+            data.co_applicant_race_4 == 42,
+            data.co_applicant_race_4 == 43,
+            data.co_applicant_race_4 == 44,
+            data.co_applicant_race_4 == 5,
+            data.co_applicant_race_4 == 6,
+            data.co_applicant_race_4 == 7,
+            data.co_applicant_race_4 == 8,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                 dtype='category'
+                                                 )
     data['co_applicant_race_5_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_race_5 == 1,
-                data.co_applicant_race_5 == 2,
-                data.co_applicant_race_5 == 21,
-                data.co_applicant_race_5 == 22,
-                data.co_applicant_race_5 == 23,
-                data.co_applicant_race_5 == 24,
-                data.co_applicant_race_5 == 25,
-                data.co_applicant_race_5 == 26,
-                data.co_applicant_race_5 == 27,
-                data.co_applicant_race_5 == 3,
-                data.co_applicant_race_5 == 4,
-                data.co_applicant_race_5 == 41,
-                data.co_applicant_race_5 == 42,
-                data.co_applicant_race_5 == 43,
-                data.co_applicant_race_5 == 44,
-                data.co_applicant_race_5 == 5,
-                data.co_applicant_race_5 == 6,
-                data.co_applicant_race_5 == 7,
-                data.co_applicant_race_5 == 8,
-            ),
-            (
-                'American Indian or Alaska Native',
-                'Asian',
-                'Asian Indian',
-                'Chinese',
-                'Filipino',
-                'Japanese',
-                'Korean',
-                'Vietnamese',
-                'Other Asian',
-                'Black or African American',
-                'Native Hawaiian or Other Pacific Islander',
-                'Native Hawaiian',
-                'Guamanian or Chamorro',
-                'Samoan',
-                'Other Pacific Islander',
-                'White',
-                'Information not provided by applicant in mail, internet, or telephone application',
-                'Not applicable',
-                'No co-applicant',
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_race_5 == 1,
+            data.co_applicant_race_5 == 2,
+            data.co_applicant_race_5 == 21,
+            data.co_applicant_race_5 == 22,
+            data.co_applicant_race_5 == 23,
+            data.co_applicant_race_5 == 24,
+            data.co_applicant_race_5 == 25,
+            data.co_applicant_race_5 == 26,
+            data.co_applicant_race_5 == 27,
+            data.co_applicant_race_5 == 3,
+            data.co_applicant_race_5 == 4,
+            data.co_applicant_race_5 == 41,
+            data.co_applicant_race_5 == 42,
+            data.co_applicant_race_5 == 43,
+            data.co_applicant_race_5 == 44,
+            data.co_applicant_race_5 == 5,
+            data.co_applicant_race_5 == 6,
+            data.co_applicant_race_5 == 7,
+            data.co_applicant_race_5 == 8,
         ),
-        dtype='category'
-    )
+        (
+            'American Indian or Alaska Native',
+            'Asian',
+            'Asian Indian',
+            'Chinese',
+            'Filipino',
+            'Japanese',
+            'Korean',
+            'Vietnamese',
+            'Other Asian',
+            'Black or African American',
+            'Native Hawaiian or Other Pacific Islander',
+            'Native Hawaiian',
+            'Guamanian or Chamorro',
+            'Samoan',
+            'Other Pacific Islander',
+            'White',
+            'Information not provided by applicant in mail, internet, or telephone application',
+            'Not applicable',
+            'No co-applicant',
+        ),
+        default=''
+    ),
+                                                 dtype='category'
+                                                 )
     data['applicant_race_observed_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_race_observed == 1,
-                data.applicant_race_observed == 2,
-                data.applicant_race_observed == 3,
-            ),
-            (
-                'Collected on the basis of visual observation or surname',
-                'Not collected on the basis of visual observation or surname',
-                'Not Applicable'
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_race_observed == 1,
+            data.applicant_race_observed == 2,
+            data.applicant_race_observed == 3,
         ),
-        dtype='category'
-    )
+        (
+            'Collected on the basis of visual observation or surname',
+            'Not collected on the basis of visual observation or surname',
+            'Not Applicable'
+        ),
+        default=''
+    ),
+                                                     dtype='category'
+                                                     )
     data['co_applicant_race_observed_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_race_observed == 1,
-                data.co_applicant_race_observed == 2,
-                data.co_applicant_race_observed == 3,
-                data.co_applicant_race_observed == 4,
-            ),
-            (
-                'Collected on the basis of visual observation or surname',
-                'Not collected on the basis of visual observation or surname',
-                'Not Applicable',
-                'No co-applicant'
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_race_observed == 1,
+            data.co_applicant_race_observed == 2,
+            data.co_applicant_race_observed == 3,
+            data.co_applicant_race_observed == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Collected on the basis of visual observation or surname',
+            'Not collected on the basis of visual observation or surname',
+            'Not Applicable',
+            'No co-applicant'
+        ),
+        default=''
+    ),
+                                                        dtype='category'
+                                                        )
     data['applicant_sex_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_sex == 1,
-                data.applicant_sex == 2,
-                data.applicant_sex == 3,
-                data.applicant_sex == 4,
-                data.applicant_sex == 6,
-            ),
-            (
-                'Male', 'Female',
-                'Information not provided by applicant in mail, internet or telephone application',
-                'Not Applicable', 'Applicant selected both male and female'
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_sex == 1,
+            data.applicant_sex == 2,
+            data.applicant_sex == 3,
+            data.applicant_sex == 4,
+            data.applicant_sex == 6,
         ),
-        dtype='category'
-    )
+        (
+            'Male', 'Female',
+            'Information not provided by applicant in mail, internet or telephone application',
+            'Not Applicable', 'Applicant selected both male and female'
+        ),
+        default=''
+    ),
+                                           dtype='category'
+                                           )
     data['co_applicant_sex_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_sex == 1,
-                data.co_applicant_sex == 2,
-                data.co_applicant_sex == 3,
-                data.co_applicant_sex == 4,
-                data.co_applicant_sex == 5,
-                data.co_applicant_sex == 6,
-            ),
-            (
-                'Male', 'Female',
-                'Information not provided by applicant in mail, internet or telephone application',
-                'Not Applicable', 'No co-applicant',
-                'Applicant selected both male and female'
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_sex == 1,
+            data.co_applicant_sex == 2,
+            data.co_applicant_sex == 3,
+            data.co_applicant_sex == 4,
+            data.co_applicant_sex == 5,
+            data.co_applicant_sex == 6,
         ),
-        dtype='category'
-    )
+        (
+            'Male', 'Female',
+            'Information not provided by applicant in mail, internet or telephone application',
+            'Not Applicable', 'No co-applicant',
+            'Applicant selected both male and female'
+        ),
+        default=''
+    ),
+                                              dtype='category'
+                                              )
     data['applicant_sex_observed_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.applicant_sex_observed == 1,
-                data.applicant_sex_observed == 2,
-                data.applicant_sex_observed == 3,
-            ),
-            (
-                'Collected on the basis of visual observation or surname',
-                'Not collected on the basis of visual observation or surname',
-                'Not applicable'
-            ),
-            default=''
+    np.select(
+        (
+            data.applicant_sex_observed == 1,
+            data.applicant_sex_observed == 2,
+            data.applicant_sex_observed == 3,
         ),
-        dtype='category'
-    )
+        (
+            'Collected on the basis of visual observation or surname',
+            'Not collected on the basis of visual observation or surname',
+            'Not applicable'
+        ),
+        default=''
+    ),
+                                                    dtype='category'
+                                                    )
     data['co_applicant_sex_observed_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.co_applicant_sex_observed == 1,
-                data.co_applicant_sex_observed == 2,
-                data.co_applicant_sex_observed == 3,
-                data.co_applicant_sex_observed == 4,
-            ),
-            (
-                'Collected on the basis of visual observation or surname',
-                'Not collected on the basis of visual observation or surname',
-                'Not applicable',
-                'No co-applicant'
-            ),
-            default=''
+    np.select(
+        (
+            data.co_applicant_sex_observed == 1,
+            data.co_applicant_sex_observed == 2,
+            data.co_applicant_sex_observed == 3,
+            data.co_applicant_sex_observed == 4,
         ),
-        dtype='category'
-    )
+        (
+            'Collected on the basis of visual observation or surname',
+            'Not collected on the basis of visual observation or surname',
+            'Not applicable',
+            'No co-applicant'
+        ),
+        default=''
+    ),
+                                                       dtype='category'
+                                                       )
     data['submission_of_application_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.submission_of_application == 1,
-                data.submission_of_application == 2,
-                data.submission_of_application == 3,
-                data.submission_of_application == 1111,
-            ),
-            (
-                'Submitted directly to your institution',
-                'Not submitted directly to your institution',
-                'Not Applicable',
-                'Exempt'
-            ),
-            default='',
+    np.select(
+        (
+            data.submission_of_application == 1,
+            data.submission_of_application == 2,
+            data.submission_of_application == 3,
+            data.submission_of_application == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Submitted directly to your institution',
+            'Not submitted directly to your institution',
+            'Not Applicable',
+            'Exempt'
+        ),
+        default='',
+    ),
+                                                       dtype='category'
+                                                       )
     data['initially_payable_to_institution_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.initially_payable_to_institution == 1,
-                data.initially_payable_to_institution == 2,
-                data.initially_payable_to_institution == 3,
-                data.initially_payable_to_institution == 1111,
-            ),
-            (
-                'Initially payable to your institution',
-                'Not initially payable to your institution',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.initially_payable_to_institution == 1,
+            data.initially_payable_to_institution == 2,
+            data.initially_payable_to_institution == 3,
+            data.initially_payable_to_institution == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Initially payable to your institution',
+            'Not initially payable to your institution',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                                              dtype='category'
+                                                              )
     data['aus_1_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.aus_1 == 1,
-                data.aus_1 == 2,
-                data.aus_1 == 3,
-                data.aus_1 == 4,
-                data.aus_1 == 5,
-                data.aus_1 == 6,
-                data.aus_1 == 1111,
-            ),
-            (
-                'Desktop Underwriter (DU)',
-                'Loan Prospector (LP) or Loan Product Advisor',
-                'Technology Open to Approved Lenders (TOTAL) Scorecard',
-                'Guaranteed Underwriting System (GUS)',
-                'Other',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.aus_1 == 1,
+            data.aus_1 == 2,
+            data.aus_1 == 3,
+            data.aus_1 == 4,
+            data.aus_1 == 5,
+            data.aus_1 == 6,
+            data.aus_1 == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Desktop Underwriter (DU)',
+            'Loan Prospector (LP) or Loan Product Advisor',
+            'Technology Open to Approved Lenders (TOTAL) Scorecard',
+            'Guaranteed Underwriting System (GUS)',
+            'Other',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                   dtype='category'
+                                   )
     data['aus_2_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.aus_2 == 1,
-                data.aus_2 == 2,
-                data.aus_2 == 3,
-                data.aus_2 == 4,
-                data.aus_2 == 5,
-                data.aus_2 == 6,
-                data.aus_2 == 1111,
-            ),
-            (
-                'Desktop Underwriter (DU)',
-                'Loan Prospector (LP) or Loan Product Advisor',
-                'Technology Open to Approved Lenders (TOTAL) Scorecard',
-                'Guaranteed Underwriting System (GUS)',
-                'Other',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.aus_2 == 1,
+            data.aus_2 == 2,
+            data.aus_2 == 3,
+            data.aus_2 == 4,
+            data.aus_2 == 5,
+            data.aus_2 == 6,
+            data.aus_2 == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Desktop Underwriter (DU)',
+            'Loan Prospector (LP) or Loan Product Advisor',
+            'Technology Open to Approved Lenders (TOTAL) Scorecard',
+            'Guaranteed Underwriting System (GUS)',
+            'Other',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                   dtype='category'
+                                   )
     data['aus_3_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.aus_3 == 1,
-                data.aus_3 == 2,
-                data.aus_3 == 3,
-                data.aus_3 == 4,
-                data.aus_3 == 5,
-                data.aus_3 == 6,
-                data.aus_3 == 1111,
-            ),
-            (
-                'Desktop Underwriter (DU)',
-                'Loan Prospector (LP) or Loan Product Advisor',
-                'Technology Open to Approved Lenders (TOTAL) Scorecard',
-                'Guaranteed Underwriting System (GUS)',
-                'Other',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.aus_3 == 1,
+            data.aus_3 == 2,
+            data.aus_3 == 3,
+            data.aus_3 == 4,
+            data.aus_3 == 5,
+            data.aus_3 == 6,
+            data.aus_3 == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Desktop Underwriter (DU)',
+            'Loan Prospector (LP) or Loan Product Advisor',
+            'Technology Open to Approved Lenders (TOTAL) Scorecard',
+            'Guaranteed Underwriting System (GUS)',
+            'Other',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                   dtype='category'
+                                   )
     data['aus_4_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.aus_4 == 1,
-                data.aus_4 == 2,
-                data.aus_4 == 3,
-                data.aus_4 == 4,
-                data.aus_4 == 5,
-                data.aus_4 == 6,
-                data.aus_4 == 1111,
-            ),
-            (
-                'Desktop Underwriter (DU)',
-                'Loan Prospector (LP) or Loan Product Advisor',
-                'Technology Open to Approved Lenders (TOTAL) Scorecard',
-                'Guaranteed Underwriting System (GUS)',
-                'Other',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.aus_4 == 1,
+            data.aus_4 == 2,
+            data.aus_4 == 3,
+            data.aus_4 == 4,
+            data.aus_4 == 5,
+            data.aus_4 == 6,
+            data.aus_4 == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Desktop Underwriter (DU)',
+            'Loan Prospector (LP) or Loan Product Advisor',
+            'Technology Open to Approved Lenders (TOTAL) Scorecard',
+            'Guaranteed Underwriting System (GUS)',
+            'Other',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                   dtype='category'
+                                   )
     data['aus_5_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.aus_5 == 1,
-                data.aus_5 == 2,
-                data.aus_5 == 3,
-                data.aus_5 == 4,
-                data.aus_5 == 5,
-                data.aus_5 == 6,
-                data.aus_5 == 1111,
-            ),
-            (
-                'Desktop Underwriter (DU)',
-                'Loan Prospector (LP) or Loan Product Advisor',
-                'Technology Open to Approved Lenders (TOTAL) Scorecard',
-                'Guaranteed Underwriting System (GUS)',
-                'Other',
-                'Not applicable',
-                'Exempt',
-            ),
-            default=''
+    np.select(
+        (
+            data.aus_5 == 1,
+            data.aus_5 == 2,
+            data.aus_5 == 3,
+            data.aus_5 == 4,
+            data.aus_5 == 5,
+            data.aus_5 == 6,
+            data.aus_5 == 1111,
         ),
-        dtype='category'
-    )
+        (
+            'Desktop Underwriter (DU)',
+            'Loan Prospector (LP) or Loan Product Advisor',
+            'Technology Open to Approved Lenders (TOTAL) Scorecard',
+            'Guaranteed Underwriting System (GUS)',
+            'Other',
+            'Not applicable',
+            'Exempt',
+        ),
+        default=''
+    ),
+                                   dtype='category'
+                                   )
     data['denial_reason_1_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.denial_reason_1 == 1,
-                data.denial_reason_1 == 2,
-                data.denial_reason_1 == 3,
-                data.denial_reason_1 == 4,
-                data.denial_reason_1 == 5,
-                data.denial_reason_1 == 6,
-                data.denial_reason_1 == 7,
-                data.denial_reason_1 == 8,
-                data.denial_reason_1 == 9,
-                data.denial_reason_1 == 10,
-            ),
-            (
-                'Debt-to-income ratio',
-                'Employment history',
-                'Credit history',
-                'Collateral',
-                'Insufficient cash (downpayment, closing costs)',
-                'Unverifiable information',
-                'Credit application incomplete',
-                'Mortgage insurance denied',
-                'Other',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.denial_reason_1 == 1,
+            data.denial_reason_1 == 2,
+            data.denial_reason_1 == 3,
+            data.denial_reason_1 == 4,
+            data.denial_reason_1 == 5,
+            data.denial_reason_1 == 6,
+            data.denial_reason_1 == 7,
+            data.denial_reason_1 == 8,
+            data.denial_reason_1 == 9,
+            data.denial_reason_1 == 10,
         ),
-        dtype='category'
-    )
+        (
+            'Debt-to-income ratio',
+            'Employment history',
+            'Credit history',
+            'Collateral',
+            'Insufficient cash (downpayment, closing costs)',
+            'Unverifiable information',
+            'Credit application incomplete',
+            'Mortgage insurance denied',
+            'Other',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                             dtype='category'
+                                             )
     data['denial_reason_2_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.denial_reason_2 == 1,
-                data.denial_reason_2 == 2,
-                data.denial_reason_2 == 3,
-                data.denial_reason_2 == 4,
-                data.denial_reason_2 == 5,
-                data.denial_reason_2 == 6,
-                data.denial_reason_2 == 7,
-                data.denial_reason_2 == 8,
-                data.denial_reason_2 == 9,
-                data.denial_reason_2 == 10,
-            ),
-            (
-                'Debt-to-income ratio',
-                'Employment history',
-                'Credit history',
-                'Collateral',
-                'Insufficient cash (downpayment, closing costs)',
-                'Unverifiable information',
-                'Credit application incomplete',
-                'Mortgage insurance denied',
-                'Other',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.denial_reason_2 == 1,
+            data.denial_reason_2 == 2,
+            data.denial_reason_2 == 3,
+            data.denial_reason_2 == 4,
+            data.denial_reason_2 == 5,
+            data.denial_reason_2 == 6,
+            data.denial_reason_2 == 7,
+            data.denial_reason_2 == 8,
+            data.denial_reason_2 == 9,
+            data.denial_reason_2 == 10,
         ),
-        dtype='category'
-    )
+        (
+            'Debt-to-income ratio',
+            'Employment history',
+            'Credit history',
+            'Collateral',
+            'Insufficient cash (downpayment, closing costs)',
+            'Unverifiable information',
+            'Credit application incomplete',
+            'Mortgage insurance denied',
+            'Other',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                             dtype='category'
+                                             )
     data['denial_reason_3_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.denial_reason_3 == 1,
-                data.denial_reason_3 == 2,
-                data.denial_reason_3 == 3,
-                data.denial_reason_3 == 4,
-                data.denial_reason_3 == 5,
-                data.denial_reason_3 == 6,
-                data.denial_reason_3 == 7,
-                data.denial_reason_3 == 8,
-                data.denial_reason_3 == 9,
-                data.denial_reason_3 == 10,
-            ),
-            (
-                'Debt-to-income ratio',
-                'Employment history',
-                'Credit history',
-                'Collateral',
-                'Insufficient cash (downpayment, closing costs)',
-                'Unverifiable information',
-                'Credit application incomplete',
-                'Mortgage insurance denied',
-                'Other',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.denial_reason_3 == 1,
+            data.denial_reason_3 == 2,
+            data.denial_reason_3 == 3,
+            data.denial_reason_3 == 4,
+            data.denial_reason_3 == 5,
+            data.denial_reason_3 == 6,
+            data.denial_reason_3 == 7,
+            data.denial_reason_3 == 8,
+            data.denial_reason_3 == 9,
+            data.denial_reason_3 == 10,
         ),
-        dtype='category'
-    )
+        (
+            'Debt-to-income ratio',
+            'Employment history',
+            'Credit history',
+            'Collateral',
+            'Insufficient cash (downpayment, closing costs)',
+            'Unverifiable information',
+            'Credit application incomplete',
+            'Mortgage insurance denied',
+            'Other',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                             dtype='category'
+                                             )
     data['denial_reason_4_desc'] = pd.Series(index=data.index, data=
-        np.select(
-            (
-                data.denial_reason_4 == 1,
-                data.denial_reason_4 == 2,
-                data.denial_reason_4 == 3,
-                data.denial_reason_4 == 4,
-                data.denial_reason_4 == 5,
-                data.denial_reason_4 == 6,
-                data.denial_reason_4 == 7,
-                data.denial_reason_4 == 8,
-                data.denial_reason_4 == 9,
-                data.denial_reason_4 == 10,
-            ),
-            (
-                'Debt-to-income ratio',
-                'Employment history',
-                'Credit history',
-                'Collateral',
-                'Insufficient cash (downpayment, closing costs)',
-                'Unverifiable information',
-                'Credit application incomplete',
-                'Mortgage insurance denied',
-                'Other',
-                'Not applicable',
-            ),
-            default=''
+    np.select(
+        (
+            data.denial_reason_4 == 1,
+            data.denial_reason_4 == 2,
+            data.denial_reason_4 == 3,
+            data.denial_reason_4 == 4,
+            data.denial_reason_4 == 5,
+            data.denial_reason_4 == 6,
+            data.denial_reason_4 == 7,
+            data.denial_reason_4 == 8,
+            data.denial_reason_4 == 9,
+            data.denial_reason_4 == 10,
         ),
-        dtype='category'
-    )
+        (
+            'Debt-to-income ratio',
+            'Employment history',
+            'Credit history',
+            'Collateral',
+            'Insufficient cash (downpayment, closing costs)',
+            'Unverifiable information',
+            'Credit application incomplete',
+            'Mortgage insurance denied',
+            'Other',
+            'Not applicable',
+        ),
+        default=''
+    ),
+                                             dtype='category'
+                                             )
     return data
 
 
@@ -1575,7 +1576,7 @@ if __name__ == '__main__':
                              "derived_race", "derived_sex", "ffiec_msa_md_median_family_income"] + \
                 [x for x in lar.columns if str.startswith(x, "tract")]
     keep_cols = keep_cols + [x + "_desc" for x in keep_cols for y in lar.columns.values if x + "_desc" == y]
-    assert(len(np.unique(keep_cols)) == len(keep_cols))
+    assert (len(np.unique(keep_cols)) == len(keep_cols))
     # pd.Series(keep_cols).value_counts()
 
     view_dropped_vars = lar.drop(columns=keep_cols)
@@ -1594,14 +1595,14 @@ if __name__ == '__main__':
     x = lar.loc[lar["loan_type_desc"].isnull(), ["loan_type", "loan_type_desc"]]
     var_desc = pd.merge(lar_subset.apply(pd.Series.nunique).to_frame('num_unique'),
                         lar_subset.dtypes.to_frame('dtypes'), left_index=True, right_index=True,
-                        how='outer' ,)
+                        how='outer', )
     var_desc.sort_values(by=["num_unique"], inplace=True)
     for vi in var_desc.loc[var_desc["num_unique"] <= 20].index:
         var_freq = lar_subset[vi].value_counts(dropna=False)
         print(f'******************************************\nVariable {vi} Frequencies:\n{var_freq}')
 
     lar_subset["co_applicant_age_above_62"].value_counts(dropna=False)
-    pd.crosstab(lar_subset["applicant_age_above_62"],  lar_subset["co_applicant_age_above_62"])
+    pd.crosstab(lar_subset["applicant_age_above_62"], lar_subset["co_applicant_age_above_62"])
 
     lar_subset["agegte62"] = np.where((lar_subset["applicant_age_above_62"] == "No") &
                                       (lar_subset["co_applicant_age_above_62"] == "No"), 0,
@@ -1626,7 +1627,7 @@ if __name__ == '__main__':
     print(lar_subset["race"].value_counts(dropna=False))
     for racei in ["black", "asian", "white", "amind", "hipac"]:
         lar_subset[racei] = np.where(lar_subset["race"] == racei, 1,
-                                       np.where(lar_subset["race"] != "NA", 0, np.nan))
+                                     np.where(lar_subset["race"] != "NA", 0, np.nan))
         print(f'\n{lar_subset[racei].value_counts(dropna=False)}\n\n'
               f'{pd.crosstab(lar_subset[racei], lar_subset["race"], dropna=False)}')
 
@@ -1679,3 +1680,17 @@ if __name__ == '__main__':
 
     train.to_csv('./data/output/hmda_train.csv')
     test.to_csv('./data/output/hmda_test.csv')
+
+    ##################################
+    ##################################
+    ##################################
+    train = pd.read_csv('./data/output/hmda_train.csv')
+
+    def piecewise_linear(x, x0, y0, k1, k2):
+        return np.piecewise(x, [x < x0], [lambda x: k1 * x + y0 - k1 * x0, lambda x: k2 * x + y0 - k2 * x0])
+
+    f_i = "loan_amount"
+    p, e = optimize.curve_fit(piecewise_linear, np.array(train[f_i]), np.array(train["high_priced"]))
+    xd = np.linspace(0, 15, 100)
+    plt.plot(x, y, "o")
+    plt.plot(xd, piecewise_linear(xd, *p))

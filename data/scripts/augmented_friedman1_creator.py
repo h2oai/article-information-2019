@@ -20,6 +20,7 @@ from data.scripts import di_testing
 from sklearn.metrics import roc_auc_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -112,22 +113,25 @@ if __name__ == "__main__":
     X["intercept"] = intercept
 
     np.random.seed(rand_seed_list.pop())
-    # X["logistic_noise"] = np.random.logistic(scale=0.5, size=len(X))
-    # X["logistic_noise"] = (X["logistic_noise"] - X["logistic_noise"].mean())  # / X["logistic_noise"].std()
-    # print(f'\nLogistic Random Noise Distribution Characteristics:\n{X["logistic_noise"].agg(["mean", "std"])}')
-    # X['latent_with_noise'] = X["latent_no_noise"] + X["logistic_noise"]
-    # X["latent_with_noise"].describe()
-    # X["latent_with_noise"].hist(alpha=0.5)
-    # X["logistic_noise"].hist(alpha=0.5)
+    X["logistic_noise"] = np.random.logistic(scale=0.5, size=len(X))
+    X["logistic_noise"] = (X["logistic_noise"] - X["logistic_noise"].mean())  # / X["logistic_noise"].std()
+    print(f'\nLogistic Random Noise Distribution Characteristics:\n{X["logistic_noise"].agg(["mean", "std"])}')
+    X['latent_with_noise'] = X["latent_no_noise"] + X["logistic_noise"]
+    X["latent_with_noise"].describe()
+    X["latent_with_noise"].hist(alpha=0.5)
+    X["logistic_noise"].hist(alpha=0.5)
+    X["outcome"] = pd.DataFrame(np.where(X["latent_with_noise"] > 0, 1, 0))
 
-    # X["outcome"] = pd.DataFrame(np.where(X["latent_with_noise"] > 0, 1, 0))
     X["outcome_no_noise"] = pd.DataFrame(np.where(X["latent_no_noise"] > 0, 1, 0))
-    np.random.seed(rand_seed_list.pop())
-    X["outcome"] = X["outcome_no_noise"]
-    X["random_flip_outcome"] = np.random.rand(len(X)) >= 0.10
-    X.loc[X["random_flip_outcome"], "outcome"] = 1 - X["outcome_no_noise"]
-    X["logistic_noise"] = np.nan
-    X["latent_with_noise"] = np.nan
+
+    # percent_random_outcomes = 0.25
+    # np.random.seed(rand_seed_list.pop())
+    # rand_outcome_prep1 = np.random.rand(len(X)) <= percent_random_outcomes
+    # np.random.seed(rand_seed_list.pop())
+    # rand_outcome_prep2 = np.random.rand(len(X)) >= 0.50
+    # X["outcome"] = np.where(rand_outcome_prep1, 1 - X["outcome_no_noise"], X["outcome_no_noise"])
+    # X["logistic_noise"] = np.nan
+    # X["latent_with_noise"] = np.nan
 
     test_latent_nn = (1 / (1 + np.exp(-X["latent_no_noise"])))
     # These are all of the places where the model should not be able to correctly ID the output:
@@ -136,7 +140,7 @@ if __name__ == "__main__":
     # (1 / (1 + np.exp(-X["latent_with_noise"]))).hist(alpha=0.25)
     print(f'Outcome with Noise Frequency:\n{X["outcome"].value_counts(normalize=True, dropna=False)}')
     print(f'Outcome: Noise v. No-Noise Comparison:\n'
-          f'{pd.crosstab(X["outcome"], X["outcome_no_noise"], normalize=False, margins=True, dropna=False)}')
+          f'{pd.crosstab(X["outcome"], X["outcome_no_noise"], normalize=True, margins=True, dropna=False)}')
 
     # Create protected/control class variables (DI will be present in both):
     X["prot_class1"], X["prot_class2"] = 0, 0
@@ -167,14 +171,14 @@ if __name__ == "__main__":
     X = X[['outcome', "outcome_no_noise"] +
           ["fried" + str(x) for x in range(1, 6)] +
           ["binary1", "binary2", "cat1", 'intercept', "prot_class1", "ctrl_class1", "prot_class2", "ctrl_class2",
-           "latent_no_noise", "logistic_noise", "latent_with_noise", "random_flip_outcome"]]
+           "latent_no_noise", "logistic_noise", "latent_with_noise"]] # , "random_outcome"]]
     print("\n", X.head())
 
-    X_train = X[:int(round(n_obs) * (4 / 5))].copy()
-    np.random.seed(rand_seed_list.pop())
+    X_train, X_test = train_test_split(X, test_size=0.20, random_state=rand_seed_list.pop(),
+                                       shuffle=True, stratify=X["outcome"])
+    X_train, X_test = X_train.copy(), X_test.copy()
     X_train["fold"] = np.random.randint(low=1, high=6, size=len(X_train))
-    X_test = X[:int(round(n_obs) * (1 / 5))].copy()
-    print(X_train.shape, X_test.shape)
+    print(X_train.shape, X_test.shape, f"\n{X_train['fold'].value_counts(normalize=True)}")
 
     X_train.to_csv("./data/output/simu_train.csv")
     X_test.to_csv("./data/output/simu_test.csv")
@@ -193,7 +197,6 @@ if __name__ == "__main__":
     features = [x for x in train.columns if str.startswith(x, "cat1_") or
                 str.startswith(x, "fried") or
                 str.startswith(x, "binary")]
-    train[features + [label]].describe().T
     rfc.fit(X=train[features], y=train[label])
     pred_test = pd.Series(rfc.predict_proba(X=test[features])[:, 1], index=test.index)
     pred_train = pd.Series(rfc.predict_proba(X=train[features])[:, 1], index=train.index)
