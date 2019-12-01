@@ -14,8 +14,6 @@ DISCLAIMER: This notebook is not legal compliance advice.
 
 import numpy as np
 import pandas as pd
-from scipy import optimize
-import matplotlib.pyplot as plt
 
 
 def get_hmda_descriptions(data):
@@ -134,22 +132,6 @@ def get_hmda_descriptions(data):
     ),
                                               dtype='category'
                                               )
-    data['open_end_line_of_credit_desc'] = pd.Series(index=data.index, data=
-    np.select(
-        (
-            data.open_end_line_of_credit == 1,
-            data.open_end_line_of_credit == 2,
-            data.open_end_line_of_credit == 1111
-        ),
-        (
-            'Open-end line of credit',
-            'Not an open-end line of credit',
-            'Exempt'
-        ),
-        default=''
-    ),
-                                                     dtype='category'
-                                                     )
     data['business_or_commercial_purpose_desc'] = pd.Series(index=data.index, data=
     np.select(
         (
@@ -174,6 +156,22 @@ def get_hmda_descriptions(data):
     ),
                                           dtype='category'
                                           )
+    data['open_end_line_of_credit_desc'] = pd.Series(index=data.index, data=
+    np.select(
+        (
+            data.open_end_line_of_credit == 1,
+            data.open_end_line_of_credit == 2,
+            data.open_end_line_of_credit == 1111
+        ),
+        (
+            'Open-end line of credit',
+            'Not an open-end line of credit',
+            'Exempt'
+        ),
+        default=''
+    ),
+                                                     dtype='category'
+                                                     )
     data['negative_amortization_desc'] = pd.Series(index=data.index, data=
     np.select(
         (
@@ -1681,16 +1679,19 @@ if __name__ == '__main__':
     train.to_csv('./data/output/hmda_train.csv')
     test.to_csv('./data/output/hmda_test.csv')
 
-    ##################################
-    ##################################
-    ##################################
+    # Analysis for Implementation of Monotonic Constraints:
     train = pd.read_csv('./data/output/hmda_train.csv')
+    features = ['loan_amount', 'loan_to_value_ratio', 'no_intro_rate_period', 'intro_rate_period',
+                'property_value', 'income', "debt_to_income_ratio", "term_360", "conforming"]
+    label = "high_priced"
 
-    def piecewise_linear(x, x0, y0, k1, k2):
-        return np.piecewise(x, [x < x0], [lambda x: k1 * x + y0 - k1 * x0, lambda x: k2 * x + y0 - k2 * x0])
+    for vsi in features:
+        if train[vsi].dtype != 'O':
+            ranker = np.ceil(10 * train[vsi].rank(pct=True, method='max'))
+            ranker.value_counts(dropna=False, normalize=True)
+            print(f'\nFeature Analysis: Signs, Correlations, and Averages of "{label}" By Decile of "{vsi}":')
+            for di in np.sort(np.unique(ranker)):
+                corr_test = np.corrcoef(train.loc[ranker == di, vsi], train.loc[ranker == di, label])[0, 1]
+                ave_vals = np.round(train.loc[ranker == di, label].mean(), decimals=2)
+                print(f'Decile {di:>4}: {np.sign(corr_test): >4}; {np.round(corr_test, decimals=4):>7}; {ave_vals:<8}')
 
-    f_i = "loan_amount"
-    p, e = optimize.curve_fit(piecewise_linear, np.array(train[f_i]), np.array(train["high_priced"]))
-    xd = np.linspace(0, 15, 100)
-    plt.plot(x, y, "o")
-    plt.plot(xd, piecewise_linear(xd, *p))
