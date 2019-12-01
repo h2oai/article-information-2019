@@ -80,7 +80,7 @@ if __name__ == "__main__":
     friedman_weights = [10., 20., 10., 5.]
     binary_categorical_weights = [1.0, -1.5, 2.0, -2.5, 1.25, -3.0]
     coefficients = pd.Series(friedman_weights + binary_categorical_weights, index=names_weights)
-    coefficients = coefficients.divide(10)
+    coefficients = coefficients.divide(5)
 
     # Friedman-Only Variables:
     contrib = pd.DataFrame(np.full(shape=(len(X), len(names_weights)), fill_value=np.nan),
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     X = X[['outcome', "outcome_no_noise"] +
           ["fried" + str(x) for x in range(1, 6)] +
           ["binary1", "binary2", "cat1", 'intercept', "prot_class1", "ctrl_class1", "prot_class2", "ctrl_class2",
-           "latent_no_noise", "logistic_noise", "latent_with_noise"]]
+           "latent_no_noise", "logistic_noise", "latent_with_noise", "random_flip_outcome"]]
     print("\n", X.head())
 
     X_train = X[:int(round(n_obs) * (4 / 5))].copy()
