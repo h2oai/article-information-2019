@@ -99,7 +99,7 @@ $^{3}$ \quad George Washington University}
 %\conference{} % An extended version of a conference paper 
 
 % Abstract (Do not insert blank lines, i.e. \\) 
-\abstract{This text outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and sociological bias characteristics and on realistic, publicly available lending data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and global and local gradient-based or Shapley feature importance. The constrained model predictions are also tested for disparate impact (DI) and other types of sociological bias using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and bias testing with accessible software tools, this text aims to provide a template workflow for important ML applications that require high accuracy and interpretability and low disparate impact.}
+\abstract{This text outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and discrimination characteristics and on realistic, publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and \textcolor{red}{global and local gradient-based or Shapley feature importance}. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to provide a template workflow for important ML applications that require high accuracy and interpretability and minimal discrimination.}
 
 % Keywords
 \keyword{Machine Learning; Neural Network; Gradient Boosting Machine; Interpretable; Explanation; Fairness; Disparate Impact; Python}
@@ -143,33 +143,33 @@ $^{3}$ \quad George Washington University}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{\href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{See: ``When a Computer Program Keeps You in Jail''}.} ML models can perpetuate and exacerbate social biases \cite{fairmlbook}, \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}. The authors make no claim that the interdependent issues of opaqueness, unwanted sociological bias, or security vulnerabilities in ML have been solved, even as singular entities, much less as complex intersectional phenomena, e.g. the fairwashing or scaffolding of biased models with ML explanations or the privacy harms of ML explanations \cite{fair_washing}, \cite{scaffolding}, \cite{shokri2019privacy}. However, this text does present an attempt to address the technological aspects of these vexing problems with interpretable models, post-hoc explanation, and DI testing implemented in widely available, free, and open source Python tools. Section \ref{sec:m_and_m} describes methods and materials herein, including simulated and collected training datasets, interpretable and constrained architectures used to train highly transparent models, post-hoc explanations used to create an \textit{appealable} decision-making framework, tests for DI and other unwanted sociological bias, and public and open source software resources. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models and post-hoc explanation and DI testing results are also presented. Section \ref{sec:disc} then discusses some nuances of the presented modeling, explanation, and DI testing methods and results. Finally, Section \ref{sec:con} closes this text with a brief outline of proposed additional steps to increase human trust and understanding in ML and also touches on the authors' future work.
+ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{``When a Computer Program Keeps You in Jail''}.} ML models can perpetuate and exacerbate discrimination \cite{fairmlbook}, \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}. The authors make no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved, even as singular entities, much less as complex intersectional phenomena, e.g. the fairwashing or scaffolding of biased models with ML explanations or the privacy harms of ML explanations \cite{fair_washing}, \cite{scaffolding}, \cite{shokri2019privacy}. However, this text is an attempt to address the technological aspects of these vexing problems with interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools. Section \ref{sec:m_and_m} describes methods and materials, including simulated and collected training datasets, interpretable and constrained model architectures, post-hoc explanations used to create an \textit{appealable} decision-making framework, tests for DI and other discrimination, and public and open source software resources. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models and post-hoc explanation and discrimination testing results are also presented for interpretable models. Section \ref{sec:disc} then discusses some nuances of the presented modeling, explanation, and discrimination testing methods and results. Finally, Section \ref{sec:con} closes this text with a brief outline of proposed additional steps to increase human trust and understanding in ML and also touches on the authors' future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Materials and Methods}\label{sec:m_and_m}
 
-Section \ref{sec:m_and_m} presents descriptions of notation, training data, ML models, post-hoc explanation techniques, DI testing methods, and software resources as follows:\\
+To provide a sense of accuracy differences, this text compares the performance of more interpretable constrained ML models and less interpretable unconstrained ML models on simulated data and on collected mortgage data. The simulated data, based on the well-known Friedman datasets and with known feature importance and discrimination characteristics, is used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1991multivariate}. The mortgage data is sourced from the Home Mortgage Disclosure Act (HMDA) database.\footnote{See: \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}.} Post-hoc explanation and discrimination testing techniques are applied to constrained, interpretable models trained on the mortgage data to provide a more realistic template workflow for future users of these methods and tools. Unconstrained gradient boosting machines (GBMs) (e.g. \cite{friedman2001greedy}, \cite{esl}) and artificial neural networks (ANNs) (e.g. \cite{recht2011hogwild}, \cite{hinton2012improving}, \cite{sutskever2013importance}, \cite{zeiler2012adadelta}) are deemed uninterpretable black-box ML models herein. 
 
-\vspace{-10pt}
-\textsection \ref{ssec:not} \textbf{Notation}: for spaces, datasets, and models.\\
-\indent \textsection \ref{ssec:data} \textbf{Training data}: simulated data with known feature importance and social bias characteristics and collected home mortgage data.\\
-\indent \textsection \ref{ssec:models} \textbf{ML models}: interpretable XNN and constrained MGBM models.\\
-\indent \textsection \ref{ssec:expl} \textbf{Post-hoc explanation techniques}: PD, ICE, and Shapley values.\\
-\indent \textsection \ref{ssec:di}  \textbf{DI testing methods}: .\\
-\indent \textsection \ref{ssec:soft} \textbf{Software resources}: GitHub repository for the presented results; utilized and potentially useful Python packages.
+Because black-box ML models can be difficult to understand, trust, and appeal, even after the application of post-hoc explanation techniques, explanation analysis and discrimination testing are applied only to the constrained interpretable ML models \cite{please_stop}, \cite{fair_washing}, \cite{scaffolding}. Here, MGBMs\footnote{As implemented in \href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}{\texttt{XGBoost}} or \href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}{\texttt{h2o}}.} and XNNs (\cite{wf_xnn} \cite{yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analysis. Presented explanation techniques include PD, ICE, and Shapley values \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. \textcolor{red}{Discussed discrimination testing methods and metrics include ... }. All discussed materials and methods are implemented with open source Python packages and code and are available in the software resources associated with this text. Detailed descriptions of notation, training data, ML models, post-hoc explanation techniques, discrimination testing methods, and software resources are organized in Section \ref{sec:m_and_m} as follows:\\
 
+\textbf{Notation}: spaces, datasets, \& models -- \textsection\ref{ssec:not}\\
+\indent\textbf{Training data}: simulated data \& collected home mortgage data -- \textsection\ref{ssec:sim_data}~and~\textsection\ref{ssec:mort_data}\\
+\indent\textbf{ML models}: constrained, interpretable MGBM \& XNN models  -- \textsection\ref{ssec:mgbm}~and~\textsection\ref{ssec:xnn}\\
+\indent\textbf{Post-hoc explanation techniques}: PD, ICE, \& Shapley values -- \textsection\ref{ssec:pd_ice}~and~\textsection\ref{ssec:shap}\\
+\indent\textbf{Discrimination testing methods}: -- \textsection\ref{ssec:di}\\
+\indent\textbf{Software resources}: GitHub repository for this text; utilized \& useful Python packages -- \textsection\ref{ssec:soft}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notation}\label{ssec:not}
 
-To facilitate descriptions of data and modeling, explanatory, and DI testing techniques, notation for input and output spaces, datasets, and models is defined here.
+To facilitate descriptions of data and modeling, explanatory, and discrimination testing techniques, notation for input and output spaces, datasets, and models is defined.
 
 \subsubsection{Spaces} 
  
 	\begin{itemize}
 		\item Input features come from the set $\mathcal{X}$ contained in a \textit{P}-dimensional input space, $\mathcal{X} \subset \mathbb{R}^P$.  An arbitrary, potentially unobserved, or future instance of $\mathcal{X}$ is denoted $\mathbf{x}$, $\mathbf{x} \in \mathcal{X}$.
 		\item Labels corresponding to instances of $\mathcal{X}$ come from the set $\mathcal{Y}$.
-		\item Learned output responses come from the set $\mathcal{\hat{Y}}$. % For regression models, the set $\mathcal{\hat{Y}}_r$ is also contained in a $C$-dimensional output space, $\mathcal{\hat{Y}}_r \subset \mathbb{R}^{C_r}$. For classification models, the set $\mathcal{\hat{Y}}_c$ typically contains a column vector for each unique class in $\mathcal{Y}$. Hence, $\mathcal{\hat{Y}}_c$ is contained in a $C'$-dimensional output space,  $\mathcal{\hat{Y}}_c \subset \mathbb{R}^{C'_c}$.
+		\item Learned output responses of models are contained in the set $\mathcal{\hat{Y}}$. % For regression models, the set $\mathcal{\hat{Y}}_r$ is also contained in a $C$-dimensional output space, $\mathcal{\hat{Y}}_r \subset \mathbb{R}^{C_r}$. For classification models, the set $\mathcal{\hat{Y}}_c$ typically contains a column vector for each unique class in $\mathcal{Y}$. Hence, $\mathcal{\hat{Y}}_c$ is contained in a $C'$-dimensional output space,  $\mathcal{\hat{Y}}_c \subset \mathbb{R}^{C'_c}$.
 	\end{itemize}	
 	
 \subsubsection{Datasets} 
@@ -188,48 +188,20 @@ To facilitate descriptions of data and modeling, explanatory, and DI testing tec
 		\item A type of ML model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown signal-generating function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
 		$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$, such that $g \approx f$.
 		\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
-		\item The model to be explained and tested for unwanted social bias is denoted as $g$.
+		\item The model to be explained and tested for discrimination testing is denoted as $g$.
 	\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Data Description}\label{ssec:data}
-
-Results are presented for simulated data with known feature importance and social bias characteristics and for more realistic lending data sourced from the Home Mortgage Disclosure Act (HMDA) database.\footnote{\href{https://www.consumerfinance.gov/data-research/hmda/}{See: Mortgage data (HMDA)}.}
-
-\subsubsection{Simulated Data}
-
-\subsubsection{Lending Data}
-
-Lending data is sampled from the public HMDA database to create a real-world dataset on which to assess interpretable models, post-hoc explanations, and DI tests. The sampled lending data contains recent and anonymized consumer loans issued by many major United States (US) financial institutions. Consumers and loans in the dataset are characterized by Bayesian improved surname geocoding (BISG) demographic features, consumer credit scores and various consumer financial features, and loan purpose, amount, and term features.\footnote{\href{https://files.consumerfinance.gov/f/201409_cfpb_report_proxy-methodology.pdf}{See: Using publicly available information to proxy for unidentified race and ethnicity}.} The lending data is divided randomly into training and test partitions. The training data contains 33 total features and 144,000 rows, each representing a unique loan, and a fold identifier to ensure consistent 5-fold cross-validation accuracy and error measurements across different types of models. Consumer financials and loan descriptors are used for training. Demographic features are not used in model training. The lending test data contains 36,000 loans.
+\subsection{Simulated Data}\label{ssec:sim_data}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Model Description}\label{ssec:models}
-% both additive
-% XNN smooth
+\subsection{Mortgage Data}\label{ssec:mort_data}
 
-\subsubsection{Explainable Neural Network}
+The training data contains 33 total features and 144,000 rows, each representing a unique loan, and a fold identifier to ensure consistent 5-fold cross-validation accuracy and error measurements across different types of models. Consumer finance and loan descriptors are used for training. Demographic features are not used in model training. The mortgage test data contains 36,000 loans.
 
-XNNs are an alternative formulation of additive index models in which the ridge functions are neural networks \cite{wf_xnn}. XNNs also bare a strong resemblance to generalized additive models (GAMs) and so-called explainable boosting machines (EBMs or GA\textsuperscript{2}M), i.e. GAMs which consider main effects and a small number of 2-way interactions and incorporate boosting in their training \cite{esl}, \cite{ga2m}.  Hence, XNNs enable users to tailor interpretable neural network architectures to a given prediction problem and to visualize model behavior by plotting ridge functions. XNNs are composed of a global bias term, $\mu_0$, $K$ individually specified neural networks, $n_k$ with scale parameters $\gamma_k$, and the inputs to each $n_k$ are themselves a linear combination of modeling inputs, $\sum^J_{j=0}\beta_{k, j}x_j$.
-
-\begin{equation}
-\begin{aligned}
-\label{eq:xnn}
-g^{\text{XNN}}(\mathbf{x}) = \mu_0 + \sum_{k=1}^K\gamma_k n_k(\sum^J_{j=1}\beta_{k, j}x_j)
-\end{aligned}
-\end{equation}
-
-\noindent $g^{\text{XNN}}$ is comprised of 3 meta-layers:
-
-\begin{enumerate}
-\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, is known as the \textit{projection layer} and is fully connected to each input feature, $X_j$.
-\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network, which can be parameterized to suite a given modeling task. To facilitate direct visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer hidden unit, $\sum_j\beta_{k,j}x_j$.
-\item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for visualization purposes.
-\end{enumerate}
-
-\noindent $g^{\text{XNN}}$ is typically trained by mini-batch stochastic gradient descent (SGD). $L_1$ regularization is often applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof.
-
-\subsubsection{Monotonically Constrained Gradient Boosting Machine}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Monotonically Constrained Gradient Boosting Machine}\label{ssec:mgbm}
 
 MGBMs constrain typical GBM training to consider only tree splits that obey user-defined positive and negative monotonicity constraints. The MGBM remains an additive combination of $B$ trees trained by gradient boosting, $T_b$, but each tree learns a set of splitting rules that respect monotonicity constraints,  $\Theta^\text{mono}_b$. 
 
@@ -256,22 +228,44 @@ g^{\text{mono}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mo
 \item (1) and (2) are also applied to all right child nodes, except that for right child nodes $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
 \end{enumerate}
 
-\noindent Note that for any one $X_j$ and $T_b \in g^{\text{mono}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{mono}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{mono}}(x^{\alpha}_j)  \le g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e. $g^{\text{mono}}(x^{\alpha}_j)  \ge g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched.
+\noindent Note that for any one $X_j$ and $T_b \in g^{\text{mono}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{mono}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{mono}}(x^{\alpha}_j)  \le g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e. $g^{\text{mono}}(x^{\alpha}_j)  \ge g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched.\\
+
+Herein, two $g^\text{mono}$ models are trained.  One on the simulated data and one on the mortgage data. In both cases, positive and negative monotonic constraints for each $X_j$ are selected using the sign of the Pearson correlation between each $X_j$ and $y$, random grid search is used to determine other hyperparameters, and five-fold cross validation and test partitions are used for model assessment. For exact parameterization of the MGBM models, see the software resources referenced in Subsection \ref{ssec:soft}.
+
+\subsection{Explainable Neural Network}\label{ssec:xnn}
+
+XNNs are an alternative formulation of additive index models in which the ridge functions are neural networks \cite{wf_xnn}. XNNs also bare a strong resemblance to generalized additive models (GAMs) and so-called explainable boosting machines (EBMs or GA\textsuperscript{2}M), i.e. GAMs which consider main effects and a small number of 2-way interactions and incorporate boosting in their training \cite{esl}, \cite{ga2m}.  Hence, XNNs enable users to tailor interpretable neural network architectures to a given prediction problem and to visualize model behavior by plotting ridge functions. XNNs are composed of a global bias term, $\mu_0$, $K$ individually specified neural networks, $n_k$ with scale parameters $\gamma_k$, and the inputs to each $n_k$ are themselves a linear combination of modeling inputs, $\sum^J_{j=0}\beta_{k, j}x_j$.
+
+\begin{equation}
+\begin{aligned}
+\label{eq:xnn}
+g^{\text{XNN}}(\mathbf{x}) = \mu_0 + \sum_{k=1}^K\gamma_k n_k(\sum^J_{j=1}\beta_{k, j}x_j)
+\end{aligned}
+\end{equation}
+
+\noindent $g^{\text{XNN}}$ is comprised of 3 meta-layers:
+
+\begin{enumerate}
+\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, is known as the \textit{projection layer} and is fully connected to each input feature, $X_j$.
+\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network, which can be parameterized to suite a given modeling task. To facilitate direct visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer hidden unit, $\sum_j\beta_{k,j}x_j$.
+\item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for visualization purposes.
+\end{enumerate}
+
+Here, each $g^\text{XNN}$ is trained by mini-batch stochastic gradient descent (SGD) on the simulated data and mortgage data. Each $g^\text{XNN}$ is assessed in five training folds and in a test data partition.  $L_1$ regularization is applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof. The $g^\text{XNN}$ models are highly sensitive to weight initialization and manual feature selection is informed by Shapley feature importance from the $g^\text{mono}$. For more details regarding $g^\text{XNN}$ training, see the software resources in Subsection \ref{ssec:soft}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Explanatory Method Description}\label{ssec:expl}
+\subsection{Partial Dependence and Individual Conditional Expectation}\label{ssec:pd_ice}
 
-\subsubsection{Partial Dependence and Individual Conditional Expectation}
+PD plots are a widely-used method for describing and plotting the average predictions of a complex model $g$ across some partition of data $\mathbf{X}$ for some interesting input feature $X_j$ \cite{esl}. ICE plots are a newer method that describes the local behavior of $g$ for a single instance $\mathbf{x} \in \mathcal{X}$ \cite{ice_plots}. PD and ICE can be overlaid in the same plot to compensate for known weaknesses of PD (e.g. inaccuracy in the presence of strong interactions and correlations \cite{ice_plots}, \cite{ale_plot}), to identify interactions modeled by $g$, and to create a holistic global and local portrait of the predictions of a complex model for some $X_j$ \cite{ice_plots}.
 
-PD plots are a widely-used method for describing the average predictions of a complex model $g$ across some partition of data $\mathbf{X}$ for some interesting input feature $X_j$ \cite{esl}. ICE plots are a newer method that describes the local behavior of $g$ for a single instance $\mathbf{x} \in \mathcal{X}$. PD and ICE can be combined in the same plot to compensate for known weaknesses of PD, to identify interactions modeled by $g$, and to create a holistic portrait of the predictions of a complex model for some $X_j$  \cite{ice_plots}.
+Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{(-j)} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{(-j)}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{(-j)}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$, as displayed in Section \ref{sec:res}.
 
-Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{(-j)} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{(-j)}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{(-j)}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Shapley Values}\label{ssec:shap}
 
-\subsubsection{Shapley Values}
+Shapley explanations are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}, \cite{shapley1988shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ for some $\mathbf{x} \in \mathcal{X}$ and that Shapley explanation values can never decrease in magnitude for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}, \cite{tree_shap}. Unfortunately, many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing the same model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific and personalized adverse action notices for automated ML-based decisions in highly-regulated settings such as credit lending \cite{bracke2019machine}.
 
-Shapley explanations, including Tree SHAP (SHapley Additive exPlanations) , are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ and that Shapley explanation values can never decrease for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}. 
-
-For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
+For some instance $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form: 
 
 \begin{equation}
 \label{eq:shap_additive}
@@ -280,9 +274,7 @@ g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
 \end{aligned}
 \end{equation}
 
-\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. 
-
-Shapley values can be estimated in different ways. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal tree structures to estimate the impact of each $x_j$ for some $g(\mathbf{x})$ of interest \cite{tree_shap}.
+\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. Local, per-instance explanations using Shapley values tend to involve presenting a ranking of $x_j$ by $\phi_j$ values or simply presenting a set of the $x_j$ associated with the largest $\phi_j$ for some $\mathbf{x}$. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across the observations in some partition of data $\mathbf{X}$. Each $\phi_j$ is a weighted combination of model scores on the $g_x(\mathbf{x})$ with $x_j$, $g_x(S \cup \{j\})$, and the model scores without $x_j$, $g_x(S)$, for every subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$. 
 
 \begin{equation}
 \label{eq:shap_contrib}
@@ -291,14 +283,21 @@ Shapley values can be estimated in different ways. Tree SHAP is a specific imple
 \end{aligned}
 \end{equation}
 
+\noindent Where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
+
+Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in this text. 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Social Bias Test Description}\label{ssec:di}
+\subsection{Discrimination Metrics and Test Description}\label{ssec:di}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Software Resources}\label{ssec:soft}
 % Description of code
 % github repo, main packges
 Python code to reproduce the results presented in this text are available at: \url{https://github.com/h2oai/article-information-2019}. The authors primarily make use of the \href{https://github.com/h2oai/datatable}{datatable}, \href{https://github.com/h2oai/h2o-3}{h2o}, \href{https://matplotlib.org/}{matplotlib}, \href{https://pandas.pydata.org/}{pandas}, \href{https://scikit-learn.org/stable/}{scikit-learn}, \href{https://seaborn.pydata.org/}{seaborn}, and \href{https://github.com/slundberg/shap}{shap} packages for data manipulation, modeling, and reporting results. 
+
+% interesting packages
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,21 +306,47 @@ Python code to reproduce the results presented in this text are available at: \u
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulated Data Results}
 
+\subsubsection{Unconstrained Model Fit Assessment}
+
+\subsubsection{Constrained Model Fit Assessment}
+
+\subsubsection{Interpretability and Post-hoc Explanation Results}
+
+\subsubsection{Discrimination Testing Results}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Loan Data Results}
+\subsection{Mortgage Data Results}
+
+\subsubsection{Unconstrained Model Fit Assessment}
+
+\subsubsection{Constrained Model Fit Assessment}
+
+\subsubsection{Interpretability and Post-hoc Explanation Results}
+
+\subsubsection{Discrimination Testing Results}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}\label{sec:disc}
 
+\subsection{The Burgeoning Ecosystem of Interpretable Models}
 
+% these are just examples of good models
 %scalability, easy computation of derivatives
 % XNN is quite sensitive to initialization, and ...
 % variable selection
 
-% Bivariate monotonicity constraints likely dampen impact of interactions
+% both additive
+% XNN smooth
+
+% Bivariate monotonicity constraints likely dampen impact of interactions - same for XNN
 % Tree pruning?
+\subsection{Impact of Discrimination Testing on Model Use and Adoption}
+
+\subsection{Viable Discrimination Remediation Approaches}
 
 % somewhat aligned with United States regulation-mandated adverse action notices?
+
+\subsection{Intersectionality of Interpretability, Fairness, and Security in ML}
 
 %Interpretable models are also tested for disparate impact and other unwanted sociological bias and viable bias mitigation strategies are discussed. While the focus of this paper is not ML security, best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}.  
 
@@ -340,7 +365,7 @@ Python code to reproduce the results presented in this text are available at: \u
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\authorcontributions{, N.G.; , P.H.; , K.M.; , N.S.}%For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing--original draft preparation, X.X.; writing--review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work reported.}
+\authorcontributions{N.G., GBM and MGBM assessment and results; P.H., primary author; K.M., ANN and XNN implementation, assessment, and results; N.S., secondary author, data simulation and collection, and discrimination testing.}%For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing--original draft preparation, X.X.; writing--review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work reported.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \funding{This research received no external funding.}
@@ -353,7 +378,7 @@ Python code to reproduce the results presented in this text are available at: \u
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% optional
-\abbreviations{The following abbreviations are used in this manuscript: ML -- machine learning, MGBM -- monotonic gradient boosting machine, XNN -- explainable neural network, PD -- partial dependence, ICE -- individual conditional expectation, DI -- disparate impact, SGD -- stochastic gradient descent.}
+\abbreviations{The following abbreviations are used in this text: ANN -- artificial neural network, DI -- disparate impact, GBM -- gradient boosting machine, ICE -- individual conditional expectation, MGBM -- monotonic gradient boosting machine, ML -- machine learning, PD -- partial dependence, SGD -- stochastic gradient descent, US -- United States, XNN -- explainable neural network.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \reftitle{References}
