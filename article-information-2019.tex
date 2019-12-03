@@ -67,7 +67,7 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Responsible Machine Learning\\\large{with Interpretable Models, Post-hoc Explanation, and Disparate Impact Testing}}
+\Title{Responsible Machine Learning Techniques\\\large{Interpretable Models, Post-hoc Explanation, and Disparate Impact Testing}}
 
 % Author Orchid ID: enter ID or remove command
 %\newcommand{\orcidauthorA}{0000-0000-000-000X} % Add \orcidA{} behind the author's name
@@ -143,21 +143,23 @@ $^{3}$ \quad George Washington University}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{``When a Computer Program Keeps You in Jail''}.} ML models can perpetuate and exacerbate discrimination \cite{fairmlbook}, \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}. The authors make no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved, even as singular entities, much less as complex intersectional phenomena, e.g. the fairwashing or scaffolding of biased models with ML explanations or the privacy harms of ML explanations \cite{fair_washing}, \cite{scaffolding}, \cite{shokri2019privacy}. However, this text is an attempt to address the technological aspects of these vexing problems with interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools. Section \ref{sec:m_and_m} describes methods and materials, including simulated and collected training datasets, interpretable and constrained model architectures, post-hoc explanations used to create an \textit{appealable} decision-making framework, tests for DI and other discrimination, and public and open source software resources. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models and post-hoc explanation and discrimination testing results are also presented for interpretable models. Section \ref{sec:disc} then discusses some nuances of the presented modeling, explanation, and discrimination testing methods and results. Finally, Section \ref{sec:con} closes this text with a brief outline of proposed additional steps to increase human trust and understanding in ML and also touches on the authors' future work.
+ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{``When a Computer Program Keeps You in Jail''}.} ML models can perpetuate and exacerbate discrimination \cite{fairmlbook}, \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}. This text makes no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved, even as singular entities, much less as complex intersectional phenomena, e.g. the fairwashing or scaffolding of biased models with ML explanations or the privacy harms of ML explanations \cite{fair_washing}, \cite{scaffolding}, \cite{shokri2019privacy}. This text does however propose some workable countermeasures to address these vexing problems in the form of interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools. Section \ref{sec:m_and_m} describes methods and materials, including simulated and collected training datasets, interpretable and constrained model architectures, post-hoc explanations used to create an \textit{appealable} decision-making framework, tests for DI and other discrimination, and public and open source software resources. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models and post-hoc explanation and discrimination testing results are also presented for interpretable models. Section \ref{sec:disc} then discusses some nuances of the outlined modeling, explanation, and discrimination testing methods and results. Finally, Section \ref{sec:con} closes this text with a brief outline of proposed additional steps to increase human trust and understanding in ML.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Materials and Methods}\label{sec:m_and_m}
 
-To provide a sense of accuracy differences, this text compares the performance of more interpretable constrained ML models and less interpretable unconstrained ML models on simulated data and on collected mortgage data. The simulated data, based on the well-known Friedman datasets and with known feature importance and discrimination characteristics, is used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1991multivariate}. The mortgage data is sourced from the Home Mortgage Disclosure Act (HMDA) database.\footnote{See: \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}.} Post-hoc explanation and discrimination testing techniques are applied to constrained, interpretable models trained on the mortgage data to provide a more realistic template workflow for future users of these methods and tools. Unconstrained gradient boosting machines (GBMs) (e.g. \cite{friedman2001greedy}, \cite{esl}) and artificial neural networks (ANNs) (e.g. \cite{recht2011hogwild}, \cite{hinton2012improving}, \cite{sutskever2013importance}, \cite{zeiler2012adadelta}) are deemed uninterpretable black-box ML models herein. 
+To provide a sense of accuracy differences, this text compares the performance of more interpretable constrained ML models and less interpretable unconstrained ML models on simulated data and on collected mortgage data. The simulated data, based on the well-known Friedman datasets and with known feature importance and discrimination characteristics, is used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1991multivariate}. The mortgage data is sourced from the Home Mortgage Disclosure Act (HMDA) database.\footnote{See: \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}.} Post-hoc explanation and discrimination testing techniques are applied to constrained, interpretable models trained on the mortgage data to provide a more realistic template workflow for future users of similar methods and tools. 
 
-Because black-box ML models can be difficult to understand, trust, and appeal, even after the application of post-hoc explanation techniques, explanation analysis and discrimination testing are applied only to the constrained interpretable ML models \cite{please_stop}, \cite{fair_washing}, \cite{scaffolding}. Here, MGBMs\footnote{As implemented in \href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}{\texttt{XGBoost}} or \href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}{\texttt{h2o}}.} and XNNs (\cite{wf_xnn} \cite{yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analysis. Presented explanation techniques include PD, ICE, and Shapley values \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. \textcolor{red}{Discussed discrimination testing methods and metrics include ... }. All discussed materials and methods are implemented with open source Python packages and code and are available in the software resources associated with this text. Detailed descriptions of notation, training data, ML models, post-hoc explanation techniques, discrimination testing methods, and software resources are organized in Section \ref{sec:m_and_m} as follows:\\
+Because unconstrained ML models, like gradient boosting machines (GBMs) (e.g. \cite{friedman2001greedy}, \cite{esl}) and artificial neural networks (ANNs) (e.g. \cite{recht2011hogwild}, \cite{hinton2012improving}, \cite{sutskever2013importance}, \cite{zeiler2012adadelta}), can be difficult to understand, trust, and appeal, even after the application of post-hoc explanation techniques, explanation analysis and discrimination testing are applied only to the constrained interpretable ML models \cite{please_stop}, \cite{fair_washing}, \cite{scaffolding}. Here, MGBMs\footnote{As implemented in \href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}{\texttt{XGBoost}} or \href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}{\texttt{h2o}}.} and XNNs (\cite{wf_xnn} \cite{yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analysis. Presented explanation techniques include PD, ICE, and Shapley values \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. \textcolor{red}{Discussed discrimination testing methods and metrics include ... }. All outlined materials and methods are implemented in open source Python code, and are made available in the software resources associated with this text. Detailed descriptions of notation, training data, ML models, post-hoc explanation techniques, discrimination testing methods, and software resources are organized in Section \ref{sec:m_and_m} as follows:
 
-\textbf{Notation}: spaces, datasets, \& models -- \textsection\ref{ssec:not}\\
-\indent\textbf{Training data}: simulated data \& collected home mortgage data -- \textsection\ref{ssec:sim_data}~and~\textsection\ref{ssec:mort_data}\\
-\indent\textbf{ML models}: constrained, interpretable MGBM \& XNN models  -- \textsection\ref{ssec:mgbm}~and~\textsection\ref{ssec:xnn}\\
-\indent\textbf{Post-hoc explanation techniques}: PD, ICE, \& Shapley values -- \textsection\ref{ssec:pd_ice}~and~\textsection\ref{ssec:shap}\\
-\indent\textbf{Discrimination testing methods}: -- \textsection\ref{ssec:di}\\
-\indent\textbf{Software resources}: GitHub repository for this text; utilized \& useful Python packages -- \textsection\ref{ssec:soft}
+\begin{itemize}
+	\item \textbf{Notation}: spaces, datasets, \& models -- \textsection\ref{ssec:not}
+	\item \textbf{Training data}: simulated data \& collected mortgage data -- \textsection\ref{ssec:sim_data}~and~\textsection\ref{ssec:mort_data}
+	\item \textbf{ML models}: constrained, interpretable MGBM \& XNN models  -- \textsection\ref{ssec:mgbm}~and~\textsection\ref{ssec:xnn}
+	\item \textbf{Post-hoc explanation techniques}: PD, ICE, \& Shapley values -- \textsection\ref{ssec:pd_ice}~and~\textsection\ref{ssec:shap}
+	\item \textbf{Discrimination testing methods}: -- \textsection\ref{ssec:di}
+	\item \textbf{Software resources}: GitHub repository for this text; utilized \& useful Python packages -- \textsection\ref{ssec:soft}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notation}\label{ssec:not}
@@ -207,19 +209,19 @@ MGBMs constrain typical GBM training to consider only tree splits that obey user
 
 \begin{equation}
 \begin{aligned}\label{eq:rf}
-g^{\text{mono}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mono}_b\right)
+g^{\text{MGBM}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mono}_b\right)
 \end{aligned}
 \end{equation}
 
-\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the MGBM, $g^{\text{mono}}_{b-1}(\mathbf{X})$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For the $b$-th iteration, the loss function, $\mathcal{L}_{b}$, can generally be defined as:
+\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the MGBM, $g^{\text{MGBM}}_{b-1}(\mathbf{X})$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For the $b$-th iteration, the loss function, $\mathcal{L}_{b}$, can generally be defined as:
 
 \begin{equation}
 \begin{aligned}
-\mathcal{L}_{b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{mono}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
+\mathcal{L}_{b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{MGBM}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
 \end{aligned}
 \end{equation}
 
-\noindent In addition to $\mathcal{L}_{b}$, $g^\text{mono}$ training is characterized by additional splitting rules and constraints on tree node weights. Each binary splitting rule, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left and right child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,kR}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,kR}\}$ can be direct numeric components of some $g^\text{mono}$ prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$, $\Theta_b$ is restricted to be positive monotonic w.r.t. $X_j$ by the following rules and constraints.
+\noindent In addition to $\mathcal{L}_{b}$, $g^\text{MGBM}$ training is characterized by additional splitting rules and constraints on tree node weights. Each binary splitting rule, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left and right child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,kR}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,kR}\}$ can be direct numeric components of some $g^\text{MGBM}$ prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$, $\Theta_b$ is restricted to be positive monotonic w.r.t. $X_j$ by the following rules and constraints.
 
 \begin{enumerate}
 \item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ resulting in the left child weight being greater than the right child weight, $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$, is not considered. 
@@ -228,9 +230,9 @@ g^{\text{mono}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mo
 \item (1) and (2) are also applied to all right child nodes, except that for right child nodes $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
 \end{enumerate}
 
-\noindent Note that for any one $X_j$ and $T_b \in g^{\text{mono}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{mono}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{mono}}(x^{\alpha}_j)  \le g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e. $g^{\text{mono}}(x^{\alpha}_j)  \ge g^{\text{mono}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched.\\
+\noindent Note that for any one $X_j$ and $T_b \in g^{\text{MGBM}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{MGBM}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,j,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{MGBM}}(x^{\alpha}_j)  \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e. $g^{\text{MGBM}}(x^{\alpha}_j)  \ge g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched.\\
 
-Herein, two $g^\text{mono}$ models are trained.  One on the simulated data and one on the mortgage data. In both cases, positive and negative monotonic constraints for each $X_j$ are selected using the sign of the Pearson correlation between each $X_j$ and $y$, random grid search is used to determine other hyperparameters, and five-fold cross validation and test partitions are used for model assessment. For exact parameterization of the MGBM models, see the software resources referenced in Subsection \ref{ssec:soft}.
+Herein, two $g^\text{MGBM}$ models are trained.  One on the simulated data and one on the mortgage data. In both cases, positive and negative monotonic constraints for each $X_j$ are selected using the sign of the Pearson correlation between each $X_j$ and $y$, random grid search is used to determine other hyperparameters, and five-fold cross validation and test partitions are used for model assessment. For exact parameterization of the MGBM models, see the software resources referenced in Subsection \ref{ssec:soft}. Also consider that MGBM models with one-dimensional monotonicity constraints between some $X_j$ and $\hat{Y}$ likely restrict non-monotonic interactions between multiple $X_j$. Moreover, if monotonicity constraints are not applied to all $X_j \in \mathbf{X}$, any strong non-monotonic signal in training data associated with some important $X_j$ maybe forced onto some other arbitrary unconstrained $X_j$ under some $g^{MGBM}$ models, compromising the end goal of interpretability. 
 
 \subsection{Explainable Neural Network}\label{ssec:xnn}
 
@@ -251,21 +253,19 @@ g^{\text{XNN}}(\mathbf{x}) = \mu_0 + \sum_{k=1}^K\gamma_k n_k(\sum^J_{j=1}\beta_
 \item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for visualization purposes.
 \end{enumerate}
 
-Here, each $g^\text{XNN}$ is trained by mini-batch stochastic gradient descent (SGD) on the simulated data and mortgage data. Each $g^\text{XNN}$ is assessed in five training folds and in a test data partition.  $L_1$ regularization is applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof. The $g^\text{XNN}$ models are highly sensitive to weight initialization and manual feature selection is informed by Shapley feature importance from the $g^\text{mono}$. For more details regarding $g^\text{XNN}$ training, see the software resources in Subsection \ref{ssec:soft}.
+Here, each $g^\text{XNN}$ is trained by mini-batch stochastic gradient descent (SGD) on the simulated data and mortgage data. Each $g^\text{XNN}$ is assessed in five training folds and in a test data partition.  $L_1$ regularization is applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof. The $g^\text{XNN}$ models are highly sensitive to weight initialization and manual feature selection is informed by Shapley feature importance from the $g^\text{MGBM}$. For more details regarding $g^\text{XNN}$ training, see the software resources in Subsection \ref{ssec:soft}. Be aware that $g^{XNN}$ model architectures may restrict important interactions, appear highly sensitive to initialization routines, and require manual and judicious feature selection due to burdensome training times. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Partial Dependence and Individual Conditional Expectation}\label{ssec:pd_ice}
 
 PD plots are a widely-used method for describing and plotting the average predictions of a complex model $g$ across some partition of data $\mathbf{X}$ for some interesting input feature $X_j$ \cite{esl}. ICE plots are a newer method that describes the local behavior of $g$ for a single instance $\mathbf{x} \in \mathcal{X}$ \cite{ice_plots}. PD and ICE can be overlaid in the same plot to compensate for known weaknesses of PD (e.g. inaccuracy in the presence of strong interactions and correlations \cite{ice_plots}, \cite{ale_plot}), to identify interactions modeled by $g$, and to create a holistic global and local portrait of the predictions of a complex model for some $X_j$ \cite{ice_plots}.
 
-Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{(-j)} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{(-j)}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{(-j)}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$, as displayed in Section \ref{sec:res}.
+Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{(-j)} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{(-j)}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{(-j)}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$, as displayed in Section \ref{sec:res}. Due to known problems for PD in the presence of strong correlation and interactions, PD should not be used alone. PD should always be paired with ICE or be replaced with accumulated local effect (ALE) plots \cite{ice_plots}, \cite{ale_plot}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shapley Values}\label{ssec:shap}
 
-Shapley explanations are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}, \cite{shapley1988shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ for some $\mathbf{x} \in \mathcal{X}$ and that Shapley explanation values can never decrease in magnitude for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}, \cite{tree_shap}. Unfortunately, many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing the same model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific and personalized adverse action notices for automated ML-based decisions in highly-regulated settings such as credit lending \cite{bracke2019machine}.
-
-For some instance $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form: 
+Shapley explanations are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}, \cite{shapley1988shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ for some $\mathbf{x} \in \mathcal{X}$ and that Shapley explanation values can never decrease in magnitude for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}, \cite{tree_shap}. For some instance $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form: 
 
 \begin{equation}
 \label{eq:shap_additive}
@@ -274,7 +274,9 @@ g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
 \end{aligned}
 \end{equation}
 
-\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. Local, per-instance explanations using Shapley values tend to involve presenting a ranking of $x_j$ by $\phi_j$ values or simply presenting a set of the $x_j$ associated with the largest $\phi_j$ for some $\mathbf{x}$. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across the observations in some partition of data $\mathbf{X}$. Each $\phi_j$ is a weighted combination of model scores on the $g_x(\mathbf{x})$ with $x_j$, $g_x(S \cup \{j\})$, and the model scores without $x_j$, $g_x(S)$, for every subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$. 
+\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. Local, per-instance explanations using Shapley values tend to involve ranking of $x_j$ by $\phi_j$ values or delineating a set of the $X_j$ names associated with the $k$-largest $\phi_j$ values for some $\mathbf{x}$. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across all of the observations in some partition of data $\mathbf{X}$. 
+
+Each $\phi_j$ is a weighted combination of model scores, $g_x(\mathbf{x})$, with $x_j$, $g_x(S \cup \{j\})$, and the model scores without $x_j$, $g_x(S)$, for every subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$, where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
 
 \begin{equation}
 \label{eq:shap_contrib}
@@ -283,25 +285,29 @@ g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
 \end{aligned}
 \end{equation}
 
-\noindent Where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
-
-Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in this text. 
-
+Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in this text. Unfortunately, many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing the same model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific and personalized adverse action notices for automated ML-based decisions in highly-regulated settings such as credit lending \cite{bracke2019machine}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Discrimination Metrics and Test Description}\label{ssec:di}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Software Resources}\label{ssec:soft}
-% Description of code
-% github repo, main packges
-Python code to reproduce the results presented in this text are available at: \url{https://github.com/h2oai/article-information-2019}. The authors primarily make use of the \href{https://github.com/h2oai/datatable}{datatable}, \href{https://github.com/h2oai/h2o-3}{h2o}, \href{https://matplotlib.org/}{matplotlib}, \href{https://pandas.pydata.org/}{pandas}, \href{https://scikit-learn.org/stable/}{scikit-learn}, \href{https://seaborn.pydata.org/}{seaborn}, and \href{https://github.com/slundberg/shap}{shap} packages for data manipulation, modeling, and reporting results. 
+% Description of code?
 
-% interesting packages
+Python code to reproduce discussed results is available at: \texttt{\url{https://github.com/h2oai/article-information-2019}}. The primary Python packages employed therein are:
 
+\begin{itemize}
+	\item \href{https://numpy.org/}{\texttt{numpy}} and \href{https://pandas.pydata.org/}{\texttt{pandas}} for data manipulation.
+	\item \href{https://github.com/h2oai/h2o-3}{\texttt{h2o}}, \href{https://keras.io/}{\texttt{keras}}, \href{https://github.com/slundberg/shap}{\texttt{shap}}, and \href{https://www.tensorflow.org/}{\texttt{tensorflow}} for modeling, explanation, and discrimination testing.
+	\item \href{https://matplotlib.org/}{\texttt{matplotlib}} and \href{https://seaborn.pydata.org/}{\texttt{seaborn}} for plotting. 
+\end{itemize}
+
+Additional, relevant Python packages include: \href{https://github.com/dssg/aequitas}{\texttt{aequitas}} and \href{https://github.com/LASER-UMASS/Themis}{\texttt{Themis}} for discrimination testing, \href{http://aif360.mybluemix.net/}{\texttt{AIF360}} for discrimination testing and remediation, \href{https://github.com/interpretml/interpret}{\texttt{interpret}} for interpretable models and post-hoc explanation, and \href{https://github.com/SeldonIO/alibi}{\texttt{alibi}} and \href{https://github.com/SauceCat/PDPbox}{\texttt{PDPbox}} for post-hoc explanation.\footnote{See: \texttt{\url{https://github.com/jphall663/awesome-machine-learning-interpretability}} for a longer, curated list of related software packages and resources.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:res}
+
+Results are laid out for the simulated and mortgage datasets. Accuracy is compared for unconstrained, less interpretable $g^{\text{GBM}}$ and $g^{\text{ANN}}$ models and constrained, more interpretable $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ models. Then, for the  $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ models, intrinsic interpretabilily, post-hoc explanation, and discrimination testing results are presented.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulated Data Results}
@@ -328,27 +334,31 @@ Python code to reproduce the results presented in this text are available at: \u
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}\label{sec:disc}
 
-\subsection{The Burgeoning Ecosystem of Interpretable Models}
+\subsection{The Burgeoning Ecosystem of Interpretable Machine Learning Models}
 
-% these are just examples of good models
-%scalability, easy computation of derivatives
-% XNN is quite sensitive to initialization, and ...
-% variable selection
+MGBM and XNN architectures were selected for this text because they are straightforward variants of popular unconstrained ML models. If practitioners are working with GBM and ANN models, it should be relatively uncomplicated for them to evaluate the constrained versions of these models. The same can be said for the discussed post-hoc explanation and discrimination testing techniques. Practitioners should be able to augment many interpretable modeling workflows with Shapley and derivative-based post-hoc explanatory techniques and \textcolor{red}{...} discrimination testing methods. These approaches are promising responses to the opaqueness and discrimination problems in ML. However, they are imperfect and just a small part of a larger and burgeoning responsible ML ecosystem.
 
-% both additive
-% XNN smooth
+% GA2M, Rudin Group 
 
-% Bivariate monotonicity constraints likely dampen impact of interactions - same for XNN
-% Tree pruning?
+
+
+
+
 \subsection{Impact of Discrimination Testing on Model Use and Adoption}
 
 \subsection{Viable Discrimination Remediation Approaches}
 
-% somewhat aligned with United States regulation-mandated adverse action notices?
+
 
 \subsection{Intersectionality of Interpretability, Fairness, and Security in ML}
 
 %Interpretable models are also tested for disparate impact and other unwanted sociological bias and viable bias mitigation strategies are discussed. While the focus of this paper is not ML security, best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}.  
+
+%appeal
+
+% somewhat aligned with United States regulation-mandated adverse action notices?
+
+% security
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}\label{sec:con}
@@ -365,13 +375,13 @@ Python code to reproduce the results presented in this text are available at: \u
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\authorcontributions{N.G., GBM and MGBM assessment and results; P.H., primary author; K.M., ANN and XNN implementation, assessment, and results; N.S., secondary author, data simulation and collection, and discrimination testing.}%For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing--original draft preparation, X.X.; writing--review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work reported.}
+\authorcontributions{NG, data cleaning, GBM and MGBM assessment and results; PH, primary author; KM, ANN and XNN implementation, assessment, and results; NS, secondary author, data simulation and collection, and discrimination testing.}%For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing--original draft preparation, X.X.; writing--review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work reported.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \funding{This research received no external funding.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\acknowledgments{Wen Phan for work in formalizing our notation.}
+\acknowledgments{Wen Phan for work in formalizing notation.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \conflictsofinterest{} 
