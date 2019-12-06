@@ -10,7 +10,7 @@ This text outlines a viable approach for training and evaluating complex machine
 
 See [article-information-2019.pdf](article-information-2019.pdf).
 
-### Current Python 3.6 Environment Setup: 
+### Current Python 3.6 Environment Setup for Linux and OSX: 
 
 ```
 $ pip install virtualenv
