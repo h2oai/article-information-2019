@@ -4,7 +4,7 @@
 %=================================================================
 \documentclass[information,article,submit,moreauthors,pdftex]{definitions/mdpi} 
 
-% If you would like to post an early version of this manuscript as a preprint, you may use preprint as the journal and change 'submit' to 'accept'. The document class line would be, e.g., \documentclass[preprints,article,accept,moreauthors,pdftex]{mdpi}. This is especially recommended for submission to arXiv, where line numbers should be removed before posting. For preprints.org, the editorial staff will make this change immediately prior to posting.
+% If you would like to post an early version of this manuscript  a preprint, you may use preprint as the journal and change 'submit' to 'accept'. The document class line would be, e.g., \documentclass[preprints,article,accept,moreauthors,pdftex]{mdpi}. This is especially recommended for submission to arXiv, where line numbers should be removed before posting. For preprints.org, the editorial staff will make this change immediately prior to posting.
 
 %--------------------
 % Class Options:
@@ -99,7 +99,7 @@ $^{3}$ \quad George Washington University}
 %\conference{} % An extended version of a conference paper 
 
 % Abstract (Do not insert blank lines, i.e. \\) 
-\abstract{This manuscript outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and discrimination characteristics and on realistic, publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and \textcolor{red}{global and local gradient-based or Shapley feature importance}. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to provide a template workflow for important ML applications that require high accuracy and interpretability and minimal discrimination.}
+\abstract{This manuscript outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and discrimination characteristics and on realistic, publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and global and local Shapley feature importance. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to provide a template workflow for important ML applications that require high accuracy and interpretability and minimal discrimination.}
 
 % Keywords
 \keyword{Machine Learning; Neural Network; Gradient Boosting Machine; Interpretable; Explanation; Fairness; Disparate Impact; Python}
@@ -143,7 +143,7 @@ $^{3}$ \quad George Washington University}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Responsible artificial intelligence (AI) has been variously conceptualized as AI-based products or projects that use transparent technical mechanisms, that create appealable decisions or outcomes, that perform reliably and in a trustworthy manner over time, that exhibit minimal social discrimination, and that are designed by humans with diverse experiences, both in terms of demographics and professional backgrounds, i.e. ethics, social sciences, and technology.\footnote{See: \href{https://ec.europa.eu/jrc/communities/sites/jrccties/files/03_dignum_v.pdf}{Responsible Artificial Intelligence}, \href{https://www.accenture.com/_acnmedia/pdf-92/accenture-afs-responsible-ai.pdf}{\textit{Responsible AI: A Framework for Building Trust in Your AI Solutions}}, \href{https://www.pwc.com/us/en/services/consulting/analytics/artificial-intelligence/what-is-responsible-ai.html}{PwC's Responsible AI}, \href{https://ai.google/responsibilities/responsible-ai-practices/}{Responsible AI Practices}} Even if responsible AI feels like a somewhat broad and amorphous notion, at least one aspect should be crystal clear: ML models, a common application of AI, have problems that responsible practitioners should likely attempt to remediate. ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{``When a Computer Program Keeps You in Jail''}.} ML models can perpetuate and exacerbate discrimination \cite{fairmlbook}, \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}. Though this manuscript makes no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved (even as singular entities, much less as complex intersectional phenomena), this text does propose some specific technical countermeasures, in the form of interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools, to address a subset of these vexing problems.
+Responsible artificial intelligence (AI) has been variously conceptualized as AI-based products or projects that use transparent technical mechanisms, that create appealable decisions or outcomes, that perform reliably and in a trustworthy manner over time, that exhibit minimal social discrimination, and that are designed by humans with diverse experiences, both in terms of demographics and professional backgrounds, i.e. ethics, social sciences, and technology.\footnote{See: \href{https://ec.europa.eu/jrc/communities/sites/jrccties/files/03_dignum_v.pdf}{Responsible Artificial Intelligence}, \href{https://www.accenture.com/_acnmedia/pdf-92/accenture-afs-responsible-ai.pdf}{\textit{Responsible AI: A Framework for Building Trust in Your AI Solutions}}, \href{https://www.pwc.com/us/en/services/consulting/analytics/artificial-intelligence/what-is-responsible-ai.html}{PwC's Responsible AI}, \href{https://ai.google/responsibilities/responsible-ai-practices/}{Responsible AI Practices}} Even if responsible AI feels like a somewhat broad and amorphous notion, at least one aspect should be crystal clear: ML models, a common application of AI, have problems that responsible practitioners should likely attempt to remediate. ML models can be inaccurate, noncompliant, and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{``When a Computer Program Keeps You in Jail''}.} ML models can perpetuate and exacerbate discrimination \cite{fairmlbook}, \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}. Though this manuscript makes no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved (even as singular entities, much less as complex intersectional phenomena), this text does propose some specific technical countermeasures, in the form of interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools, to address a subset of these vexing problems for high-stakes, human-centered, or regulated ML applications.\footnote{This text and associated software are not, and should not be construed as, legal advice or requirements for regulatory compliance.}\textsuperscript{,}\footnote{In the U.S., interpretable models, explanations, disparate impact testing, and the model documentation they enable may be required under the Civil Rights Acts of 1964 and 1991, the Americans with Disabilities Act, the Genetic Information Nondiscrimination Act, the Health Insurance Portability and Accountability Act, the Equal Credit Opportunity Act (ECOA), the Fair Credit Reporting Act (FCRA), the Fair Housing Act, Federal Reserve SR 11-7, and the European Union (E.U.) Greater Data Privacy Regulation (GDPR) Article 22 \cite{ff_interpretability}.}
 
 Section \ref{sec:m_and_m} describes methods and materials, including simulated and collected training datasets, interpretable and constrained model architectures, post-hoc explanations used to create an \textit{appealable} decision-making framework, tests for DI and other discrimination, and public and open source software resources. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models and post-hoc explanation and discrimination testing results are also presented for interpretable models. Section \ref{sec:disc} then discusses some nuances of the outlined modeling, explanation, and discrimination testing methods and results. Section \ref{sec:con} closes this manuscript with a brief outline of proposed additional steps to increase human trust and understanding in ML.
 
@@ -163,7 +163,7 @@ Detailed descriptions of notation, training data, ML models, post-hoc explanatio
 
 To provide a sense of accuracy differences, this manuscript compares the performance of more interpretable constrained ML models and less interpretable unconstrained ML models on simulated data and on collected mortgage data. The simulated data, based on the well-known Friedman datasets and with known feature importance and discrimination characteristics, is used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1991multivariate}. The mortgage data is sourced from the Home Mortgage Disclosure Act (HMDA) database.\footnote{See: \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}.} Post-hoc explanation and discrimination testing techniques are applied to constrained, interpretable models trained on the mortgage data to provide a more realistic template workflow for future users of similar methods and tools. 
 
-Because unconstrained ML models, like gradient boosting machines (GBMs) (e.g. \cite{friedman2001greedy}, \cite{esl}) and artificial neural networks (ANNs) (e.g. \cite{recht2011hogwild}, \cite{hinton2012improving}, \cite{sutskever2013importance}, \cite{zeiler2012adadelta}), can be difficult to understand, trust, and appeal, even after the application of post-hoc explanation techniques, explanation analysis and discrimination testing are applied only to the constrained interpretable ML models \cite{please_stop}, \cite{fair_washing}, \cite{scaffolding}. Here, MGBMs\footnote{As implemented in \href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}{\texttt{XGBoost}} or \href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}{\texttt{h2o}}.} and XNNs (\cite{wf_xnn} \cite{yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analysis. Presented explanation techniques include PD, ICE, and Shapley values \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. \textcolor{red}{Discussed discrimination testing methods and metrics include ... }. All outlined materials and methods are implemented in open source Python code, and are made available in the software resources associated with this text.  
+Because unconstrained ML models, like gradient boosting machines (GBMs) (e.g. \cite{friedman2001greedy}, \cite{esl}) and artificial neural networks (ANNs) (e.g. \cite{recht2011hogwild}, \cite{hinton2012improving}, \cite{sutskever2013importance}, \cite{zeiler2012adadelta}), can be difficult to understand, trust, and appeal, even after the application of post-hoc explanation techniques, explanation analysis and discrimination testing are applied only to the constrained interpretable ML models \cite{please_stop}, \cite{fair_washing}, \cite{scaffolding}. Here, MGBMs\footnote{As implemented in \href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}{\texttt{XGBoost}} or \href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}{\texttt{h2o}}.} and XNNs (\cite{wf_xnn} \cite{yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analysis. Presented explanation techniques include PD, ICE, and Shapley values \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. Discussed discrimination testing methods include measures of DI with marginal effects, the adverse impact ratio (AIR), and the standardized mean difference (SMD) \cite{feldman2015certifying}, \cite{cohen2013statistical}, \cite{cohen1992power}.\footnote{Part 1607 - Uniform Guidelines on Employee Selection Procedures (1978) \textsection 1607.4.} Accuracy and other confusion matrix metrics are also reported by demographic segment\cite{zafar2017fairness}. All outlined materials and methods are implemented in open source Python code, and are made available in the software resources associated with this text.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Notation}\label{ssec:not}
@@ -289,7 +289,7 @@ Each $\phi_j$ is a weighted combination of model scores, $g_x(\mathbf{x})$, with
 \end{aligned}
 \end{equation}
 
-Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP (SHapley Additive exPlanations) has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in this manuscript. Unfortunately, many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing the same model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific and personalized adverse action notices for automated ML-based decisions in highly-regulated settings such as credit lending \cite{bracke2019machine}.
+Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP (SHapley Additive exPlanations) has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in this manuscript. Unfortunately, many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing the same model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific and personalized adverse action notices for automated ML-based decisions in highly-regulated settings such as credit lending \cite{bracke2019machine}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Discrimination Metrics and Test Description}\label{ssec:di}
@@ -312,7 +312,7 @@ Results are laid out for the simulated and mortgage datasets. Accuracy is compar
 
 \begin{table}[H]
 \label{tab:sim_acc}
-\caption{Accuracy metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on simulated data.}
+\caption{Accuracy metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on simulated test data.}
 \centering
 %% \tablesize{} %% You can specify the fontsize here, e.g., \tablesize{\footnotesize}. If commented out \small will be used.
 \begin{tabular}{ccccc}
@@ -320,7 +320,7 @@ Results are laid out for the simulated and mortgage datasets. Accuracy is compar
 \textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
 \midrule
 $g^\text{GBM}$		& 				& 			& 				& \\
-$g^\text{MGBM}$	& 				& 			& 				& \\
+$g^\text{MGBM}$		& 				& 			& 				& \\
 $g^\text{ANN}$		& 				& 			& 				& \\
 $g^\text{XNN}$		& 				& 			& 				& \\
 \bottomrule
@@ -329,33 +329,46 @@ $g^\text{XNN}$		& 				& 			& 				& \\
 
 \subsubsection{Interpretability and Post-hoc Explanation Results}
 
-
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:sim_mgbm_glob}
-\caption{PD and ICE across deciles for the five most important input features for $g^\text{MGBM}(\mathbf{X})$ on the test partition of the simulated data.}
+\caption{Global Tree SHAP feature importance for $g^\text{MGBM}$ on the test partition of the simulated data.}
+\end{figure}   
+
+\begin{figure}[H]
+\centering
+%\includegraphics[width=8cm]{img/}
+\label{fig:sim_mgbm_glob_pdp_ice}
+\caption{PD and ICE across deciles for the three most important input features for $g^\text{MGBM}$ on the test partition of the simulated data.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:sim_mgbm_loc}
-\caption{Mean Tree SHAP values across quintiles for the five most important input features for $g^\text{MGBM}(\mathbf{X})$ on the test partition of the simulated data.}
+\caption{Mean Tree SHAP values across quintiles the three most important input features for $g^\text{MGBM}$ on the test partition of the simulated data.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:sim_xnn_glob}
-\caption{Ridge functions \textcolor{red}{and ICE across deciles} for the five most important input features for $g^\text{XNN}(\mathbf{X})$ on the test partition of the simulated data.}
+\caption{Global Deep SHAP feature importance for $g^\text{XNN}$ on the test partition of the simulated data.}
+\end{figure} 
+
+\begin{figure}[H]
+\centering
+%\includegraphics[width=8cm]{img/}
+\label{fig:sim_xnn_glob_pdp_ice}
+\caption{Ridge functions for the three most important input features for $g^\text{XNN}$ on the test partition of the simulated data.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
-\label{fig:fig:sim_xnn_glob}
-\caption{Mean \textcolor{red}{local feature importance} values across quintiles for the five most important input features for $g^\text{XNN}(\mathbf{X})$ on the test partition of the simulated data.}
+\label{fig:sim_xnn_loc}
+\caption{Mean Deep SHAP values across quintiles for the three most important input features for $g^\text{XNN}$ on the test partition of the simulated data.}
 \end{figure}  
 
 \subsubsection{Discrimination Testing Results}
@@ -367,7 +380,7 @@ $g^\text{XNN}$		& 				& 			& 				& \\
 
 \begin{table}[H]
 \label{tab:mort_acc}
-\caption{Accuracy metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on mortgage data.}
+\caption{Accuracy metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on mortgage test data.}
 \centering
 %% \tablesize{} %% You can specify the fontsize here, e.g., \tablesize{\footnotesize}. If commented out \small will be used.
 \begin{tabular}{ccccc}
@@ -375,7 +388,7 @@ $g^\text{XNN}$		& 				& 			& 				& \\
 \textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
 \midrule
 $g^\text{GBM}$		& 				& 			& 				& \\
-$g^\text{MGBM}$	& 				& 			& 				& \\
+$g^\text{MGBM}$		& 				& 			& 				& \\
 $g^\text{ANN}$		& 				& 			& 				& \\
 $g^\text{XNN}$		& 				& 			& 				& \\
 \bottomrule
@@ -388,29 +401,43 @@ $g^\text{XNN}$		& 				& 			& 				& \\
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:mort_mgbm_glob}
-\caption{PD and ICE across deciles for the five most important input features for $g^\text{MGBM}(\mathbf{X})$ on the test partition of the mortgage data.}
+\caption{Global Tree SHAP feature importance for $g^\text{MGBM}$ on the test partition of the simulated data.}
+\end{figure} 
+
+\begin{figure}[H]
+\centering
+%\includegraphics[width=8cm]{img/}
+\label{fig:mort_mgbm_glob_pdp_ice}
+\caption{PD and ICE across deciles for the three most important input features for $g^\text{MGBM}$ on the test partition of the mortgage data.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:mort_mgbm_loc}
-\caption{Mean Tree SHAP values across quintiles for the five most important input features for $g^\text{MGBM}(\mathbf{X})$ on the test partition of the mortgage data.}
+\caption{Mean Tree SHAP values across quintiles the three most important input features for $g^\text{MGBM}$ on the test partition of the mortgage data.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:mort_xnn_glob}
-\caption{Ridge functions \textcolor{red}{and ICE across deciles} for the five most important input features for $g^\text{XNN}(\mathbf{X})$ on the test partition of the mortgage data.}
+\caption{Global Deep SHAP feature importance for $g^\text{XNN}$ on the test partition of the mortgage data.}
+\end{figure} 
+
+\begin{figure}[H]
+\centering
+%\includegraphics[width=8cm]{img/}
+\label{fig:mort_xnn_glob_pdp_ice}
+\caption{Ridge functions for the three most important input features for $g^\text{XNN}$ on the test partition of the mortgage data.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 %\includegraphics[width=8cm]{img/}
-\label{fig:fig:mort_xnn_glob}
-\caption{Mean \textcolor{red}{local feature importance} values across quintiles for the five most important input features for $g^\text{XNN}(\mathbf{X})$ on the test partition of the mortgage data.}
-\end{figure}  
+\label{fig:mort_xnn_loc}
+\caption{Mean Deep SHAP values across quintiles for the three most important input features for $g^\text{XNN}$ on the test partition of the mortgage data.}
+\end{figure}
 
 \subsubsection{Discrimination Testing Results}
 
@@ -419,7 +446,7 @@ $g^\text{XNN}$		& 				& 			& 				& \\
 
 \subsection{The Burgeoning Python Ecosystem for Responsible Machine Learning}
 
-MGBM and XNN interpretable model architectures were selected for this text because they are straightforward variants of popular unconstrained ML models. If practitioners are working with GBM and ANN models, it should be relatively uncomplicated for them to evaluate the constrained versions of these models. The same can be said of Shapley values and \textcolor{red}{discrimination tests}. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines. While these approaches are promising responses to the black-box and discrimination problems in ML, they are just a small part of a burgeoning ecosystem of research and Python tools for responsible ML. Figure \ref{fig:blueprint} is a workflow blueprint that illustrates some of the additional steps that may be required to build a fully understandable and trustworthy machine learning system.\footnote{See: \texttt{\url{https://github.com/jphall663/hc_ml}} for details regarding the workflow in Figure \ref{fig:blueprint}.} While all the methods mentioned in Figure ~\ref{fig:blueprint} play an important role in increasing human trust and understanding of ML, a few pertinent references and Python resources are highlighted here as further reading. 
+MGBM and XNN interpretable model architectures were selected for this text because they are straightforward variants of popular unconstrained ML models. If practitioners are working with GBM and ANN models, it should be relatively uncomplicated for them to evaluate the constrained versions of these models. The same can be said of the presented explanation methods and discrimination tests. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines. While these approaches are promising responses to the black-box and discrimination problems in ML, they are just a small part of a burgeoning ecosystem of research and Python tools for responsible ML. Figure \ref{fig:blueprint} is a workflow blueprint that illustrates some of the additional steps that may be required to build a fully understandable and trustworthy machine learning system.\footnote{See: \texttt{\url{https://github.com/jphall663/hc_ml}} for details regarding the workflow in Figure \ref{fig:blueprint}.} While all the methods mentioned in Figure ~\ref{fig:blueprint} play an important role in increasing human trust and understanding of ML, a few pertinent references and Python resources are highlighted here as further reading. 
 
 \begin{figure}[H]
 \centering
@@ -431,14 +458,23 @@ MGBM and XNN interpretable model architectures were selected for this text becau
 Any discussion of interpretable ML models would be incomplete without references to the seminal work of the Rudin group at Duke University and EBM or GA\textsuperscript{2}M models, pioneered by researchers Microsoft and Cornell and led by Rich Caruana. In keeping with a major theme of this manuscript, models from these leading researchers and several other kinds of interpretable ML models are now available as open source Python packages. Among others, practitioners can now evaluate EBM in the \href{https://github.com/interpretml/interpret}{\texttt{interpret}} package, optimal sparse decision trees, GAMs in the \href{https://github.com/dswah/pyGAM}{\texttt{pyGAM}} package, a variant of Friedman's RuleFit  in the \href{https://github.com/scikit-learn-contrib/skope-rules}{\texttt{skope-rules}} package, monotonic calibrated interpolated lookup tables in \href{https://github.com/tensorflow/lattice}{\texttt{tensorflow/lattice}}, and ``this looks like that'' interpretable deep learning \cite{osdt}, \cite{rulefit}, \cite{lattice}, \cite{this_looks_like_that}.\footnote{Optimal sparse decision trees: \url{https://github.com/xiyanghu/OSDT}.}\textsuperscript{,}\footnote{``This looks like that'' interpretable deep learning: \url{https://github.com/cfchen-duke/ProtoPNet}.} Additional, relevant references and Python functionality includes:
 
 \begin{itemize}[leftmargin=*,labelsep=5.8mm]
+
 \item \textbf{Exploratory data visualization (EDA)}: \texttt{H2OAggregatorEstimator} in \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2oaggregatorestimator}{\texttt{h2o}} \cite{wilkinson2018visualizing}.
+
 \item \textbf{Sparse feature extraction}: \texttt{H2OGeneralizedLowRankEstimator} in \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogeneralizedlowrankestimator}{\texttt{h2o}} \cite{udell2016generalized}.
+
 \item \textbf{Privacy preprocessing and private models}: differential privacy for ML in \href{https://github.com/IBM/differential-privacy-library}{\texttt{diffprivlib}} \cite{diffprivlib}, \cite{ji2014differential}; private models in \href{https://github.com/tensorflow/privacy/}{\texttt{tensorflow/privacy}} \cite{pate}, \cite{abadi2016deep}.
-\item \textbf{Post-hoc explanation}: %\href{https://github.com/SeldonIO/alibi}{\texttt{alibi}} \href{https://github.com/SauceCat/PDPbox}{\texttt{PDPbox}} gradients
-\item \textbf{Discrimination testing}: in \href{https://github.com/dssg/aequitas}{\texttt{aequitas}} and \href{https://github.com/LASER-UMASS/Themis}{\texttt{Themis}}.
-\item \textbf{Discrimination remediation}: Reweighing, adversarial de-biasing, learning fair representations, and reject option classification in \href{http://aif360.mybluemix.net/}{\texttt{AIF360}} \cite{kamiran2012data}, \cite{zhang2018mitigating}, \cite{lfr}, \cite{kamiran2012decision}.
-\item \textbf{Model debugging}: %tensorflow stuff cleverhans, foolbox, SALib what-if
-\item \textbf{Model documentation}: Models cards \cite{model_cards}, e.g. \texttt{\url{https://github.com/openai/gpt-2}}, \texttt{\url{https://modelcards.withgoogle.com/object-detection}}. 
+
+\item \textbf{Post-hoc explanation}: structured data explanations with \href{https://github.com/SeldonIO/alibi}{\texttt{alibi}} and \href{https://github.com/SauceCat/PDPbox}{\texttt{PDPbox}}; image classification explanations with \href{https://github.com/marcoancona/DeepExplain}{\texttt{DeepExplainer}}; natural language explanations with \href{https://github.com/allenai/allennlp}{\texttt{allennlp}} \cite{wachter2017counterfactual}, \cite{grad_attr}, \cite{wallace2019allennlp}. 
+
+\item \textbf{Discrimination testing}: with \href{https://github.com/dssg/aequitas}{\texttt{aequitas}} and \href{https://github.com/LASER-UMASS/Themis}{\texttt{Themis}}.
+
+\item \textbf{Discrimination remediation}: Reweighing, adversarial de-biasing, learning fair representations, and reject option classification with \href{http://aif360.mybluemix.net/}{\texttt{AIF360}} \cite{kamiran2012data}, \cite{zhang2018mitigating}, \cite{lfr}, \cite{kamiran2012decision}.
+
+\item \textbf{Model debugging}: with \href{https://github.com/bethgelab/foolbox}{\texttt{foolbox}}, \href{https://github.com/SALib/SALib}{\texttt{SALib}}, \href{https://github.com/tensorflow/cleverhans}{\texttt{tensorflow/cleverhans}}, and \href{https://github.com/tensorflow/model-analysis}{\texttt{tensorflow/model-analysis}} \cite{rauber2017foolbox}, \cite{papernot2018cleverhans}, \cite{modeltracker}, \cite{papernot2018marauder}.
+
+\item \textbf{Model documentation}: models cards \cite{model_cards}, e.g. \texttt{\url{https://github.com/openai/gpt-2}}, \texttt{\url{https://modelcards.withgoogle.com/object-detection}}. 
+
 \end{itemize}
 
 \noindent See: \texttt{\url{https://github.com/jphall663/awesome-machine-learning-interpretability}} for a longer, curated list of related software packages and resources. 
@@ -449,23 +485,12 @@ Any discussion of interpretable ML models would be incomplete without references
 
 \subsection{Intersectionality of Interpretability, Fairness, and Security in ML}
 
-%Interpretable models are also tested for disparate impact and other unwanted sociological bias and viable bias mitigation strategies are discussed. While the focus of this paper is not ML security, best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}.  
-
-
-
-% somewhat aligned with United States regulation-mandated adverse action notices?
-
-% security
-
-% e.g. the fairwashing or scaffolding of biased models with ML explanations or the privacy harms of ML explanations \cite{fair_washing}, \cite{scaffolding}, \cite{shokri2019privacy})
-
-% Moreover, intersectional dangers at the nexus of sociological bias, opaque, and insecure decision-making systems: privacy dangers of explanations, fairwashing, local bias, proxies
-% accuracy, fairness, security are not static 
+The black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or the security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges e.g. the \textit{fairwashing} or \textit{scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{fair_washing}, \cite{scaffolding}, \cite{shokri2019privacy}.\footnote{See: \href{https://www.telegraph.co.uk/technology/2016/03/24/microsofts-teen-girl-ai-turns-into-a-hitler-loving-sex-robot-wit/}{\textit{Microsoft deletes 'teen girl' AI after it became a Hitler-loving sex robot within 24 hours}}.} (While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This is sometimes known as the \textit{transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation.\footnote{See: \href{https://www.theatlantic.com/technology/archive/2012/03/the-philosopher-whose-fingerprints-are-all-over-the-ftcs-new-approach-to-privacy/254365/}{\textit{The Philosopher Whose Fingerprints Are All Over the FTC's New Approach to Privacy}}.}\textsuperscript{,}\footnote{See: \textcolor{red}{Andrew Burt HBR article - upcoming.}}) Again, this text makes no claims that the opacity, discrimination, or security problems in ML have been solved, even treated as independent problems. Instead, it aims to highlight these issues as both singular entities and intersectional phenomena. Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and discrimination testing approaches as remedies to the black-box, and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data extraction, and membership inference attacks and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Of course, accuracy, discrimination, and security characteristics of a system can change over time, and simply testing for these problems at training time, as presented herein, is not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and security should be monitored in real-time and over time, as long as a model is deployed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}\label{sec:con}
 
-This text puts forward results on simulated data to provide a rough validation of constrained ML models, post-hoc explanation techniques, and discrimination testing methods. These same modeling, explanation, and discrimination testing approaches are then applied to more realistic mortgage data to provide an example of a responsible machine learning workflow. The discussed methodologies are solid steps toward interpretability, explanation, and minimal discrimination for ML decisions, which should ultimately enable increased fairness and logical appeal processes for ML decision subjects. Of course there is more to the responsible practice of ML than interpretable models, post-hoc explanation, and discrimination testing, even from a technology perspective, and this manuscript also points out numerous additional references and open source Python software assets that are available to researchers and practitioners today to increase human trust and understanding in ML systems. While the messy, complex, and human problems of racism, sexism, privacy violations, and cybercrime can probably not be solved by technology alone, this work and many others illustrate numerous ways for ML practitioners to become part of the solution to these problems, instead of perpetuating and exacerbating them. 
+This text puts forward results on simulated data to provide a rough validation of constrained ML models, post-hoc explanation techniques, and discrimination testing methods. These same modeling, explanation, and discrimination testing approaches are then applied to more realistic mortgage data to provide an example of a responsible machine learning workflow high-stakes, human-centered, or regulated ML applications. The discussed methodologies are solid steps toward interpretability, explanation, and minimal discrimination for ML decisions, which should ultimately enable increased fairness and logical appeal processes for ML decision subjects. Of course there is more to the responsible practice of ML than interpretable models, post-hoc explanation, and discrimination testing, even from a technology perspective, and this manuscript also points out numerous additional references and open source Python software assets that are available to researchers and practitioners today to increase human trust and understanding in ML systems. While the messy, complex, and human problems of racism, sexism, privacy violations, and cyber crime can probably not be solved by technology alone, this work and many others illustrate numerous ways for ML practitioners to become part of the solution to these problems, instead of perpetuating and exacerbating them. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{6pt} 
@@ -477,7 +502,7 @@ This text puts forward results on simulated data to provide a rough validation o
 \funding{This work received no external funding.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\acknowledgments{Wen Phan for work in formalizing notation.}
+\acknowledgments{Wen Phan for work in formalizing notation. \textcolor{red}{BLDS editor} for editing.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \conflictsofinterest{XNN was first made public by the corporate model validation team at Wells Fargo bank. Wells Fargo is a customer and investor of H2O.ai and a customer of BLDS, LLC.} 
