@@ -1,4 +1,3 @@
-
 """
 License
 Copyright 2019 Navdeep Gill, Patrick Hall, Kim Montgomery, Nick Schmidt
@@ -19,28 +18,11 @@ import os
 import h2o
 from h2o.estimators import H2OXGBoostEstimator
 
-
 h2o.init()
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
-
-
-# Function to get Shapley contribs
-def get_shapley(model, data, x):
-    # calculate SHAP values using function predict_contributions
-    contributions = model.predict_contributions(data[x])
-    print("First 5 rows of contributions:\n")
-    print(contributions.head(5))
-    # convert the H2O Frame to use with shap's visualization functions
-    contributions_matrix = contributions.as_data_frame().as_matrix()
-    # shap values are calculated for all features
-    shap_values = contributions_matrix[:, 0:len(x)]
-    # expected values is the last returned column
-    expected_value = contributions_matrix[:, len(x)-1].min()
-    return shap_values, expected_value
-
 
 if __name__ == '__main__':
 
@@ -95,13 +77,25 @@ if __name__ == '__main__':
     pred_train.rename(inplace=True, columns={'p0': 'prob_favorable',
                                              'predict': 'gets_unfavorable'})
     pred_train["gets_favorable"] = 1 - pred_train["gets_unfavorable"]
-    pred_train.drop(inplace=True, columns=['label', "gets_unfavorable"])
+    pred_train.drop(inplace=True, columns=[label, "gets_unfavorable"])
     print(pred_train.columns)
     print(pred_train.head())
 
-    favorable_treatment = np.array(pred_train["gets_favorable"]).reshape(-1, 1)
     score = np.array(pred_train["prob_favorable"]).reshape(-1, 1)
+    score_sd = np.std(score)
+    ave_score = (score * pred_train[pgcg_list]).sum() / pred_train[pgcg_list].sum()
+    ave_score.name = "Average Score"
+
+    favorable_treatment = np.array(pred_train["gets_favorable"]).reshape(-1, 1)
     gets_favorable = (favorable_treatment * pred_train[pgcg_list]).sum()
+
+    di_table = pd.DataFrame({'Total': pred_train[pgcg_list].sum(),
+                             'Total Favorable': (favorable_treatment * pred_train[pgcg_list]).sum()})
+    di_table["Percent Favorable"] = di_table["Total Favorable"] / di_table["Total"]
+    di_table.loc[di_table.index.isin(pg_list), "Marginal Effects"] = np.array(di_table.loc[di_table.index.isin(pg_list), "Percent Favorable"]) - np.array(di_table.loc[di_table.index.isin(cg_list), "Percent Favorable"])
+    di_table.loc[di_table.index.isin(pg_list), "Adverse Impact Ratio"] = np.array(di_table[pg_list]) / np.array(di_table[cg_list])
+
+
     gets_favorable.name = "Total Favorable"
     total = pred_train[pgcg_list].sum()
     total.name = "Total"
@@ -111,14 +105,19 @@ if __name__ == '__main__':
                                     index=pg_list, name="Total Control")
     pct_favorable_control_class = pd.Series(np.array(percent_favorable[cg_list]),
                                             index=pg_list, name="Percent Favorable Control")
+
     di_table = pd.concat([total,
                           total_control_class,
                           gets_favorable,
                           percent_favorable,
                           pct_favorable_control_class,
                           ], axis=1, sort=False)
-    di_table["Percent Difference"] = di_table["Percent Favorable Control"] - di_table["Percent Favorable Outcomes"]
-    di_table["Adverse Impact Ratio"] =  di_table["Percent Favorable Outcomes"] / di_table["Percent Favorable Control"]
+    di_table["Marginal Effects"] = di_table["Percent Favorable Control"] - di_table["Percent Favorable"]
+    di_table["Adverse Impact Ratio"] = di_table["Percent Favorable"] / di_table["Percent Favorable Control"]
+    di_table["Average Score"] = ave_score
+    di_table.loc[di_table.index.isin(pg_list), "Average Score Control"] = np.array(ave_score[cg_list])
+    di_table["Standardized Mean Difference"] = (di_table["Average Score"] - di_table["Average Score Control"]) / \
+                                               score_sd
     print(di_table)
 
     pred_train["intercept"] = 1
@@ -137,6 +136,7 @@ if __name__ == '__main__':
 
     import statsmodels.api as sm
     from statsmodels import robust
+
     race_logit = sm.GLM(endog=pred_train["gets_favorable"],
                         exog=pred_train[pg_list[:4] + ["intercept"]],
                         family=sm.families.Binomial(),
@@ -149,4 +149,3 @@ if __name__ == '__main__':
     print(race_logit_fit.summary())
     race_logit_fit.bse
     del race_logit_fit, race_logit
-
