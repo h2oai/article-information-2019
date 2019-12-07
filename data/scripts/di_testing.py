@@ -55,16 +55,17 @@ class DisparateImpactTesting(object):
 
     def adverse_impact_ratio(self,
                              data: pd.DataFrame,
-                             label: str,
+                             outcome: str,
                              ) -> pd.DataFrame:
         """
         This calculates the Adverse Impact Ratio (AIR), a standard measure of disparate impact used in
         U.S. legal and regulatory settings.  It is defined as:
             AIR = (% Protected Class Chosen) / (% Control Group Chosen)
 
-        :param data: Data containing the label and protected and control group information for each person
+        :param data: Data containing the outcome being measured
+         and protected and control group information for each person
 
-        :param label: The string name of the label
+        :param outcome: The string name of the label
 
         :return: A table containing the AIR and other summary statistics for each group.
         """
@@ -76,9 +77,9 @@ class DisparateImpactTesting(object):
         di_table.loc[di_table["class"].isin(self.pg_names), "Control Class"] = self.cg_names
 
         if self.lower_value_favorable:
-            outcome = (1 - data[label]).to_numpy().reshape(-1, 1)
+            outcome = (1 - data[outcome]).to_numpy().reshape(-1, 1)
         else:
-            outcome = data[label].to_numpy().reshape(-1, 1)
+            outcome = data[outcome].to_numpy().reshape(-1, 1)
 
         di_table["Total"] = data[self.pgcg_names].sum(axis=0)
         di_table["Total Favorable"] = np.sum(outcome * data[self.pgcg_names])
