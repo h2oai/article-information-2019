@@ -72,7 +72,7 @@ class DisparityTesting(object):
             data_cm = data[data[groupi].notna()]
             cm = metrics.confusion_matrix(y_true=data_cm[label], y_pred=data_cm[outcome], sample_weight=data_cm[groupi])
             tn, fp, fn, tp = cm.ravel()
-            res.loc[res["class"] == groupi, "total"] = (fp + tp + fn + fp)
+            res.loc[res["class"] == groupi, "total"] = (fp + tp + fn + tn)
             res.loc[res["class"] == groupi, "selected"] = (tp + fn)
             res.loc[res["class"] == groupi, "true_positive"] = tp
             res.loc[res["class"] == groupi, "true_negative"] = tn
@@ -112,7 +112,7 @@ class DisparityTesting(object):
                                                 "control_total", "control_selected"]]).reshape(2, 2))
             res.loc[res["class"] == fishi, "fishers_exact"] = fishers_values[0]
             res.loc[res["class"] == fishi, "p_value"] = fishers_values[1]
-        res.reset_index(inplace=True)
+        res.index = range(len(res))
         return res
 
     def continuous_disparity_measures(self,
@@ -145,5 +145,5 @@ class DisparityTesting(object):
             t_test = stats.ttest_ind(data.loc[data[pgi] == 1, predicted], data.loc[data[cgi] == 1, predicted])
             res.loc[res["class"] == pgi, "t_statistic"] = t_test[0]
             res.loc[res["class"] == pgi, "p_value"] = t_test[1]
-        res.reset_index(inplace=True)
+        res.index = range(len(res))
         return res
