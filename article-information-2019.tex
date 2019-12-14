@@ -346,9 +346,9 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=8cm]{img/}
+\includegraphics[width=15cm]{img/sim_mgbm_loc.png}
 \label{fig:sim_mgbm_loc}
-\caption{Mean Tree SHAP values across quintiles for the three most important input features for $g^\text{MGBM}$ on the simulated test data.}
+\caption{Tree SHAP values for three observations across selected percentiles of $g^\text{MGBM}(\mathbf{X})$ for the simulated test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
 \end{figure}   
 
 \begin{figure}[H]
@@ -369,7 +369,7 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:sim_xnn_loc}
-\caption{Mean Deep SHAP values across quintiles for the three most important input features for $g^\text{XNN}$ on the simulated test data.}
+\caption{Mean Deep SHAP values across quintiles for the three most important input features for $g^\text{XNN}$ on the simulated test data. Deep SHAP values are reported in the probability space, after the application of the logit link function.}
 \end{figure}  
 
 \subsubsection{Discrimination Testing Results}
