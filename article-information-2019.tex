@@ -320,7 +320,7 @@ Results are laid out for the simulated and mortgage datasets. Accuracy is compar
 \midrule
 $g^\text{GBM}$		& 0.775	& 0.857	& 0.474	& 0.394 \\
 $g^\text{MGBM}$	& 0.763	& 0.846	& 0.498	& 0.405 \\
-$g^\text{ANN}$		& 		& 		& 		& \\
+$g^\text{ANN}$		& 0.757	& 0.850	& 0.480 	& 0.398 \\
 $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \bottomrule
 \end{tabular}
@@ -330,16 +330,16 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=8cm]{img/}
+\includegraphics[width=8cm]{img/sim_mgbm_glob.png}
 \label{fig:sim_mgbm_glob}
-\caption{Global mean Tree SHAP feature importance for $g^\text{MGBM}$ on the simulated test data.}
+\caption{Global mean Tree SHAP feature importance for $g^\text{MGBM}$ on the simulated test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=8cm]{img/}
+\includegraphics[width=15cm]{img/sim_mgbm_glob_pdp_ice.png}
 \label{fig:sim_mgbm_glob_pdp_ice}
-\caption{PD, ICE across deciles, and histograms for the three most important input features for $g^\text{MGBM}$ on the simulated test data.}
+\caption{PD, ICE for 10 observations across selected percentiles of $g^\text{MGBM}(\mathbf{X})$, and histograms for the three most important input features of $g^\text{MGBM}$ on the simulated test data.}
 \end{figure}   
 
 % highlight monotonicity 
@@ -353,7 +353,7 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=8cm]{img/}
+\includegraphics[width=8cm]{img/sim_xnn_glob.png}
 \label{fig:sim_xnn_glob}
 \caption{Global mean Deep SHAP feature importance for $g^\text{XNN}$ on the simulated test data.}
 \end{figure} 
@@ -390,7 +390,7 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \midrule	
 $g^\text{GBM}$		& 0.795	& 0.828	& 0.252	& 0.276 \\
 $g^\text{MGBM}$	& 0.765	& 0.814	& 0.259	& 0.278 \\
-$g^\text{ANN}$		& 		& 		& 		& \\
+$g^\text{ANN}$		& 0.860	& 0.872 	& 0.230 	& 0.262 \\
 $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \bottomrule
 \end{tabular}
@@ -409,7 +409,7 @@ $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \centering
 \includegraphics[width=15cm]{img/mort_mgbm_glob_pdp_ice.png}
 \label{fig:mort_mgbm_glob_pdp_ice}
-\caption{PD, ICE across selected percentiles, and histograms for the three most important input features for $g^\text{MGBM}$ on the mortgage test data.}
+\caption{PD, ICE for 10 individuals across selected percentiles of $g^\text{MGBM}(\mathbf{X})$, and histograms for the three most important input features of $g^\text{MGBM}$ on the mortgage test data.}
 \end{figure}   
 
 % highlight monotonicity 
@@ -418,7 +418,7 @@ $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \centering
 \includegraphics[width=15cm]{img/mort_mgbm_loc.png}
 \label{fig:mort_mgbm_loc}
-\caption{Mean Tree SHAP values across quintiles for the three most important input features for $g^\text{MGBM}$ on the mortgage test data.}
+\caption{Tree SHAP values for three individuals across selected percentiles of $g^\text{MGBM}(\mathbf{X})$ for the mortgage test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
 \end{figure}   
 
 \begin{figure}[H]
@@ -432,7 +432,7 @@ $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \centering
 %\includegraphics[width=8cm]{img/}
 \label{fig:mort_xnn_glob_pdp_ice}
-\caption{Ridge functions for the three most important input features for $g^\text{XNN}$ on the mortgage test data.}
+\caption{Ridge functions for the three most important input features for $g^\text{XNN}$ on the mortgage test data. }
 \end{figure}   
 
 \begin{figure}[H]
