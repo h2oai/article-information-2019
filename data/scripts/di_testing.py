@@ -24,7 +24,7 @@ class DisparityTesting(object):
                  pg_names: Union[list, tuple],
                  cg_names: Union[list, tuple],
                  pgcg_names: Union[list, tuple],
-                 higher_score_favorable: bool = False):
+                 higher_score_favorable: bool):
         self.pg_names = pg_names
         self.cg_names = cg_names
         self.pgcg_names = pgcg_names
@@ -59,7 +59,7 @@ class DisparityTesting(object):
             res.loc[res["class"] == pi, "control"] = ci
 
         for groupi in self.pgcg_names:
-            data_cm = data[~np.isnan(data[groupi])]
+            data_cm = data[data[groupi].notna()]
             cm = metrics.confusion_matrix(y_true=data_cm[label], y_pred=data_cm[outcome], sample_weight=data_cm[groupi])
             tn, fp, fn, tp = cm.ravel()
             res.loc[res["class"] == groupi, "total"] = (fp + tp + fn + fp)
@@ -87,14 +87,42 @@ class DisparityTesting(object):
         res["favorable"] = res["selected"] if self.higher_score_favorable else res["total"] - res["selected"]
         res["percent_selected"] = res["selected"] / res["total"]
         res["percent_favorable"] = res["favorable"] / res["total"]
-        res.loc[res["class"].isin(self.pg_names), "air"] = np.array(res["percent_favorable"][self.pg_names]) / \
-                                                           np.array(res["percent_favorable"][self.cg_names])
+
         res.loc[res["class"].isin(self.pg_names), "control_total"] = np.array(res["total"][self.cg_names])
         res.loc[res["class"].isin(self.pg_names), "control_selected"] = np.array(res["selected"][self.cg_names])
+        res.loc[res["class"].isin(self.pg_names), "control_percent_favorable"] = \
+            np.array(res["percent_favorable"][self.cg_names])
+
+        res["marginal_difference"] = res["control_percent_favorable"] - res["percent_favorable"]
+        res["shortfall"] = res["marginal_difference"] * res["total"]
+        res["air"] = res["percent_favorable"] / res["control_percent_favorable"]
         for fishi in self.pg_names:
             fishers_values = stats.fisher_exact(np.array(
                 res.loc[res["class"] == fishi, ["total", "selected",
                                                 "control_total", "control_selected"]]).reshape(2, 2))
             res.loc[res["class"] == fishi, "fishers_value"] = fishers_values[0]
             res.loc[res["class"] == fishi, "fishers_p"] = fishers_values[1]
+        res.reset_index(inplace=True)
+        return res
+
+    def continuous_disparity_measures(self,
+                                      data: pd.DataFrame,
+                                      predicted: str):
+        res = pd.DataFrame({'class': self.pgcg_names}, index=self.pgcg_names)
+        for pi, ci in zip(self.pg_names, self.cg_names):
+            res.loc[res["class"] == pi, "control"] = ci
+
+        score = np.array(data[predicted]).reshape(-1, 1)
+        res["total"] = data[self.pgcg_names].sum(axis=0)
+        res["average"] = (score * data[self.pgcg_names]).sum(axis=0) / data[self.pgcg_names].sum(axis=0)
+        res.loc[res["class"].isin(self.pg_names), "control_average"] = np.array(res["average"][self.cg_names])
+        res["average_difference"] = res["average"] - res["control_average"]
+        res["standard_deviation"] = score.std()
+        res["smd"] = res["average_difference"] / res["standard_deviation"]
+
+        for pgi, cgi in zip(self.pg_names, self.cg_names):
+            t_test = stats.ttest_ind(data.loc[data[pgi] == 1, predicted], data.loc[data[cgi] == 1, predicted])
+            res.loc[res["class"] == pgi, "t_statistic"] = t_test[0]
+            res.loc[res["class"] == pgi, "p_value"] = t_test[1]
+        res.reset_index(inplace=True)
         return res
