@@ -21,12 +21,12 @@ pd.set_option('display.width', 200)
 
 hmda = pd.read_csv('./data/output/test_hmda_with_preds.csv')
 
-# pg_names = ["black", "amind", "hispanic", "female"]
-# cg_names = ["white", "white", "non_hispanic", "male"]
-# pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"]
-pg_names = ["black", "female"]
-cg_names = ["white", "male"]
-pgcg_names = ["black", "white", "female", "male"]
+pg_names = ["black", "amind", "hispanic", "female"]
+cg_names = ["white", "white", "non_hispanic", "male"]
+pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"]
+# pg_names = ["black", "female"]
+# cg_names = ["white", "male"]
+# pgcg_names = ["black", "white", "female", "male"]
 
 predicted = "high_priced_mgbm_pred"
 label = "high_priced"
@@ -43,10 +43,7 @@ disp_tests = DisparityTesting(pg_names=pg_names, cg_names=cg_names, pgcg_names=p
                               higher_score_favorable=higher_score_favorable)
 
 cat_outcomes = disp_tests.categorical_disparity_measures(data=data, label=label, outcome=outcome)
-
-cat_outcomes = cat_outcomes[['class', 'control', 'total', 'selected', 'false_positive_rate', 'false_negative_rate',
-                             'accuracy', 'percent_favorable', 'control_percent_favorable', 'marginal_difference',
-                             'shortfall', 'adverse_impact_ratio', 'fishers_exact', 'p_value']]
-
 cont_outcomes = disp_tests.continuous_disparity_measures(data=data, predicted=predicted)
+disparity_measures = DisparityTesting.create_combined_output(cat_outcomes=cat_outcomes, cont_outcomes=cont_outcomes)
+
 

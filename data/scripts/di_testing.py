@@ -111,8 +111,7 @@ class DisparityTesting(object):
                 res.loc[res["class"] == fishi, ["total", "selected",
                                                 "control_total", "control_selected"]]).reshape(2, 2))
             res.loc[res["class"] == fishi, "fishers_exact"] = fishers_values[0]
-            res.loc[res["class"] == fishi, "p_value"] = fishers_values[1]
-        res.index = range(len(res))
+            res.loc[res["class"] == fishi, "fishers_exact_p_value"] = fishers_values[1]
         return res
 
     def continuous_disparity_measures(self,
@@ -144,6 +143,27 @@ class DisparityTesting(object):
         for pgi, cgi in zip(self.pg_names, self.cg_names):
             t_test = stats.ttest_ind(data.loc[data[pgi] == 1, predicted], data.loc[data[cgi] == 1, predicted])
             res.loc[res["class"] == pgi, "t_statistic"] = t_test[0]
-            res.loc[res["class"] == pgi, "p_value"] = t_test[1]
-        res.index = range(len(res))
+            res.loc[res["class"] == pgi, "t_statistic_p_value"] = t_test[1]
         return res
+    
+    @staticmethod
+    def create_combined_output(cat_outcomes: pd.DataFrame,
+                               cont_outcomes: pd.DataFrame,
+                               cat_vars: Union[list, tuple] = ('class', 'control', 'total', 'false_positive_rate',
+                                                               'false_negative_rate', 'accuracy',
+                                                               'marginal_difference', 'shortfall',
+                                                               'adverse_impact_ratio', 'fishers_exact',
+                                                               'fishers_exact_p_value'),
+                               cont_vars: Union[list, tuple] = ('class', 'control', 'standardized_mean_difference', 
+                                                                't_statistic', 't_statistic_p_value'),
+                               ):
+
+        disp_outcomes = pd.merge(cat_outcomes[list(cat_vars)], cont_outcomes[list(cont_vars)], on=["class", "control"])
+        disp_outcomes["class"] = disp_outcomes["class"].str.replace("_", "-").str.title()
+        disp_outcomes["control"] = disp_outcomes["control"].str.replace("_", "-").str.title()
+
+        disp_outcomes.columns = disp_outcomes.columns.str.title()
+        for old, new in zip(["_", "P Value", "T Statistic"], [" ", "P-Value", "T-Statistic"]):
+            disp_outcomes.columns = disp_outcomes.columns.str.replace(old, new)
+        return disp_outcomes
+
