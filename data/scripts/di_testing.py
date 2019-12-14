@@ -1,4 +1,3 @@
-
 """
 License
 Copyright 2019 Navdeep Gill, Patrick Hall, Kim Montgomery, Nick Schmidt
@@ -16,15 +15,20 @@ DISCLAIMER: This notebook is not legal compliance advice.
 import pandas as pd
 import numpy as np
 from typing import Union
+from sklearn import metrics
+from scipy import stats
 
 
-class DisparateImpactTesting(object):
-    def __init__(self, lower_value_favorable: bool,
-                 pg_names: Union[list, tuple] = ('black', 'hispanic' 'asian', 'female', 'older'),
-                 cg_names: Union[list, tuple] = ('white', 'white', 'white', 'male', 'younger'),
-                 pgcg_names: Union[list, tuple] = ('black', 'hispanic', 'asian', 'white',
-                                                   'female', 'male', 'older', 'younger'),
-                 ):
+class DisparityTesting(object):
+    def __init__(self,
+                 pg_names: Union[list, tuple],
+                 cg_names: Union[list, tuple],
+                 pgcg_names: Union[list, tuple],
+                 higher_score_favorable: bool = False):
+        self.pg_names = pg_names
+        self.cg_names = cg_names
+        self.pgcg_names = pgcg_names
+        self.higher_score_favorable = higher_score_favorable
         """
         This class creates metrics used to test disparate impact.  See each method for detail on the
         particular calculations.
@@ -48,46 +52,49 @@ class DisparateImpactTesting(object):
         :param pgcg_names: This is a unique list of the values contained in pg_names and cg_names.  It is only used
         as a way to make the output more readable: it specifies the order in which each group is displayed.
         """
-        self.pg_names = pg_names
-        self.cg_names = cg_names
-        self.lower_value_favorable = lower_value_favorable
-        self.pgcg_names = pgcg_names
 
-    def adverse_impact_ratio(self,
-                             data: pd.DataFrame,
-                             outcome: str,
-                             ) -> pd.DataFrame:
-        """
-        This calculates the Adverse Impact Ratio (AIR), a standard measure of disparate impact used in
-        U.S. legal and regulatory settings.  It is defined as:
-            AIR = (% Protected Class Chosen) / (% Control Group Chosen)
+    def categorical_disparity_measures(self, data: pd.DataFrame, label: str, outcome: str):
+        res = pd.DataFrame({'class': self.pgcg_names}, index=self.pgcg_names)
+        for pi, ci in zip(self.pg_names, self.cg_names):
+            res.loc[res["class"] == pi, "control"] = ci
 
-        :param data: Data containing the outcome being measured
-         and protected and control group information for each person
+        for groupi in self.pgcg_names:
+            data_cm = data[~np.isnan(data[groupi])]
+            cm = metrics.confusion_matrix(y_true=data_cm[label], y_pred=data_cm[outcome], sample_weight=data_cm[groupi])
+            tn, fp, fn, tp = cm.ravel()
+            res.loc[res["class"] == groupi, "total"] = (fp + tp + fn + fp)
+            res.loc[res["class"] == groupi, "selected"] = (tp + fn)
+            res.loc[res["class"] == groupi, "true_positive"] = tp
+            res.loc[res["class"] == groupi, "true_negative"] = tn
+            res.loc[res["class"] == groupi, "false_positive"] = fp
+            res.loc[res["class"] == groupi, "false_negative"] = fn
+            res.loc[res["class"] == groupi, "false_positive_rate"] = fp / (fp + tn)
+            res.loc[res["class"] == groupi, "false_negative_rate"] = fn / (fn + tp)
+            res.loc[res["class"] == groupi, "accuracy"] = metrics.accuracy_score(y_true=data_cm[label],
+                                                                                 y_pred=data_cm[outcome],
+                                                                                 sample_weight=data_cm[groupi])
+            res.loc[res["class"] == groupi, "accuracy"] = metrics.accuracy_score(y_true=data_cm[label],
+                                                                                 y_pred=data_cm[outcome],
+                                                                                 sample_weight=data_cm[groupi])
 
-        :param outcome: The string name of the label
+            res.loc[res["class"] == groupi, "precision"] = metrics.precision_score(y_true=data_cm[label],
+                                                                                   y_pred=data_cm[outcome],
+                                                                                   sample_weight=data_cm[groupi])
+            res.loc[res["class"] == groupi, "recall"] = metrics.recall_score(y_true=data_cm[label],
+                                                                             y_pred=data_cm[outcome],
+                                                                             sample_weight=data_cm[groupi])
 
-        :return: A table containing the AIR and other summary statistics for each group.
-        """
-        di_cols = ["class", "Control Class", "Total", "Total Favorable", 
-                   "Percent Favorable", "Adverse Impact Ratio"]
-        di_table = pd.DataFrame(np.full(shape=(len(self.pgcg_names), len(di_cols)), fill_value=np.nan),
-                                index=self.pgcg_names, columns=di_cols)
-        di_table["class"] = self.pgcg_names
-        di_table.loc[di_table["class"].isin(self.pg_names), "Control Class"] = self.cg_names
-
-        if self.lower_value_favorable:
-            outcome = (1 - data[outcome]).to_numpy().reshape(-1, 1)
-        else:
-            outcome = data[outcome].to_numpy().reshape(-1, 1)
-
-        di_table["Total"] = data[self.pgcg_names].sum(axis=0)
-        di_table["Total Favorable"] = np.sum(outcome * data[self.pgcg_names])
-        di_table["Percent Favorable"] = di_table["Total Favorable"] / di_table["Total"]
-        for cgi, pgi in zip(self.pg_names, self.cg_names):
-            di_table.loc[di_table["class"] == cgi, "Adverse Impact Ratio"] = \
-                di_table.loc[di_table["class"] == cgi, "Percent Favorable"].to_numpy() / \
-                di_table.loc[di_table["class"] == pgi, "Percent Favorable"].to_numpy()
-
-        di_table.index = range(len(di_table))
-        return di_table
+        res["favorable"] = res["selected"] if self.higher_score_favorable else res["total"] - res["selected"]
+        res["percent_selected"] = res["selected"] / res["total"]
+        res["percent_favorable"] = res["favorable"] / res["total"]
+        res.loc[res["class"].isin(self.pg_names), "air"] = np.array(res["percent_favorable"][self.pg_names]) / \
+                                                           np.array(res["percent_favorable"][self.cg_names])
+        res.loc[res["class"].isin(self.pg_names), "control_total"] = np.array(res["total"][self.cg_names])
+        res.loc[res["class"].isin(self.pg_names), "control_selected"] = np.array(res["selected"][self.cg_names])
+        for fishi in self.pg_names:
+            fishers_values = stats.fisher_exact(np.array(
+                res.loc[res["class"] == fishi, ["total", "selected",
+                                                "control_total", "control_selected"]]).reshape(2, 2))
+            res.loc[res["class"] == fishi, "fishers_value"] = fishers_values[0]
+            res.loc[res["class"] == fishi, "fishers_p"] = fishers_values[1]
+        return res
