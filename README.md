@@ -35,8 +35,8 @@ $ jupyter notebook
 * For GBM and MGBM model building on the simulated dataset, see [simulated_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulated_preprocessing.ipynb)
 * For XNN model building on the lending dataset, see [xnn_notebook_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_hmda.ipynb)
 * For XNN model building on the simulated dataset, see [xnn_notebook_simulated_data.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_simulated_data.ipynb)
-* For ANN model building on the lending dataset, see [ann_hdma_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_hdma_code.py)
-* For ANN model building on the simulated dataset, see [ann_simulation_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_simulation_code.py)
+* For ANN model building on the lending dataset, see [ann_hdma_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/ann_hdma_code.py)
+* For ANN model building on the simulated dataset, see [ann_simulation_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/ann_simulation_code.py)
 
 #### Model Performance and Interpretation
 * For GBM and MGBM performance evaluation and interpretation on the lending dataset, see [perf_pdp_ice_shap_mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_hmda.ipynb)
