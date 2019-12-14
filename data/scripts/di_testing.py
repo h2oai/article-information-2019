@@ -30,10 +30,10 @@ class DisparityTesting(object):
         self.pgcg_names = pgcg_names
         self.higher_score_favorable = higher_score_favorable
         """
-        This class creates metrics used to test disparate impact.  See each method for detail on the
+        This class creates metrics used to test various metrics of fairness.  See each method for detail on the
         particular calculations.
 
-        :param lower_value_favorable: Boolean specifying whether a lower outcome value being tested
+        :param higher_score_favorable: Boolean specifying whether a higher outcome value being tested
         is considered favorable.  For example, a marketing offer would generally be associated with a score
         where a higher value is favorable.  For credit, generally a lower score is favorable, as the score
         is typically a measure of the probability of default.
@@ -54,6 +54,16 @@ class DisparityTesting(object):
         """
 
     def categorical_disparity_measures(self, data: pd.DataFrame, label: str, outcome: str):
+        """
+        This method calculates various disparity measures commonly used to assess fairness or discrimination in
+        processes that lead to categorical outcomes.
+
+        @param data: This is the Pandas data frame that contains the protected and control group information for
+        each observation being tested, along with the given categorical outcome and the true outcome
+        @param label: name of the true outcome variable in the data frame
+        @param outcome: name of the given categorical outcome in the data frame
+        @return: Pandas data frame containing a number of disparity measures
+        """
         res = pd.DataFrame({'class': self.pgcg_names}, index=self.pgcg_names)
         for pi, ci in zip(self.pg_names, self.cg_names):
             res.loc[res["class"] == pi, "control"] = ci
@@ -95,19 +105,30 @@ class DisparityTesting(object):
 
         res["marginal_difference"] = res["control_percent_favorable"] - res["percent_favorable"]
         res["shortfall"] = res["marginal_difference"] * res["total"]
-        res["air"] = res["percent_favorable"] / res["control_percent_favorable"]
+        res["adverse_impact_ratio"] = res["percent_favorable"] / res["control_percent_favorable"]
         for fishi in self.pg_names:
             fishers_values = stats.fisher_exact(np.array(
                 res.loc[res["class"] == fishi, ["total", "selected",
                                                 "control_total", "control_selected"]]).reshape(2, 2))
-            res.loc[res["class"] == fishi, "fishers_value"] = fishers_values[0]
-            res.loc[res["class"] == fishi, "fishers_p"] = fishers_values[1]
+            res.loc[res["class"] == fishi, "fishers_exact"] = fishers_values[0]
+            res.loc[res["class"] == fishi, "p_value"] = fishers_values[1]
         res.reset_index(inplace=True)
         return res
 
     def continuous_disparity_measures(self,
                                       data: pd.DataFrame,
                                       predicted: str):
+        """
+        This method calculates various disparity measures commonly used to assess fairness or discrimination in
+        processes that lead to continuous outcomes (e.g., pricing of loans, or probability measures that are used
+        in optimizations).
+
+        @param data: This is the Pandas data frame that contains the protected and control group information for
+        each observation being tested, along with the given categorical outcome and the true outcome
+        @param predicted: name of the model's predicted outcome (typically, though not always, continuous) in the
+        data frame.
+        @return: Pandas data frame containing a number of disparity measures
+        """
         res = pd.DataFrame({'class': self.pgcg_names}, index=self.pgcg_names)
         for pi, ci in zip(self.pg_names, self.cg_names):
             res.loc[res["class"] == pi, "control"] = ci
@@ -118,7 +139,7 @@ class DisparityTesting(object):
         res.loc[res["class"].isin(self.pg_names), "control_average"] = np.array(res["average"][self.cg_names])
         res["average_difference"] = res["average"] - res["control_average"]
         res["standard_deviation"] = score.std()
-        res["smd"] = res["average_difference"] / res["standard_deviation"]
+        res["standardized_mean_difference"] = res["average_difference"] / res["standard_deviation"]
 
         for pgi, cgi in zip(self.pg_names, self.cg_names):
             t_test = stats.ttest_ind(data.loc[data[pgi] == 1, predicted], data.loc[data[cgi] == 1, predicted])

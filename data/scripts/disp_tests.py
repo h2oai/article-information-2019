@@ -27,7 +27,7 @@ pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "
 predicted = "high_priced_mgbm_pred"
 label = "high_priced"
 outcome = "decision"
-pred_prob_for_outcome = 0.20
+pred_prob_for_outcome = 0.30
 higher_score_favorable = False
 
 hmda[outcome] = np.where(hmda[predicted] >= pred_prob_for_outcome, 1, 0)
@@ -39,6 +39,7 @@ disp_tests = DisparityTesting(pg_names=pg_names, cg_names=cg_names, pgcg_names=p
                               higher_score_favorable=higher_score_favorable)
 
 cat_outcomes = disp_tests.categorical_disparity_measures(data=data, label=label, outcome=outcome)
+print(cat_outcomes)
 cont_outcomes = disp_tests.continuous_disparity_measures(data=data, predicted=predicted)
 
 
