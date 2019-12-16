@@ -19,7 +19,6 @@ from scipy import stats
 from data.scripts import di_testing
 from sklearn.metrics import roc_auc_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 pd.set_option('display.max_rows', 500)
