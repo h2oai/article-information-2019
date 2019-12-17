@@ -19,7 +19,7 @@ from notebooks.scripts.disparity_measurement import DisparityTesting
 pd.set_option('display.max_columns', 30)
 pd.set_option('display.width', 200)
 
-hmda = pd.read_csv('./data/output/test_hmda_with_preds.csv')
+file_name = './data/output/test_hmda_with_preds.csv'
 
 pg_names = ["black", "amind", "hispanic", "female"]
 cg_names = ["white", "white", "non_hispanic", "male"]
@@ -29,16 +29,16 @@ pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "
 # pgcg_names = ["black", "white", "female", "male"]
 
 predicted = "high_priced_mgbm_pred"
-apredicted = "high_priced_gbm_pred"
+predicted = "high_priced_gbm_pred"
 label = "high_priced"
 outcome = "decision"
-pred_prob_for_outcome = 0.30
+probability_for_classification = 0.30
 higher_score_favorable = False
 
-hmda[outcome] = np.where(hmda[predicted] >= pred_prob_for_outcome, 1, 0)
-hmda[outcome].value_counts(normalize=True)
 
-data = hmda[["Id", predicted, outcome, label] + pgcg_names]
+data = pd.read_csv(file_name)
+data[outcome] = np.where(data[predicted] >= probability_for_classification, 1, 0)
+data[outcome].value_counts(normalize=True)
 
 disp_tests = DisparityTesting(pg_names=pg_names, cg_names=cg_names, pgcg_names=pgcg_names,
                               higher_score_favorable=higher_score_favorable)
