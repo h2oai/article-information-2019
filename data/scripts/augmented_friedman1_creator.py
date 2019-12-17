@@ -16,7 +16,6 @@ import numpy as np
 import pandas as pd
 from sklearn import datasets as ds
 from scipy import stats
-from data.scripts import di_testing
 from sklearn.metrics import roc_auc_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -159,13 +158,6 @@ if __name__ == "__main__":
           f'{X.groupby(by="prot_class2")["outcome"].mean()}')
     print(f'\nCross-tab of Protected Class 2 Status and Outcome:\n'
           f'{pd.crosstab(X["prot_class2"], X["outcome"], margins=True, dropna=False, normalize=False)}')
-
-    di_analysis = di_testing.DisparateImpactTesting(lower_value_favorable=False,
-                                                    pg_names=["prot_class1", "prot_class2"],
-                                                    cg_names=["ctrl_class1", "ctrl_class2"],
-                                                    pgcg_names=["prot_class1", "ctrl_class1",
-                                                                "prot_class2", "ctrl_class2"])
-    print(f'\nResults of DI Analysis:\n{di_analysis.adverse_impact_ratio(data=X, label="outcome")}')
 
     X = X[['outcome', "outcome_no_noise"] +
           ["fried" + str(x) for x in range(1, 6)] +
