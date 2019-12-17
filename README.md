@@ -25,8 +25,8 @@ $ jupyter notebook
 ### Current Results:
 
 #### Data Summaries and Preprocessing
-* For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb)
-* For lending data, see [article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb)
+* For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb) (WIP)
+* For lending data, see [article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb) (WIP)
 * For lending data preprocessing, see [hmda_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/hmda_preprocessing.ipynb)
 * For simulated data preprocessing, see [simulated_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulated_preprocessing.ipynb)
 
