@@ -14,19 +14,19 @@ DISCLAIMER: This notebook is not legal compliance advice.
 
 import pandas as pd
 import numpy as np
-from notebooks.scripts.di_testing import DisparityTesting
+from notebooks.scripts.disparity_measurement import DisparityTesting
 
 pd.set_option('display.max_columns', 30)
 pd.set_option('display.width', 200)
 
 hmda = pd.read_csv('./data/output/test_hmda_with_preds.csv')
 
-# pg_names = ["black", "amind", "hispanic", "female"]
-# cg_names = ["white", "white", "non_hispanic", "male"]
-# pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"]
-pg_names = ["black", "female"]
-cg_names = ["white", "male"]
-pgcg_names = ["black", "white", "female", "male"]
+pg_names = ["black", "amind", "hispanic", "female"]
+cg_names = ["white", "white", "non_hispanic", "male"]
+pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"]
+# pg_names = ["black", "female"]
+# cg_names = ["white", "male"]
+# pgcg_names = ["black", "white", "female", "male"]
 
 predicted = "high_priced_mgbm_pred"
 apredicted = "high_priced_gbm_pred"
