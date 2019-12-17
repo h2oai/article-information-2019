@@ -143,7 +143,7 @@ $^{3}$ \quad George Washington University}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Responsible artificial intelligence (AI) has been variously conceptualized as AI-based products or projects that use transparent technical mechanisms, that create appealable decisions or outcomes, that perform reliably and in a trustworthy manner over time, that exhibit minimal social discrimination, and that are designed by humans with diverse experiences, both in terms of demographics and professional backgrounds, i.e. ethics, social sciences, and technology.\footnote{See: \href{https://ec.europa.eu/jrc/communities/sites/jrccties/files/03_dignum_v.pdf}{Responsible Artificial Intelligence}, \href{https://www.accenture.com/_acnmedia/pdf-92/accenture-afs-responsible-ai.pdf}{\textit{Responsible AI: A Framework for Building Trust in Your AI Solutions}}, \href{https://www.pwc.com/us/en/services/consulting/analytics/artificial-intelligence/what-is-responsible-ai.html}{PwC's Responsible AI}, \href{https://ai.google/responsibilities/responsible-ai-practices/}{Responsible AI Practices}} Although responsible AI is today a somewhat broad and amorphous notion, at least one aspect is crystal clear: ML models, a common application of AI, have problems that responsible practitioners should likely attempt to remediate. ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{\textit{When a Computer Program Keeps You in Jail}}.} ML models can perpetuate and exacerbate discrimination \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}, \cite{shokri2019privacy}. While this manuscript makes no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved (even as singular entities, much less as complex intersectional phenomena), Sections \ref{sec:m_and_m}, \ref{sec:res}, and \ref{sec:disc} do propose some specific technical countermeasures, in the form of interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools, to address a subset of these vexing problems for high-stakes, human-centered, or regulated ML applications.\footnote{This text and associated software are not, and should not be construed as, legal advice or requirements for regulatory compliance.}\textsuperscript{,}\footnote{In the United States (US), interpretable models, explanations, DI testing, and the model documentation they enable may be required under the Civil Rights Acts of 1964 and 1991, the Americans with Disabilities Act, the Genetic Information Nondiscrimination Act, the Health Insurance Portability and Accountability Act, the Equal Credit Opportunity Act (ECOA), the Fair Credit Reporting Act (FCRA), the Fair Housing Act, Federal Reserve SR 11-7, and the European Union (EU) Greater Data Privacy Regulation (GDPR) Article 22 \cite{ff_interpretability}.}
+Responsible artificial intelligence (AI) has been variously conceptualized as AI-based products or projects that use transparent technical mechanisms, that create appealable decisions or outcomes, that perform reliably and in a trustworthy manner over time, that exhibit minimal social discrimination, and that are designed by humans with diverse experiences, both in terms of demographics and professional backgrounds, i.e. ethics, social sciences, and technology.\footnote{See: \href{https://ec.europa.eu/jrc/communities/sites/jrccties/files/03_dignum_v.pdf}{Responsible Artificial Intelligence}, \href{https://www.accenture.com/_acnmedia/pdf-92/accenture-afs-responsible-ai.pdf}{\textit{Responsible AI: A Framework for Building Trust in Your AI Solutions}}, \href{https://www.pwc.com/us/en/services/consulting/analytics/artificial-intelligence/what-is-responsible-ai.html}{PwC's Responsible AI}, \href{https://ai.google/responsibilities/responsible-ai-practices/}{Responsible AI Practices}.} Although responsible AI is today a somewhat broad and amorphous notion, at least one aspect is crystal clear: ML models, a common application of AI, have problems that responsible practitioners should likely attempt to remediate. ML models can be inaccurate and unappealable black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop}.\footnote{See: \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}{\textit{When a Computer Program Keeps You in Jail}}.} ML models can perpetuate and exacerbate discrimination \cite{feldman2015certifying}, \cite{dwork2012fairness}, \cite{gender_shades}.  ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml}, \cite{model_stealing}, \cite{membership_inference}, \cite{shokri2019privacy}. While this manuscript makes no claim that the interdependent issues of opaqueness, discrimination, or security vulnerabilities in ML have been solved (even as singular entities, much less as complex intersectional phenomena), Sections \ref{sec:m_and_m}, \ref{sec:res}, and \ref{sec:disc} do propose some specific technical countermeasures, in the form of interpretable models, post-hoc explanation, and DI and discrimination testing implemented in widely available, free, and open source Python tools, to address a subset of these vexing problems for high-stakes, human-centered, or regulated ML applications.\footnote{This text and associated software are not, and should not be construed as, legal advice or requirements for regulatory compliance.}\textsuperscript{,}\footnote{In the United States (US), interpretable models, explanations, DI testing, and the model documentation they enable may be required under the Civil Rights Acts of 1964 and 1991, the Americans with Disabilities Act, the Genetic Information Nondiscrimination Act, the Health Insurance Portability and Accountability Act, the Equal Credit Opportunity Act (ECOA), the Fair Credit Reporting Act (FCRA), the Fair Housing Act, Federal Reserve SR 11-7, and the European Union (EU) Greater Data Privacy Regulation (GDPR) Article 22 \cite{ff_interpretability}.}
 
 Section \ref{sec:m_and_m} describes methods and materials, including simulated and collected training datasets, interpretable and constrained model architectures, post-hoc explanations used to create an appealable decision-making framework, tests for DI and other social discrimination, and public and open source software resources. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models and post-hoc explanation and discrimination testing results are also presented for interpretable models. Section \ref{sec:disc} then discusses some nuances of the outlined modeling, explanation, and discrimination testing methods and results. Section \ref{sec:con} closes this manuscript with a brief summary of the outlined methods, materials, results, and discussion.
 
@@ -300,7 +300,7 @@ Shapley values can be estimated in different ways, many of which are intractable
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Software Resources}\label{ssec:soft}
 
-Python code to reproduce discussed results is available at: \texttt{\url{https://github.com/h2oai/article-information-2019}}. The primary Python packages employed are: \href{https://numpy.org/}{\texttt{numpy}} and \href{https://pandas.pydata.org/}{\texttt{pandas}} for data manipulation, \href{https://github.com/h2oai/h2o-3}{\texttt{h2o}}, \href{https://keras.io/}{\texttt{keras}}, \href{https://github.com/slundberg/shap}{\texttt{shap}}, and \href{https://www.tensorflow.org/}{\texttt{tensorflow}} for modeling, explanation, and discrimination testing, and \href{https://matplotlib.org/}{\texttt{matplotlib}} and \href{https://seaborn.pydata.org/}{\texttt{seaborn}} for plotting. 
+Python code to reproduce discussed results is available at: \texttt{\url{https://github.com/h2oai/article-information-2019}}. The primary Python packages employed are: \href{https://numpy.org/}{\texttt{numpy}} and \href{https://pandas.pydata.org/}{\texttt{pandas}} for data manipulation, \href{https://github.com/h2oai/h2o-3}{\texttt{h2o}}, \href{https://keras.io/}{\texttt{keras}}, \href{https://github.com/slundberg/shap}{\texttt{shap}}, and \href{https://www.tensorflow.org/}{\texttt{tensorflow}} for modeling, explanation, and discrimination testing, and \href{https://matplotlib.org/}{\texttt{matplotlib}} for plotting. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:res}
@@ -310,11 +310,14 @@ Results are laid out for the simulated and mortgage datasets. Accuracy is compar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulated Data Results}
 
-\subsubsection{Constrained vs. Unconstrained Model Fit Assessment}
+Results for constrained models on the simulated data are displayed in Subsections \ref{ssec: c_v_uc_sim} -- \ref{ssec:dis_sim}. {Model fit is roughly uniform for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. Given that little or no trade-off is required in terms of model to fit to use the constrained models, intrinsic interpretability, post-hoc explainability, and discrimination are explored further for the $g^\text{MGBM}$ and $g^\text{XNN}$ models. \textcolor{red}{...}
+
+\subsubsection{Constrained vs. Unconstrained Model Fit Assessment}\label{ssec: c_v_uc_sim}
+
+Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. $g^\text{GBM}$ exhibits the best performance, but all models give relatively similar fit results. Interpretability and explainability benefits of the constrained models appear to come at little cost to overall model performance, or in the case of $g^\text{ANN}$ and $g^\text{XNN}$, no cost at all. $g^\text{XNN}$ actually shows slightly better fit than $g^\text{ANN}$ across accuracy, area under the curve (AUC), logloss, and root mean squared error (RMSE). Accuracy is measured at the best F1 threshold for each model.
 
 \begin{table}[H]
-\label{tab:sim_acc}
-\caption{Fit metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. Accuracy is measured at the best F1 threshold for each model.}
+\caption{Fit metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data.}
 \centering
 \begin{tabular}{ccccc}
 \toprule
@@ -325,10 +328,13 @@ $g^\text{MGBM}$	& 0.763	& 0.846	& 0.498	& 0.405 \\
 $g^\text{ANN}$		& 0.757	& 0.850	& 0.480 	& 0.398 \\
 $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \bottomrule
+\label{tab:sim_acc}
 \end{tabular}
 \end{table}
 
 \subsubsection{Interpretability and Post-hoc Explanation Results}
+
+Tree SHAP values are reported in the margin space, prior to the application of the logit link function, and the numeric value of the reported values can interpreted as the absolute mean impact of each $X_j$ on $g^\text{MGBM}$ in the margin space. 
 
 \begin{figure}[H]
 \centering
@@ -337,14 +343,15 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \caption{Global mean Tree SHAP feature importance for $g^\text{MGBM}$ on the simulated test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
 \end{figure}   
 
+% highlight monotonicity 
+PD and ICE are always displayed with a histogram herein to highlight any sparse regions in an input feature's domain. Because most ML models will always issue a prediction on any datum with a correct schema, it's crucial to consider whether a given model learned enough about an observation to make an accurate prediction. Viewing PD and ICE along with a histogram is a convenient method to visually assess whether a prediction is reasonable and based on sufficient training data.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{img/sim_mgbm_glob_pdp_ice.png}
 \label{fig:sim_mgbm_glob_pdp_ice}
 \caption{PD, ICE for 10 observations across selected percentiles of $g^\text{MGBM}(\mathbf{X})$, and histograms for the three most important input features of $g^\text{MGBM}$ on the simulated test data.}
 \end{figure}   
-
-% highlight monotonicity 
 
 \begin{figure}[H]
 \centering
@@ -353,12 +360,16 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \caption{Tree SHAP values for three observations across selected percentiles of $g^\text{MGBM}(\mathbf{X})$ for the simulated test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
 \end{figure}   
 
+Deep SHAP values are reported in the probability space, after the application of the logit link function. They are also calculated from the projection layer of $g^\text{XNN}$.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=8cm]{img/sim_xnn_glob.png}
 \label{fig:sim_xnn_glob}
 \caption{Global mean Deep SHAP feature importance for $g^\text{XNN}$ on the simulated test data.}
 \end{figure} 
+
+Ridge functions are reminiscent of basis functions ...
 
 \begin{figure}[H]
 \centering
@@ -374,16 +385,19 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \caption{Deep SHAP values for three observations across selected percentiles of  $g^\text{XNN}$ on the simulated test data. Deep SHAP values are reported in the probability space, after the application of the logit link function.}
 \end{figure}  
 
-\subsubsection{Discrimination Testing Results}
+\subsubsection{Discrimination Testing Results}\label{ssec:dis_sim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Mortgage Data Results}
 
-\subsubsection{Constrained vs. Unconstrained Model Fit Assessment}
+Results for the mortgage data are presented in Subsections \ref{ssec: c_v_uc_mort} -- \ref{ssec:dis_mort}.  $g^\text{ANN}$ and $g^\text{XNN}$ outperform $g^\text{GBM}$ and $g^\text{MGBM}$ on the mortgage data, but as in Subsection \ref{ssec: c_v_uc_sim} the constrained variants of both model architectures do not show large differences in model performance with respect to unconstrained variants. Assuming that small fit differences do not outweigh the need for intrinsic model interpretability and post-hoc explainability in high-stakes, human-centered, or regulated applications, $g^\text{MGBM}$ and $g^\text{XNN}$ interpretability and post-hoc explainability results are presented along with discrimination testing results. For $g^\text{MGBM}$, intrinsic interpretability is evaluated with PD and ICE plots of monotonic prediction behavior, and post-hoc Shapley explanation analysis is used to create global and local feature importance. For $g^\text{XNN}$ intrinsic interpretability manifests as plots of sparse weights in the projection and output layers and plots of subnetwork ridge functions. Post-hoc Shapley explanation techniques are also used to generate global and local feature importance for $g^\text{XNN}$. Both $g^\text{MGBM}$ and $g^\text{XNN}$ are evaluated for discrimination using AIR, SMD, and other measures.
+
+\subsubsection{Constrained vs. Unconstrained Model Fit Assessment}\label{ssec: c_v_uc_mort}
+
+Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably outperform $g^\text{GBM}$ and $g^\text{MGBM}$ on the mortgage data. This is partially due to the need to present direct comparisons between post-hoc explainability results and the data preprocessing required to use neural networks and tensorflow, e.g. numerical encoding of categorical features and missing values. This preprocessing appears to hamstring some of the tree-based models' inherent capabilities. $g^\text{GBM}$ models trained on non-encoded data with missing values repeatedly produced AUC values of $\sim0.81$. 
 
 \begin{table}[H]
-\label{tab:mort_acc}
-\caption{Fit metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the mortgage test data. Accuracy is measured at the best F1 threshold for each model.}
+\caption{Fit metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the mortgage test data.}
 \centering
 %% \tablesize{} %% You can specify the fontsize here, e.g., \tablesize{\footnotesize}. If commented out \small will be used.
 \begin{tabular}{ccccc}
@@ -395,56 +409,76 @@ $g^\text{MGBM}$	& 0.765	& 0.814	& 0.259	& 0.278 \\
 $g^\text{ANN}$		& 0.865	& 0.871 	& 0.231 	& 0.262 \\
 $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \bottomrule
+\label{tab:mort_acc}
 \end{tabular}
 \end{table}
 
+\noindent Regardless of the fit differences between the two families of hypothesis models, the difference between the fit of constrained and unconstrained variants within the two types of models is small for the GBMs and negligible for ANNs, 3\% and < 1\% worse fit respectively, averaged across the metrics reported in Table \ref{tab:mort_acc}. 
+
 \subsubsection{Interpretability and Post-hoc Explanation Results}
+
+Global feature importance for $g^\text{MGBM}$ on the mortgage test data is reported in Figure \ref{fig:mort_mgbm_glob}. $g^\text{MGBM}$ places high importance on LTV ratio, perhaps too high, and also weighs DTI ratio, property value, loan amount, and introductory rate period heavily in many of its predictions. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=8cm]{img/mort_mgbm_glob.png}
+\caption{Global mean absolute Tree SHAP feature importance for $g^\text{MGBM}$ on the mortgage test data.}
 \label{fig:mort_mgbm_glob}
-\caption{Global mean absolute Tree SHAP feature importance for $g^\text{MGBM}$ on the mortgage test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
 \end{figure} 
+
+\noindent The potential over-emphasis of LTV ratio, and the de-emphasis of income, likely an important feature from a business perspective, and the encoded flag features may contribute to the decreased performance of $g^\text{MGBM}$ as compared to $g^\text{XNN}$.
+
+Domain knowledge was used to positively constrain DTI ratio and LTV ratio and to negatively constrain income and the loan term flag under $g^\text{MGBM}$. The monotonicity constraints for DTI ratio and LTV ratio are confirmed on average and across selected percentiles of $g^\text{MGBM}(\mathbf{X})$ in Figure \ref{fig:mort_mgbm_glob_pdp_ice}. Both DTI ratio and LTV ratio display positive monotonic behavior at all selected percentiles using ICE and on average with PD. Because PD curves generally follow the patterns of the ICE curves for both features, it's also likely that no strong interactions are at play for DTI ratio and LTV ratio under $g^\text{MGBM}$. Of course, the monotonicity constraints themselves can dampen the effects of non-monotonic interactions under $g^\text{MGBM}$, even if they do exist in the data, and this rigidity could also play a role in the performance differences between $g^\text{MGBM}$ and $g^\text{XNN}$, which does allow for the modeling of non-monotonic interactions. DTI ratio and LTV ratio also appear to have sparse regions in their univariate distributions. The monotonicity constraints likely play to the advantage of $g^\text{MGBM}$ in this regard, as the $g^\text{MGBM}$ appears to carry reasonable predictions learned from more populated regions of both features' distributions into the more sparsely populated regions. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{img/mort_mgbm_glob_pdp_ice.png}
-\label{fig:mort_mgbm_glob_pdp_ice}
 \caption{PD, ICE for 10 individuals across selected percentiles of $g^\text{MGBM}(\mathbf{X})$, and histograms for the three most important input features of $g^\text{MGBM}$ on the mortgage test data.}
+\label{fig:mort_mgbm_glob_pdp_ice}
 \end{figure}   
 
-% highlight monotonicity 
+Figure \ref{fig:mort_mgbm_glob_pdp_ice} also displays PD and ICE for the unconstrained feature property value. Unlike DTI ratio and LTV ratio, PD for property value does not always follow the patterns of ICE curves. While PD shows monotonically increasing prediction behavior on average, apparently influenced by the extremely large predictions of high $g^{\text{MGBM}}(\mathbf{X})$ percentile individuals, ICE curves for individuals at the 40\textsuperscript{th} percentile of $g^{\text{MGBM}}(\mathbf{X})$ exhibit different prediction behavior with respect to property value. Some individuals at these lower percentiles display monotonically decreasing prediction behavior while others appear to show fluctuating prediction behavior. This divergence of PD and ICE can be indicative of an interaction affecting property value under $g^{\text{MGBM}}(\mathbf{X})$ \cite{ice_plots}. Drivers of this interaction can often be elucidated using surrogate decision trees \cite{art_and_sci}. Property value is strongly right-skewed, with little data regarding high-value property from which $g^{\text{MGBM}}(\mathbf{X})$ can learn. For the most part, reasonable predictions do appear to be carried from more densely populated regions to more sparsely populated regions. However, prediction fluctuations at lower $g^{\text{MGBM}}(\mathbf{X})$ percentiles are visible, and in a sparse region of property value. Such fluctuations can be caused by local data characteristics, modeled local interactions, or unfortunately, by overfitting or leakage of strong non-monotonic signal from important constrained features into the modeled behavior of non-constrained features. 
+
+Local Tree SHAP values are displayed for selected individuals at the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} percentiles of $g^{\text{MGBM}}(\mathbf{X})$ in Figure \ref{fig:mort_mgbm_loc}. The selected individuals show the expected progression of mostly negative Shapley values at the 10\textsuperscript{th} percentile, a mixture of positive and negative Shapley values at the 50\textsuperscript{th} percentile, mostly positive Shapley values the 90\textsuperscript{th} percentile, and with globally important features driving most local model decisions. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{img/mort_mgbm_loc.png}
-\label{fig:mort_mgbm_loc}
 \caption{Tree SHAP values for three individuals across selected percentiles of $g^\text{MGBM}(\mathbf{X})$ for the mortgage test data. Tree SHAP values are reported in the margin space, prior to the application of the logit link function.}
+\label{fig:mort_mgbm_loc}
 \end{figure}   
+
+\noindent The deeper significance of Figure \ref{fig:mort_mgbm_loc} lies in the fact that any $g^\text{MGBM}(\mathbf{x})$ prediction can be accurately summarized in this manner, which is generally important for enabling appeal of model decisions, and specifically important in the context of lending, where applicable regulations often require lenders to provide consumer-specific reasons for denying credit to individuals. (In the US, applicable regulations are typically ECOA and FCRA, and the consumer-specific reasons are commonly known as adverse actions codes.)
+
+Figure \ref{fig:mort_xnn_glob} displays global feature importance for $g^\text{XNN}$ on the mortgage test data. $g^\text{XNN}$ distributes importance more evenly across business drivers and puts strong emphasis on the no introductory rate period flag feature than does $g^\text{MGBM}$. Like $g^\text{MGBM}$, $g^\text{XNN}$ puts little emphasis on the other flag features.  
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=8cm]{img/mort_xnn_glob.png}
+\caption{Global mean absolute Deep SHAP feature importance for $g^\text{XNN}$ on the mortgage test data.}
 \label{fig:mort_xnn_glob}
-\caption{Global mean absolute Deep SHAP feature importance for $g^\text{XNN}$ on the mortgage test data. Deep SHAP values are reported in the probability space, after the application of the logit link function.}
 \end{figure} 
+
+\noindent As compared to $g^\text{MGBM}$, $g^\text{XNN}$ assigns higher importance to property value and loan amount, and lower importance on LTV ratio, and the income related features, DTI ratio and income. 
+
+The capability of $g^\text{XNN}$ to model nonlinear phenomenon and high-degree interactions is on display in Figure \ref{fig:mort_xnn_glob_ridge}. \ref{fig:mort_xnn_glob_ridge} \textbf{A} presents the sparse weights of the $g^\text{XNN}$ output layer, in which subnetworks 0,1,2,3,5,8, and 9 have large magnitude weights and subnetworks 4,6, and 7 have small to near-zero magnitude weights.
+
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=16cm]{img/mort_xnn_glob_ridge.png}
-\label{fig:mort_xnn_glob_pdp_ice}
 \caption{\textbf{A.} Output layer weights, \textbf{B.} corresponding ridge functions, and \textbf{C.} corresponding projection layer weights for $g^\text{XNN}$ on the mortgage test data.}
+\label{fig:mort_xnn_glob_ridge}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=15cm]{img/mort_xnn_loc.png}
 \label{fig:mort_xnn_loc}
-\caption{Deep SHAP values for three individuals across selected percentiles of $g^\text{XNN}$ on the mortgage test data. Deep SHAP values are reported in the probability space, after the application of the logit link function.}
+\caption{Deep SHAP values for three individuals across selected percentiles of $g^\text{XNN}$ on the mortgage test data.}
 \end{figure}
 
-\subsubsection{Discrimination Testing Results}
+\subsubsection{Discrimination Testing Results}\label{ssec:dis_mort}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}\label{sec:disc}
@@ -524,6 +558,7 @@ AIR - adverse impact ratio,
 ALE - accumulated local effect,
 ANN -- artificial neural network, 
 APR -- annual percentage rate,
+AUC -- area under the curve,
 CFPB -- Consumer Financial Protection Bureau,
 DI -- disparate impact, 
 DTI -- debt to income,
@@ -535,12 +570,13 @@ FCRA -- Fair Credit Reporting Act,
 GAM -- generalized additive model, 
 GBM -- gradient boosting machine, 
 GDPR - General Data Protection Regulation,
-HMDA -- Home Mortgage Disclosure Act
+HMDA -- Home Mortgage Disclosure Act,
 ICE -- individual conditional expectation, 
 LTV -- loan to value,
 MGBM -- monotonic gradient boosting machine, 
 ML -- machine learning, 
 PD -- partial dependence, 
+RMSE -- root mean square error,
 SGD -- stochastic gradient descent, 
 SHAP -- Shapley additive explanation,
 SMD - standardized mean difference,
