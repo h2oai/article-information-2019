@@ -204,7 +204,9 @@ To facilitate descriptions of data and modeling, explanatory, and discrimination
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Mortgage Data}\label{ssec:mort_data}
 
-The training data contains 33 total features and 144,000 rows, each representing a unique loan, and a fold identifier to ensure consistent 5-fold cross-validation accuracy and error measurements across different types of models. Consumer finance and loan descriptors are used for training. Demographic features are not used in model training. The mortgage test data contains 36,000 loans.
+The US HMDA, originally enacted in 1975, requires many financial institutions that originate mortgage products to provide certain data about many of the mortgage-related products that they either deny or originate on an annual basis. This information is first provided to the Consumer Financial Protection Bureau (CFPB), which subsequently releases some of the data to the public. Regulators often use HMDA data to, ``...show whether lenders are serving the housing needs of their communities; they give public officials information that helps them make decisions and policies; and they shed light on lending patterns that could be discriminatory.''\textsuperscript{5} In addition to regulatory use, public advocacy groups use these data for similar purposes, and the lenders themselves use the data to benchmark their community outreach relative to their peers.  The publicly available data that the CFPB releases includes information such as the lender, the type of loan, loan amount, loan to value (LTV) ratio, debt to income (DTI) ratio, and other important financial descriptors. The data also include information on each borrower and co-borrower’s race, ethnicity, gender, and age. Because the data includes information on these protected class characteristics, certain metrics that can be indicative of discrimination in lending can be calculated directly using the HDMA data. 
+
+The mortgage dataset analyzed here is a random sample of 100,000 consumer-anonymized loans from the HDMA database, separated into a training set and a test set. These loans are a subset of all originated mortgage loans in the 2018 HMDA data that were chosen to represent a relatively comparable group of consumer mortgages.  A selection of features is used to predict whether a loan is \textit{high-priced}, i.e. the annual percentage rate (APR) charged was 150 basis points (1.5\%) or more above a survey-based estimate of other similar loans offered around the time of the given loan.  While lenders would almost certainly use more information than the selected features to determine whether to offer and originate a high-priced loan, the selected input features (LTV ratio, DTI ratio, property value, loan amount, introductory interest rate, customer income, etc.) are likely to be some of the most influential factors that a lender would consider.  Ultimately, the HMDA data represent the most comprehensive source of data on highly-regulated mortgage lending that is publicly available, which makes it an ideal dataset to use for the types of analyses set forth in this text.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Monotonic Gradient Boosting Machine}\label{ssec:mgbm}
@@ -362,7 +364,7 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \centering
 \includegraphics[width=17cm]{img/sim_xnn_glob_ridge.png}
 \label{fig:sim_xnn_glob_ridge}
-\caption{Ridge functions for the three most important input features for $g^\text{XNN}$ on the simulated test data.}
+\caption{\textbf{A.} Output layer weights, \textbf{B.} corresponding ridge functions, and \textbf{C.} corresponding projection layer weights for $g^\text{XNN}$ on the simulated test data.}
 \end{figure}   
 
 \begin{figure}[H]
@@ -390,7 +392,7 @@ $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \midrule	
 $g^\text{GBM}$		& 0.795	& 0.828	& 0.252	& 0.276 \\
 $g^\text{MGBM}$	& 0.765	& 0.814	& 0.259	& 0.278 \\
-$g^\text{ANN}$		& 0.860	& 0.872 	& 0.230 	& 0.262 \\
+$g^\text{ANN}$		& 0.865	& 0.871 	& 0.231 	& 0.262 \\
 $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \bottomrule
 \end{tabular}
@@ -430,9 +432,9 @@ $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=8cm]{img/}
+\includegraphics[width=16cm]{img/mort_xnn_glob_ridge.png}
 \label{fig:mort_xnn_glob_pdp_ice}
-\caption{Ridge functions for the three most important input features for $g^\text{XNN}$ on the mortgage test data. }
+\caption{\textbf{A.} Output layer weights, \textbf{B.} corresponding ridge functions, and \textbf{C.} corresponding projection layer weights for $g^\text{XNN}$ on the mortgage test data.}
 \end{figure}   
 
 \begin{figure}[H]
@@ -521,7 +523,10 @@ AI -- artificial intelligence,
 AIR - adverse impact ratio,
 ALE - accumulated local effect,
 ANN -- artificial neural network, 
+APR -- annual percentage rate,
+CFPB -- Consumer Financial Protection Bureau,
 DI -- disparate impact, 
+DTI -- debt to income,
 EBM or GA\textsuperscript{2}M -- explainable boosting machine, i.e. variants GAMs that consider two-way interactions and may incorporate boosting into training, 
 ECOA - Equal Credit Opportunity Act,
 EDA -- exploratory data analysis,
@@ -532,6 +537,7 @@ GBM -- gradient boosting machine,
 GDPR - General Data Protection Regulation,
 HMDA -- Home Mortgage Disclosure Act
 ICE -- individual conditional expectation, 
+LTV -- loan to value,
 MGBM -- monotonic gradient boosting machine, 
 ML -- machine learning, 
 PD -- partial dependence, 
