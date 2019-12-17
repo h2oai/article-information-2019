@@ -14,7 +14,7 @@ DISCLAIMER: This notebook is not legal compliance advice.
 
 import pandas as pd
 import numpy as np
-from data.scripts.di_testing import DisparityTesting
+from notebooks.scripts.di_testing import DisparityTesting
 
 pd.set_option('display.max_columns', 30)
 pd.set_option('display.width', 200)
@@ -29,6 +29,7 @@ cg_names = ["white", "male"]
 pgcg_names = ["black", "white", "female", "male"]
 
 predicted = "high_priced_mgbm_pred"
+apredicted = "high_priced_gbm_pred"
 label = "high_priced"
 outcome = "decision"
 pred_prob_for_outcome = 0.30
