@@ -324,15 +324,15 @@ Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$
 \textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
 \midrule
 $g^\text{GBM}$		& 0.775	& 0.857	& 0.474	& 0.394 \\
-$g^\text{MGBM}$	& 0.763	& 0.846	& 0.498	& 0.405 \\
-$g^\text{ANN}$		& 0.757	& 0.850	& 0.480 	& 0.398 \\
+$g^\text{MGBM}$		& 0.763	& 0.846	& 0.498	& 0.405 \\
+$g^\text{ANN}$		& 0.757	& 0.850	& 0.480 & 0.398 \\
 $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \bottomrule
 \label{tab:sim_acc}
 \end{tabular}
 \end{table}
 
-\subsubsection{Interpretability and Post-hoc Explanation Results}
+\subsubsection{Interpretability and Post-hoc Explanation Results}\label{ssec:int_ex_sim}
 
 Tree SHAP values are reported in the margin space, prior to the application of the logit link function, and the numeric value of the reported values can interpreted as the absolute mean impact of each $X_j$ on $g^\text{MGBM}$ in the margin space. 
 
@@ -390,9 +390,9 @@ Ridge functions are reminiscent of basis functions ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Mortgage Data Results}
 
-Results for the mortgage data are presented in Subsections \ref{ssec: c_v_uc_mort} -- \ref{ssec:dis_mort}.  $g^\text{ANN}$ and $g^\text{XNN}$ outperform $g^\text{GBM}$ and $g^\text{MGBM}$ on the mortgage data, but as in Subsection \ref{ssec: c_v_uc_sim} the constrained variants of both model architectures do not show large differences in model performance with respect to unconstrained variants. Assuming that small fit differences do not outweigh the need for intrinsic model interpretability and post-hoc explainability in high-stakes, human-centered, or regulated applications, $g^\text{MGBM}$ and $g^\text{XNN}$ interpretability and post-hoc explainability results are presented along with discrimination testing results. For $g^\text{MGBM}$, intrinsic interpretability is evaluated with PD and ICE plots of monotonic prediction behavior, and post-hoc Shapley explanation analysis is used to create global and local feature importance. For $g^\text{XNN}$ intrinsic interpretability manifests as plots of sparse weights in the projection and output layers and plots of subnetwork ridge functions. Post-hoc Shapley explanation techniques are also used to generate global and local feature importance for $g^\text{XNN}$. Both $g^\text{MGBM}$ and $g^\text{XNN}$ are evaluated for discrimination using AIR, SMD, and other measures.
+Results for the mortgage data are presented in Subsections \ref{ssec:c_v_uc_mort} -- \ref{ssec:dis_mort}.  $g^\text{ANN}$ and $g^\text{XNN}$ outperform $g^\text{GBM}$ and $g^\text{MGBM}$ on the mortgage data, but as in Subsection \ref{ssec: c_v_uc_sim} the constrained variants of both model architectures do not show large differences in model performance with respect to unconstrained variants. Assuming that small fit differences do not outweigh the need for intrinsic model interpretability and post-hoc explainability in high-stakes, human-centered, or regulated applications, $g^\text{MGBM}$ and $g^\text{XNN}$ interpretability and post-hoc explainability results are presented along with discrimination testing results. For $g^\text{MGBM}$, intrinsic interpretability is evaluated with PD and ICE plots of monotonic prediction behavior, and post-hoc Shapley explanation analysis is used to create global and local feature importance. For $g^\text{XNN}$ intrinsic interpretability manifests as plots of sparse weights in the projection and output layers and plots of subnetwork ridge functions. Post-hoc Shapley explanation techniques are also used to generate global and local feature importance for $g^\text{XNN}$. Both $g^\text{MGBM}$ and $g^\text{XNN}$ are evaluated for discrimination using AIR, SMD, and other measures.
 
-\subsubsection{Constrained vs. Unconstrained Model Fit Assessment}\label{ssec: c_v_uc_mort}
+\subsubsection{Constrained vs. Unconstrained Model Fit Assessment}\label{ssec:c_v_uc_mort}
 
 Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably outperform $g^\text{GBM}$ and $g^\text{MGBM}$ on the mortgage data. This is partially due to the need to present direct comparisons between post-hoc explainability results and the data preprocessing required to use neural networks and tensorflow, e.g. numerical encoding of categorical features and missing values. This preprocessing appears to hamstring some of the tree-based models' inherent capabilities. $g^\text{GBM}$ models trained on non-encoded data with missing values repeatedly produced AUC values of $\sim0.81$. 
 
@@ -405,8 +405,8 @@ Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably
 \textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
 \midrule	
 $g^\text{GBM}$		& 0.795	& 0.828	& 0.252	& 0.276 \\
-$g^\text{MGBM}$	& 0.765	& 0.814	& 0.259	& 0.278 \\
-$g^\text{ANN}$		& 0.865	& 0.871 	& 0.231 	& 0.262 \\
+$g^\text{MGBM}$		& 0.765	& 0.814	& 0.259	& 0.278 \\
+$g^\text{ANN}$		& 0.865	& 0.871	& 0.231	& 0.262 \\
 $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \bottomrule
 \label{tab:mort_acc}
@@ -461,8 +461,7 @@ Figure \ref{fig:mort_xnn_glob} displays global feature importance for $g^\text{X
 
 \noindent As compared to $g^\text{MGBM}$, $g^\text{XNN}$ assigns higher importance to property value and loan amount, and lower importance on LTV ratio, and the income related features, DTI ratio and income. 
 
-The capability of $g^\text{XNN}$ to model nonlinear phenomenon and high-degree interactions is on display in Figure \ref{fig:mort_xnn_glob_ridge}. \ref{fig:mort_xnn_glob_ridge} \textbf{A} presents the sparse weights of the $g^\text{XNN}$ output layer, in which subnetworks 0,1,2,3,5,8, and 9 have large magnitude weights and subnetworks 4,6, and 7 have small to near-zero magnitude weights.
-
+The capability of $g^\text{XNN}$ to model nonlinear phenomenon and high-degree interactions, and to do so in an interpretable manner, is on display in Figure \ref{fig:mort_xnn_glob_ridge}. \ref{fig:mort_xnn_glob_ridge} \textbf{A} presents the sparse weights of the $g^\text{XNN}$ output layer, in which subnetworks zero, one, two, three, five, eight and nine have large magnitude weights and subnetworks four, six, and seven have small or near-zero magnitude weights. Distinctive ridge functions that feed into those weights are highlighted in \ref{fig:mort_xnn_glob_ridge} \textbf{B}. As in the subsection \ref{ssec:int_ex_sim}, ridge function plots vary with the output of the corresponding projection layer hidden unit in \ref{fig:mort_xnn_glob_ridge} \textbf{C}, and ridge functions appear to be simple functional forms that the output layer learns to combine to generate accurate predictions.  
 
 \begin{figure}[H]
 \centering
@@ -470,6 +469,8 @@ The capability of $g^\text{XNN}$ to model nonlinear phenomenon and high-degree i
 \caption{\textbf{A.} Output layer weights, \textbf{B.} corresponding ridge functions, and \textbf{C.} corresponding projection layer weights for $g^\text{XNN}$ on the mortgage test data.}
 \label{fig:mort_xnn_glob_ridge}
 \end{figure}   
+
+\noindent \ref{fig:mort_xnn_glob_ridge} \textbf{C} displays the sparse weights of the projection layers associated with each subnetwork ridge function. For instance, subnetwork three has large weights for LTV ratio, introductory rate period flag, and introductory rate period, whereas subnetwork nine is nearly completely dominated by the weight for income. In combination, Figure \ref{fig:mort_xnn_glob_ridge} \textbf{A} presents the weighting of the ridge functions in the $g^\text{XNN}$ output, \ref{fig:mort_xnn_glob_ridge} \textbf{B} displays the ridge functions that feed directly into those output weights, and \ref{fig:mort_xnn_glob_ridge} \textbf{C} describes the weighting of multiple input features into those ridge functions.
 
 \begin{figure}[H]
 \centering
