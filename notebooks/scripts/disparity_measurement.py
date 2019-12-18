@@ -73,7 +73,7 @@ class DisparityTesting(object):
             cm = metrics.confusion_matrix(y_true=data_cm[label], y_pred=data_cm[outcome], sample_weight=data_cm[groupi])
             tn, fp, fn, tp = cm.ravel()
             res.loc[res["class"] == groupi, "total"] = (fp + tp + fn + tn)
-            res.loc[res["class"] == groupi, "selected"] = (tp + fn)
+            res.loc[res["class"] == groupi, "selected"] = (tp + fp)
             res.loc[res["class"] == groupi, "true_positive"] = tp
             res.loc[res["class"] == groupi, "true_negative"] = tn
             res.loc[res["class"] == groupi, "false_positive"] = fp
@@ -103,8 +103,8 @@ class DisparityTesting(object):
         res.loc[res["class"].isin(self.pg_names), "control_percent_favorable"] = \
             np.array(res["percent_favorable"][self.cg_names])
 
-        res["marginal_difference"] = res["control_percent_favorable"] - res["percent_favorable"]
-        res["shortfall"] = res["marginal_difference"] * res["total"]
+        res["marginal_effects"] = res["control_percent_favorable"] - res["percent_favorable"]
+        res["shortfall"] = res["marginal_effects"] * res["total"]
         res["adverse_impact_ratio"] = res["percent_favorable"] / res["control_percent_favorable"]
         for fishi in self.pg_names:
             fishers_values = stats.fisher_exact(np.array(
@@ -151,7 +151,7 @@ class DisparityTesting(object):
                                cont_outcomes: pd.DataFrame,
                                cat_vars: Union[list, tuple] = ('class', 'control', 'total', 'false_positive_rate',
                                                                'false_negative_rate', 'accuracy',
-                                                               'marginal_difference', 'shortfall',
+                                                               'marginal_effects', 'shortfall',
                                                                'adverse_impact_ratio', 'fishers_exact',
                                                                'fishers_exact_p_value'),
                                cont_vars: Union[list, tuple] = ('class', 'control', 'standardized_mean_difference', 

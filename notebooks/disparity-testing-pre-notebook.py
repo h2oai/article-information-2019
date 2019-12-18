@@ -31,13 +31,13 @@ def disparity_tables(file_name,
                      model_name,
                      ):
     data = pd.read_csv(file_name)
-    data["outcome"] = np.where(data[predicted] >= probability_for_classification, 1, 0)
-    data["outcome"].value_counts(normalize=True)
+    data["classification_outcome"] = np.where(data[predicted] >= probability_for_classification, 1, 0)
+    data["classification_outcome"].value_counts(normalize=True)
 
     disp_tests = DisparityTesting(pg_names=pg_names, cg_names=cg_names, pgcg_names=pgcg_names,
                                   higher_score_favorable=higher_score_favorable)
 
-    cat_outcomes = disp_tests.categorical_disparity_measures(data=data, label=label, outcome="outcome")
+    cat_outcomes = disp_tests.categorical_disparity_measures(data=data, label=label, outcome="classification_outcome")
     cont_outcomes = disp_tests.continuous_disparity_measures(data=data, predicted=predicted)
     disparity_measures = DisparityTesting.create_combined_output(cat_outcomes=cat_outcomes, cont_outcomes=cont_outcomes)
     disparity_measures["Model Name"] = model_name
@@ -47,36 +47,66 @@ def disparity_tables(file_name,
 
 if __name__ == '__main__':
 
-    pg_names = ["black", "amind", "hispanic", "female"]
-    cg_names = ["white", "white", "non_hispanic", "male"]
-    pgcg_names = ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"]
-    # pg_names = ["black", "female"]
-    # cg_names = ["white", "male"]
-    # pgcg_names = ["black", "white", "female", "male"]
-    static_params = {"pg_names": ["black", "amind", "hispanic", "female"],
-                     "cg_names": ["white", "white", "non_hispanic", "male"],
-                     "pgcg_names": ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"],
-                     "higher_score_favorable": False,
-                     }
+    hmda_static_params = {"pg_names": ["black", "female"],
+                          "cg_names": ["white", "male"],
+                          "pgcg_names": ["black", "white", "female", "male"],
+                          # "pg_names": ["black", "amind", "hispanic", "female"],
+                          # "cg_names": ["white", "white", "non_hispanic", "male"],
+                          # "pgcg_names": ["black", "amind", "white", "hispanic", "non_hispanic", "female", "male"],
+                          "higher_score_favorable": False,
+                          "probability_for_classification": 0.20,
+                          }
 
-    # dynamic_params = {'model_name': "Monotonic GBM", 'file_name': './data/output/test_hmda_with_preds.csv',
-    #                   'predicted': "high_priced_mgbm_pred", 'label': "high_priced",
-    #                   'probability_for_classification': 0.30}
-    hmda_mgbm = disparity_tables(**static_params,
-                                 model_name="Monotonic GBM",
+    hmda_mgbm = disparity_tables(**hmda_static_params,
+                                 model_name="Monotonic GBM - HMDA Data",
                                  file_name='./data/output/test_hmda_with_preds.csv',
                                  predicted="high_priced_mgbm_pred",
                                  label="high_priced",
-                                 probability_for_classification=0.30)
+                                 )
 
-    hmda_gbm = disparity_tables(**static_params,
-                                model_name="Standard GBM",
+    hmda_gbm = disparity_tables(**hmda_static_params,
+                                model_name="Standard GBM - HMDA Data",
                                 file_name='./data/output/test_hmda_with_preds.csv',
                                 predicted="high_priced_gbm_pred",
                                 label="high_priced",
-                                probability_for_classification=0.30)
+                                )
 
-    disparity_results = pd.concat([hmda_mgbm,
-                                   hmda_gbm], axis=0)
+    simu_static_params = {"pg_names": ["prot_class1", "prot_class2"],
+                          "cg_names": ["ctrl_class1", "ctrl_class2"],
+                          "pgcg_names": ["prot_class1", "ctrl_class1", "prot_class2", "ctrl_class2"],
+                          "higher_score_favorable": True,
+                          "probability_for_classification": 0.60,
+                          }
+    simu_mgbm = disparity_tables(**simu_static_params,
+                                 model_name="Monotonic GBM - Simulated Data",
+                                 file_name='./data/output/test_sim_with_preds.csv',
+                                 predicted="outcome_mgbm_pred",
+                                 label="outcome",
+                                 )
 
-    disparity_results.to_csv('./data/output/gbm_disparity_results.csv')
+    simu_gbm = disparity_tables(**simu_static_params,
+                                model_name="XNN - Simulated Data",
+                                file_name='./data/output/test_sim_with_preds.csv',
+                                predicted="outcome_gbm_pred",
+                                label="outcome",
+                                )
+
+    hmda_xnn = disparity_tables(**hmda_static_params,
+                                model_name="XNN - HMDA Data",
+                                file_name="./data/xnn_output/hmda_results/Results_hmda_test_set.csv",
+                                predicted="probability",
+                                label="high_priced",
+                                )
+
+    simu_xnn = disparity_tables(**simu_static_params,
+                                model_name="Standard GBM - Simulated Data",
+                                file_name="./data/xnn_output/simulation_results/Results_simulation_test_set.csv",
+                                predicted="probability",
+                                label="outcome",
+                                )
+
+    disparity_results = pd.concat([hmda_gbm, hmda_mgbm, hmda_xnn,
+                                   simu_gbm, simu_mgbm, simu_xnn], axis=0)
+    pc_only = disparity_results.loc[disparity_results["Class"] == "Black"]
+
+    disparity_results.to_csv('./data/output/disparity_results_gbm_xnn_hmda_simu.csv', index=False)
