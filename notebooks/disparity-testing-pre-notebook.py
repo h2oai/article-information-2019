@@ -85,13 +85,28 @@ if __name__ == '__main__':
                                  )
 
     simu_gbm = disparity_tables(**simu_static_params,
-                                model_name="Standard GBM - Simulated Data",
+                                model_name="XNN - Simulated Data",
                                 file_name='./data/output/test_sim_with_preds.csv',
                                 predicted="outcome_gbm_pred",
                                 label="outcome",
                                 )
 
-    disparity_results = pd.concat([hmda_mgbm, hmda_gbm,
-                                   simu_mgbm, simu_gbm], axis=0)
+    hmda_xnn = disparity_tables(**hmda_static_params,
+                                model_name="XNN - HMDA Data",
+                                file_name="./data/xnn_output/hmda_results/Results_hmda_test_set.csv",
+                                predicted="probability",
+                                label="high_priced",
+                                )
 
-    disparity_results.to_csv('./data/output/gbm_simu_and_hmda_disparity_results.csv')
+    simu_xnn = disparity_tables(**simu_static_params,
+                                model_name="Standard GBM - Simulated Data",
+                                file_name="./data/xnn_output/simulation_results/Results_simulation_test_set.csv",
+                                predicted="probability",
+                                label="outcome",
+                                )
+
+    disparity_results = pd.concat([hmda_gbm, hmda_mgbm, hmda_xnn,
+                                   simu_gbm, simu_mgbm, simu_xnn], axis=0)
+    pc_only = disparity_results.loc[disparity_results["Class"] == "Black"]
+
+    disparity_results.to_csv('./data/output/disparity_results_gbm_xnn_hmda_simu.csv', index=False)
