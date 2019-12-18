@@ -161,6 +161,7 @@ class DisparityTesting(object):
         disp_outcomes = pd.merge(cat_outcomes[list(cat_vars)], cont_outcomes[list(cont_vars)], on=["class", "control"])
         disp_outcomes["class"] = disp_outcomes["class"].str.replace("_", "-").str.title()
         disp_outcomes["control"] = disp_outcomes["control"].str.replace("_", "-").str.title()
+        disp_outcomes.loc[disp_outcomes["class"] == "Amind", "class"] = "Native American"
 
         disp_outcomes.columns = disp_outcomes.columns.str.title()
         for old, new in zip(["_", "P Value", "T Statistic"], [" ", "P-Value", "T-Statistic"]):
