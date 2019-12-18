@@ -73,7 +73,7 @@ class DisparityTesting(object):
             cm = metrics.confusion_matrix(y_true=data_cm[label], y_pred=data_cm[outcome], sample_weight=data_cm[groupi])
             tn, fp, fn, tp = cm.ravel()
             res.loc[res["class"] == groupi, "total"] = (fp + tp + fn + tn)
-            res.loc[res["class"] == groupi, "selected"] = (tp + fn)
+            res.loc[res["class"] == groupi, "selected"] = (tp + fp)
             res.loc[res["class"] == groupi, "true_positive"] = tp
             res.loc[res["class"] == groupi, "true_negative"] = tn
             res.loc[res["class"] == groupi, "false_positive"] = fp
