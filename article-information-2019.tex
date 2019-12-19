@@ -99,7 +99,7 @@ $^{3}$ \quad George Washington University}
 %\conference{} % An extended version of a conference paper 
 
 % Abstract (Do not insert blank lines, i.e. \\) 
-\abstract{This manuscript outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and discrimination characteristics and on publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and global and local Shapley feature importance. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using adverse impact ratio (AIR), marginal effect (ME), standardized mean difference (SMD), and additional straightforward group fairness measures. By combining interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to describe the art of the possible for important ML applications that require high accuracy and interpretability and minimal discrimination.}
+\abstract{This manuscript outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and discrimination characteristics and on publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and global and local Shapley feature importance. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using adverse impact ratio (AIR), marginal effect (ME), standardized mean difference (SMD), and additional straightforward group fairness measures. By combining interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to present the art of the possible for important ML applications that require high accuracy and interpretability and minimal discrimination.}
 
 % Keywords
 \keyword{Machine Learning; Neural Network; Gradient Boosting Machine; Interpretable; Explanation; Fairness; Disparate Impact; Python}
@@ -129,17 +129,6 @@ $^{3}$ \quad George Washington University}
 %\keycontribution{The breakthroughs or highlights of the manuscript. Authors can write one or two sentences to describe the most important part of the paper.}
 
 %\setcounter{secnumdepth}{4}
-
-%two part definition
-\newcommand{\twopartdef}[4]
-{
-	\left\{
-		\begin{array}{ll}
-			#1 & \mbox{if } #2 \\
-			#3 & \mbox{if } #4
-		\end{array}
-	\right.
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -371,7 +360,7 @@ Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$
 \textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
 \midrule
 $g^\text{GBM}$		& 0.775	& 0.857	& 0.474	& 0.394 \\
-$g^\text{MGBM}$	& 0.763	& 0.846	& 0.498	& 0.405 \\
+$g^\text{MGBM}$		& 0.763	& 0.846	& 0.498	& 0.405 \\
 $g^\text{ANN}$		& 0.757	& 0.850	& 0.480	& 0.398 \\
 $g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
 \bottomrule
@@ -464,9 +453,9 @@ Control 2		& 10084		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$
 \toprule
 \textbf{Model}		& \textbf{Protected Class}								& \textbf{Control Class}							& \textbf{AIR}							& \textbf{ME}								& \textbf{SMD} \\
 \midrule
-$g^\text{MGBM}$	& \begin{tabular}{@{}c@{}} Protected 1 \\ Protected 2\end{tabular}		& \begin{tabular}{@{}c@{}} Control 1 \\ Control 2\end{tabular}	& \begin{tabular}{@{}c@{}} \textcolor{red}{0} \\ \textcolor{red}{0}\end{tabular}	& \begin{tabular}{@{}c@{}} \textcolor{red}{0\%}\\ \textcolor{red}{0\%}\end{tabular}	& \begin{tabular}{@{}c@{}} \textcolor{red}{0} \\ \textcolor{red}{0}\end{tabular}\\
+$g^\text{MGBM}$	& \begin{tabular}{@{}c@{}} Protected 1 \\ Protected 2\end{tabular}		& \begin{tabular}{@{}c@{}} Control 1 \\ Control 2\end{tabular}	& \begin{tabular}{@{}c@{}} 0.752 \\ 1.10\end{tabular}	& \begin{tabular}{@{}c@{}} 9.7\% \\ -3.6\%\end{tabular}	& \begin{tabular}{@{}c@{}} -0.206 \\ 0.106\end{tabular}\\
 \midrule 
-$g^\text{XNN}$		& \begin{tabular}{@{}c@{}} Protected 1 \\ Protected 2\end{tabular}		& \begin{tabular}{@{}c@{}} Control 1 \\ Control 2\end{tabular}	& \begin{tabular}{@{}c@{}} \textcolor{red}{0} \\ \textcolor{red}{0}\end{tabular}	& \begin{tabular}{@{}c@{}} \textcolor{red}{0\%}\\ \textcolor{red}{0\%}\end{tabular}	& \begin{tabular}{@{}c@{}} \textcolor{red}{0} \\ \textcolor{red}{0}\end{tabular} \\													
+$g^\text{XNN}$	& \begin{tabular}{@{}c@{}} Protected 1 \\ Protected 2\end{tabular}		& \begin{tabular}{@{}c@{}} Control 1 \\ Control 2\end{tabular}	& \begin{tabular}{@{}c@{}} 0.737 \\ 1.04\end{tabular}	& \begin{tabular}{@{}c@{}} 11.1\%\\ -1.7\%\end{tabular}	& \begin{tabular}{@{}c@{}} -0.240 \\ 0.551\end{tabular} \\													
 \bottomrule
 \label{tab:sim_disc}
 \end{tabular}
@@ -490,7 +479,7 @@ Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably
 \textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
 \midrule	
 $g^\text{GBM}$		& 0.795	& 0.828	& 0.252	& 0.276 \\
-$g^\text{MGBM}$	& 0.765	& 0.814	& 0.259	& 0.278 \\
+$g^\text{MGBM}$		& 0.765	& 0.814	& 0.259	& 0.278 \\
 $g^\text{ANN}$		& 0.865	& 0.871	& 0.231	& 0.262 \\
 $g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
 \bottomrule
@@ -522,8 +511,7 @@ Domain knowledge was used to positively constrain DTI ratio and LTV ratio and to
 \label{fig:mort_mgbm_glob_pdp_ice}
 \end{figure}   
 
-Figure \ref{fig:mort_mgbm_glob_pdp_ice} also displays PD and ICE for the unconstrained feature property value. Unlike DTI ratio and LTV ratio, PD for property value does not always follow the patterns established by ICE curves. While PD shows monotonically increasing prediction behavior on average, apparently influenced by large predictions at extreme $g^{\text{MGBM}}(\mathbf{X})$ percentiles, ICE curves for individuals at the 40\textsuperscript{th} percentile of $g^{\text{MGBM}}(\mathbf{X})$, and lower,  exhibit different prediction behavior with respect to property value. Some individuals at these lower percentiles display monotonically decreasing prediction behavior while others appear to show fluctuating prediction behavior. Property value is strongly right-skewed, with little data regarding high-value property from which $g^{\text{MGBM}}$ can learn. For the most part, reasonable predictions do appear to be carried from more densely populated regions to more sparsely populated regions. However, prediction fluctuations at lower $g^{\text{MGBM}}(\mathbf{X})$ percentiles are visible, and in a sparse region of property value. Such fluctuations can be caused by local data characteristics, modeled local interactions, or unfortunately, by overfitting or leakage of strong non-monotonic signal from important constrained features into the modeled behavior of non-constrained features. \textcolor{red}{This divergence of PD and ICE can be indicative of an interaction affecting property value under $g^{\text{MGBM}}(\mathbf{X})$ \cite{ice_plots}, and drivers of such interactions can often be elucidated using surrogate decision trees \cite{art_and_sci}.
-}
+Figure \ref{fig:mort_mgbm_glob_pdp_ice} also displays PD and ICE for the unconstrained feature property value. Unlike DTI ratio and LTV ratio, PD for property value does not always follow the patterns established by ICE curves. While PD shows monotonically increasing prediction behavior on average, apparently influenced by large predictions at extreme $g^{\text{MGBM}}(\mathbf{X})$ percentiles, ICE curves for individuals at the 40\textsuperscript{th} percentile of $g^{\text{MGBM}}(\mathbf{X})$, and lower,  exhibit different prediction behavior with respect to property value. Some individuals at these lower percentiles display monotonically decreasing prediction behavior while others appear to show fluctuating prediction behavior. Property value is strongly right-skewed, with little data regarding high-value property from which $g^{\text{MGBM}}$ can learn. For the most part, reasonable predictions do appear to be carried from more densely populated regions to more sparsely populated regions. However, prediction fluctuations at lower $g^{\text{MGBM}}(\mathbf{X})$ percentiles are visible, and in a sparse region of property value. This divergence of PD and ICE can be indicative of an interaction affecting property value under $g^{\text{MGBM}}$ \cite{ice_plots}, and analysis by surrogate decision tree did show evidence of numerous potential interactions in lower predictions ranges of $g^{\text{MGBM}}(\mathbf{X})$ \cite{art_and_sci}. However, fluctuations in ICE can also be caused by overfitting or leakage of strong non-monotonic signal from important constrained features into the modeled behavior of non-constrained features. 
 
 In Figure \ref{fig:mort_mgbm_loc}, local Tree SHAP values are displayed for selected individuals at the 10\textsuperscript{th}, 50\textsuperscript{th}, and 90\textsuperscript{th} percentiles of $g^{\text{MGBM}}(\mathbf{X})$ in the mortgage test data. The selected individuals show an expected progression of mostly negative Shapley values at the 10\textsuperscript{th} percentile, a mixture of positive and negative Shapley values at the 50\textsuperscript{th} percentile, mostly positive Shapley values the 90\textsuperscript{th} percentile, and with globally important features driving most local model decisions. 
 
