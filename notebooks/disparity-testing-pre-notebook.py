@@ -39,9 +39,11 @@ def disparity_tables(file_name,
 
     cat_outcomes = disp_tests.categorical_disparity_measures(data=data, label=label, outcome="classification_outcome")
     cont_outcomes = disp_tests.continuous_disparity_measures(data=data, predicted=predicted)
-    disparity_measures = DisparityTesting.create_combined_output(cat_outcomes=cat_outcomes, cont_outcomes=cont_outcomes)
+    disparity_measures = DisparityTesting.create_combined_output(cat_outcomes=cat_outcomes, cont_outcomes=cont_outcomes,
+                                                                 cat_vars=list(cat_outcomes.columns))
     disparity_measures["Model Name"] = model_name
-    disparity_measures = disparity_measures[["Model Name"] + [x for x in disparity_measures.columns if x != "Model Name"]]
+    disparity_measures = disparity_measures[["Model Name"] +
+                                            [x for x in disparity_measures.columns if x != "Model Name"]]
     return disparity_measures
 
 
@@ -64,12 +66,12 @@ if __name__ == '__main__':
                                  label="high_priced",
                                  )
 
-    hmda_gbm = disparity_tables(**hmda_static_params,
-                                model_name="Standard GBM - HMDA Data",
-                                file_name='./data/output/test_hmda_with_preds.csv',
-                                predicted="high_priced_gbm_pred",
-                                label="high_priced",
-                                )
+    # hmda_gbm = disparity_tables(**hmda_static_params,
+    #                             model_name="Standard GBM - HMDA Data",
+    #                             file_name='./data/output/test_hmda_with_preds.csv',
+    #                             predicted="high_priced_gbm_pred",
+    #                             label="high_priced",
+    #                             )
 
     simu_static_params = {"pg_names": ["prot_class1", "prot_class2"],
                           "cg_names": ["ctrl_class1", "ctrl_class2"],
@@ -84,12 +86,12 @@ if __name__ == '__main__':
                                  label="outcome",
                                  )
 
-    simu_gbm = disparity_tables(**simu_static_params,
-                                model_name="XNN - Simulated Data",
-                                file_name='./data/output/test_sim_with_preds.csv',
-                                predicted="outcome_gbm_pred",
-                                label="outcome",
-                                )
+    # simu_gbm = disparity_tables(**simu_static_params,
+    #                             model_name="Standard GBM - Simulated Data",
+    #                             file_name='./data/output/test_sim_with_preds.csv',
+    #                             predicted="outcome_gbm_pred",
+    #                             label="outcome",
+    #                             )
 
     hmda_xnn = disparity_tables(**hmda_static_params,
                                 model_name="XNN - HMDA Data",
@@ -99,14 +101,14 @@ if __name__ == '__main__':
                                 )
 
     simu_xnn = disparity_tables(**simu_static_params,
-                                model_name="Standard GBM - Simulated Data",
+                                model_name="XNN - Simulated Data",
                                 file_name="./data/xnn_output/simulation_results/Results_simulation_test_set.csv",
                                 predicted="probability",
                                 label="outcome",
                                 )
 
-    disparity_results = pd.concat([hmda_gbm, hmda_mgbm, hmda_xnn,
-                                   simu_gbm, simu_mgbm, simu_xnn], axis=0)
-    pc_only = disparity_results.loc[disparity_results["Class"] == "Black"]
+    disparity_results = pd.concat([simu_mgbm, simu_xnn,
+                                   hmda_mgbm, hmda_xnn], axis=0)
+    # pc_only = disparity_results.loc[disparity_results["Class"].isin(['Prot-Class1', 'Prot-Class2'])]
 
-    disparity_results.to_csv('./data/output/disparity_results_gbm_xnn_hmda_simu.csv', index=False)
+    disparity_results.to_csv('./data/output/disparity_results_mgbm_xnn_hmda_simu.csv', index=False)

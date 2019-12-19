@@ -99,13 +99,19 @@ class DisparityTesting(object):
         res["percent_favorable"] = res["favorable"] / res["total"]
 
         res.loc[res["class"].isin(self.pg_names), "control_total"] = np.array(res["total"][self.cg_names])
+        res.loc[res["class"].isin(self.pg_names), "control_false_positive_rate"] = \
+            np.array(res["false_positive_rate"][self.cg_names])
+        res.loc[res["class"].isin(self.pg_names), "control_false_negative_rate"] = \
+            np.array(res["false_negative_rate"][self.cg_names])
         res.loc[res["class"].isin(self.pg_names), "control_selected"] = np.array(res["selected"][self.cg_names])
         res.loc[res["class"].isin(self.pg_names), "control_percent_favorable"] = \
             np.array(res["percent_favorable"][self.cg_names])
 
         res["marginal_effects"] = res["control_percent_favorable"] - res["percent_favorable"]
-        res["shortfall"] = res["marginal_effects"] * res["total"]
         res["adverse_impact_ratio"] = res["percent_favorable"] / res["control_percent_favorable"]
+        res["relative_false_positive_rate"] = res["false_positive_rate"] / res["control_false_positive_rate"]
+        res["relative_false_negative_rate"] = res["false_negative_rate"] / res["control_false_negative_rate"]
+
         for fishi in self.pg_names:
             fishers_values = stats.fisher_exact(np.array(
                 res.loc[res["class"] == fishi, ["total", "selected",
@@ -150,9 +156,10 @@ class DisparityTesting(object):
     def create_combined_output(cat_outcomes: pd.DataFrame,
                                cont_outcomes: pd.DataFrame,
                                cat_vars: Union[list, tuple] = ('class', 'control', 'total', 'false_positive_rate',
-                                                               'false_negative_rate', 'accuracy',
-                                                               'marginal_effects', 'shortfall',
-                                                               'adverse_impact_ratio', 'fishers_exact',
+                                                               'relative_false_positive_rate',  'false_negative_rate',
+                                                               'relative_false_negative_rate', 'accuracy',
+                                                               'marginal_effects', 'adverse_impact_ratio', 
+                                                               'fishers_exact',
                                                                'fishers_exact_p_value'),
                                cont_vars: Union[list, tuple] = ('class', 'control', 'standardized_mean_difference', 
                                                                 't_statistic', 't_statistic_p_value'),
