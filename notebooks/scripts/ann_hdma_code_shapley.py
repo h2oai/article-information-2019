@@ -3,8 +3,6 @@ import pandas as pd
 import shap
 import subprocess
 import sys
-#import pydot
-
 
 import keras    
 from timeit import default_timer as timer
@@ -23,9 +21,9 @@ my_init = keras.initializers.RandomUniform(seed=seed)
 
 out_dir = "ann_output5/"
 
-# baseline model
+
 def ann_model():
-	# create model
+	""" Create an artificial neural network model """
 
     input = Input(shape=(features,), name='main_input')
 
@@ -41,6 +39,7 @@ def ann_model():
     
     return model
 
+
 # Load the dataset
 xnn_data_dir = '~/article-information-2019/data/xnn_output/'
 #xnn_data_dir = ''
@@ -48,15 +47,17 @@ DATA=pd.read_csv(xnn_data_dir + 'train_transformed.csv')
 #DATA = DATA.iloc[0:10000,:]
 TEST=pd.read_csv(xnn_data_dir + 'test_transformed.csv')
 
+
 # Select features and split into target and feature sets
 selected_vars = ['term_360', 'conforming']
 selected_vars += ['debt_to_income_ratio_missing','loan_amount_std', 'loan_to_value_ratio_std']
 selected_vars += ['no_intro_rate_period_std', 'intro_rate_period_std']
 selected_vars += ['property_value_std', 'income_std', 'debt_to_income_ratio_std']
 
-
 target_var = "high_priced"
 
+
+# Split the data into feature and target values
 X=DATA[selected_vars].values
 Y=DATA[target_var].values
 TEST_X = TEST[selected_vars].values
@@ -64,7 +65,6 @@ TEST_Y = TEST[target_var].values
 features = X.shape[1]
 
 inputs = {'main_input': X}
-
 
 #Fit model
 model = ann_model()
@@ -80,6 +80,8 @@ preds = model.predict(TEST_X)
 preds = np.concatenate((preds, shap_values[0], preds), axis=1)
 preds[:, -1] = explainer.expected_value
 
+
+# Add the Shapley values and predictions to the dataset
 TEST = pd.DataFrame(pd.concat([TEST, pd.DataFrame(preds)], axis=1))
 
 Feature_names = selected_vars.copy()
@@ -97,6 +99,7 @@ TEST = TEST.rename(columns={0: "probability",
                             10: Feature_names[9]+"_Shapley_score",
                             11: "Intercept_Shapley_score"})
 
+    
 # Save results
 TEST.to_csv(out_dir + "hmda_ann_results_with_Shapley.csv" , index=False)
 

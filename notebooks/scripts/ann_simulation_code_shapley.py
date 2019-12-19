@@ -3,9 +3,6 @@ import pandas as pd
 import shap
 import subprocess
 import sys
-#import pydot
-
-
 import keras    
 from timeit import default_timer as timer
 import tensorflow as tf
@@ -21,13 +18,11 @@ np.random.seed(seed)
 
 my_init = keras.initializers.RandomUniform(seed=seed)
 
-
-
 out_dir = "ann_output4/"
 
-# baseline model
+
 def ann_model():
-    
+    """ Create an ann model"""
     input = Input(shape=(features,), name='main_input')
 
     out = Dense(10, input_dim=10, activation='relu')(input)
@@ -51,12 +46,14 @@ print(list(DATA.columns))
 TEST=pd.read_csv(xnn_data_dir + 'test_simulated_transformed.csv')
 print(list(TEST.columns))
 
-
+# Specify the features and target
 selected_vars = ['binary1', 'binary2', 'cat1_0', 'cat1_1', 'cat1_2', 'cat1_3', 'cat1_4', 
                  'fried1_std', 'fried2_std', 'fried3_std', 'fried4_std', 'fried5_std']
 
 target_var = 'outcome'
 
+
+# Split the datasets into feature and target values
 X=DATA[selected_vars].values
 Y=DATA[target_var].values
 TEST_X = TEST[selected_vars].values
@@ -65,6 +62,7 @@ features = X.shape[1]
 
 
 inputs = {'main_input': X}
+
 
 # Fit model
 model = ann_model()
@@ -80,6 +78,8 @@ preds = model.predict(TEST_X)
 preds = np.concatenate((preds, shap_values[0], preds), axis=1)
 preds[:, -1] = explainer.expected_value
 
+
+# Add the predictions and Shapley values to the test set
 TEST = pd.DataFrame(pd.concat([TEST, pd.DataFrame(preds)], axis=1))
 
 Feature_names = selected_vars.copy()
