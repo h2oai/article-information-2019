@@ -47,7 +47,7 @@ $ jupyter notebook
 * For ANN performance evaluation and interpretation on the simulated dataset, see [ann_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_simulation_from_files.ipynb)
 
 #### Discrimination Testing Results
-* For discrimination testing analysis, see [disparity_measurement.py] (https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/disparity_measurement.py)
-* For discrimination testing results, see [Disparity Tables for Paper.xlsx] (https://github.com/h2oai/article-information-2019/blob/master/data/output/Disparity%20Tables%20for%20Paper.xlsx)
+* For discrimination testing analysis, see [disparity_measurement.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/disparity_measurement.py)
+* For discrimination testing results, see [Disparity Tables for Paper.xlsx](https://github.com/h2oai/article-information-2019/blob/master/data/output/Disparity%20Tables%20for%20Paper.xlsx)
 
 
