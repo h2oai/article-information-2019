@@ -110,5 +110,12 @@ if __name__ == '__main__':
     disparity_results = pd.concat([simu_mgbm, simu_xnn,
                                    hmda_mgbm, hmda_xnn], axis=0)
     # pc_only = disparity_results.loc[disparity_results["Class"].isin(['Prot-Class1', 'Prot-Class2'])]
-
+    disparity_results_for_paper = disparity_results[["Model Name", "Class", "Control", "Total", "Accuracy",
+                                                     "False Positive Rate", "Control False Positive Rate",
+                                                     "Relative False Positive Rate", "False Negative Rate",
+                                                     "Control False Negative Rate", "Relative False Negative Rate",
+                                                     "Marginal Effects", "Adverse Impact Ratio",
+                                                     "Fishers Exact P-Value", "Standardized Mean Difference",
+                                                     "T-Statistic P-Value"]]
     disparity_results.to_csv('./data/output/disparity_results_mgbm_xnn_hmda_simu.csv', index=False)
+    disparity_results_for_paper.to_csv('./data/output/disparity_results_for_paper_mgbm_xnn_hmda_simu.csv', index=False)

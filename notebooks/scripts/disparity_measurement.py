@@ -156,6 +156,7 @@ class DisparityTesting(object):
     def create_combined_output(cat_outcomes: pd.DataFrame,
                                cont_outcomes: pd.DataFrame,
                                cat_vars: Union[list, tuple] = ('class', 'control', 'total', 'false_positive_rate',
+                                                               'control_false_positive', 'control_false_negative',
                                                                'relative_false_positive_rate',  'false_negative_rate',
                                                                'relative_false_negative_rate', 'accuracy',
                                                                'marginal_effects', 'adverse_impact_ratio', 
