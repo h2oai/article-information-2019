@@ -4,7 +4,7 @@
 ### Affiliations: <sup>1</sup> H2O.ai; <sup>2</sup> George Washington University; <sup>3</sup> BLDS, LLC
 
 ### Abstract: 
-This text outlines a viable approach for training and evaluating complex machine learning systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (M-GBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated datasets with known feature importance and sociological bias characteristics and on realistic, publicly available example datasets. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of individual conditional expectation (ICE) and global and local gradient-based or Shapley feature importance. The constrained model predictions are also tested for disparate impact and other types of sociological bias using straightforward group fairness measures. By combining innovations in interpretable models, post-hoc explanation, and bias testing with accessible software tools, this text aims to provide a template workflow for important machine learning applications that require high accuracy and interpretability and low disparate impact.
+This manuscript outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data with known feature importance and discrimination characteristics and on publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and global and local Shapley feature importance. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using adverse impact ratio (AIR), marginal effect (ME), standardized mean difference (SMD), and additional straightforward group fairness measures. By combining interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to present the art of the possible for important ML applications that require high accuracy and interpretability and minimal discrimination.
 
 ### Current Working Draft:
 
@@ -24,6 +24,16 @@ $ jupyter notebook
 
 ### Current Results:
 
+#### Datasets:
+* For lending trainset before preprocessing, see [hmda_train.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_train.csv)
+* For lending testset before preprocessing, see [hmda_test.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_test.csv)
+* For lending trainset after preprocessing, see [hmda_train_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_train_processed.csv)
+* For lending testset after preprocessing, see [hmda_test_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_test_processed.csv)
+* For simulated trainset before preprocessing, see [simu_train.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/simu_train.csv)
+* For simulated testset before preprocessing, see [simu_test.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/simu_test.csv)
+* For simulated trainset after preprocessing, see [train_simulated_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/train_simulated_processed.csv)
+* For simulated testset after preprocessing, see [test_simulated_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/test_simulated_processed.csv)
+
 #### Data Summaries and Preprocessing
 * For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb) (WIP)
 * For lending data, see [article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb) (WIP)
@@ -39,11 +49,19 @@ $ jupyter notebook
 * For ANN model building on the simulated dataset, see [ann_simulation_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/ann_simulation_code.py)
 
 #### Model Performance and Interpretation
-* For GBM and MGBM performance evaluation and interpretation on the lending dataset, see [perf_pdp_ice_shap_mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_hmda.ipynb)
-* For GBM and MGBM performance evaluation and interpretation on the simulated dataset, see [perf_pdp_ice_shap_mgbm_sim.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_sim.ipynb)
-* For XNN performance evaluation and interpretation on the lending dataset, see [xnn_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_hmda_from_files.ipynb)
-* For XNN performance evaluation and interpretation on the simulated dataset, see [xnn_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_simulation_from_files.ipynb)
-* For ANN performance evaluation and interpretation on the lending dataset, see [ann_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_hmda_from_files.ipynb)
-* For ANN performance evaluation and interpretation on the simulated dataset, see [ann_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_simulation_from_files.ipynb)
+
+##### GBM and MGBM
+* For GBM and MGBM performance evaluation and interpretation on the lending dataset (Table 4, Figure 7, Figure 8, Figure 9), see [perf_pdp_ice_shap_mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_hmda.ipynb)
+* For GBM and MGBM performance evaluation and interpretation on the simulated dataset (Table 1, Figure 1, Figure 2, Figure 3), see [perf_pdp_ice_shap_mgbm_sim.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_sim.ipynb)
+
+##### XNN and ANN
+* For XNN performance evaluation and interpretation on the lending dataset (Table 4, Figure 10, Figure 11, Figure 12), see [xnn_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_hmda_from_files.ipynb)
+* For XNN performance evaluation and interpretation on the simulated dataset (Table 1, Figure 4, Figure 5, Figure 6), see [xnn_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_simulation_from_files.ipynb)
+* For ANN performance evaluation and interpretation on the lending dataset (Table 1), see [ann_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_hmda_from_files.ipynb)
+* For ANN performance evaluation and interpretation on the simulated dataset (Table 1), see [ann_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_simulation_from_files.ipynb)
+
+#### Discrimination Testing Results
+* For discrimination testing analysis, see [disparity_measurement.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/disparity_measurement.py)
+* For discrimination testing results (Table 2, Table 3, Table 5, Table 6), see [Disparity Tables for Paper.xlsx](https://github.com/h2oai/article-information-2019/blob/master/data/output/Disparity%20Tables%20for%20Paper.xlsx)
 
 
