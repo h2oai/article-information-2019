@@ -24,6 +24,16 @@ $ jupyter notebook
 
 ### Current Results:
 
+#### Datasets:
+* For lending trainset before preprocessing, see [hmda_train.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_train.csv)
+* For lending testset before preprocessing, see [hmda_test.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_test.csv)
+* For lending trainset after preprocessing, see [hmda_train_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_train_processed.csv)
+* For lending testset after preprocessing, see [hmda_test_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_test_processed.csv)
+* For simulated trainset before preprocessing, see [simu_train.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/simu_train.csv)
+* For simulated testset before preprocessing, see [simu_test.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/simu_test.csv)
+* For simulated trainset after preprocessing, see [train_simulated_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/train_simulated_processed.csv)
+* For simulated testset after preprocessing, see [test_simulated_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/test_simulated_processed.csv)
+
 #### Data Summaries and Preprocessing
 * For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb) (WIP)
 * For lending data, see [article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb) (WIP)
