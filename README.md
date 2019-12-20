@@ -52,11 +52,11 @@ $ jupyter notebook
 
 ##### GBM and MGBM
 * For GBM and MGBM performance evaluation and interpretation on the lending dataset (Table 4, Figure 7, Figure 8, Figure 9), see [perf_pdp_ice_shap_mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_hmda.ipynb)
-* For GBM and MGBM performance evaluation and interpretation on the simulated dataset (Table 1, Figure 2, Figure 3, Figure 8), see [perf_pdp_ice_shap_mgbm_sim.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_sim.ipynb)
+* For GBM and MGBM performance evaluation and interpretation on the simulated dataset (Table 1, Figure 1, Figure 2, Figure 3), see [perf_pdp_ice_shap_mgbm_sim.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_sim.ipynb)
 
 ##### XNN and ANN
 * For XNN performance evaluation and interpretation on the lending dataset (Table 4, Figure 10, Figure 11, Figure 12), see [xnn_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_hmda_from_files.ipynb)
-* For XNN performance evaluation and interpretation on the simulated dataset (Table 1, Figure 4, Figure 5, Figure 6,), see [xnn_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_simulation_from_files.ipynb)
+* For XNN performance evaluation and interpretation on the simulated dataset (Table 1, Figure 4, Figure 5, Figure 6), see [xnn_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_simulation_from_files.ipynb)
 * For ANN performance evaluation and interpretation on the lending dataset (Table 1), see [ann_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_hmda_from_files.ipynb)
 * For ANN performance evaluation and interpretation on the simulated dataset (Table 1), see [ann_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_simulation_from_files.ipynb)
 
