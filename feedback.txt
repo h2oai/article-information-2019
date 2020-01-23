@@ -1,0 +1,43 @@
+CRITICAL REVIEVER FEEDBACK:
+
+* Two models chosen would be described very concretely, but on closer inspection the description is incomplete, imprecise to wrong ...
+
+* sometimes there are contradictions (especially in chapters 1.4 and 1.5)
+
+* The evaluation measures are also not introduced in a scientifically adequate way.
+
+--
+
+STRUCTURAL REVIEVER FEEDBACK:
+
+* Many variables are not described at all or only inaccurately.
+
+* It is not clear what exactly the authors want to achieve with the paper. They partly contradict each other: in the introduction they explain that they want to give a general workflow, but then limit themselves to 2 concrete models without ever giving a reason why these models are suitable.
+
+* Question arises why the models are introduced in such detail. In my opinion, this is not necessary for the workflow, since it should be generally valid.
+
+* Reduce 24 pages into 12-16 pages and move the detailed information into supplementary information.
+
+* Move at least 4-6 figures into supplementary information
+
+* Provide commonly used evaluation metrics such as MCC, Sn (Sensivity), Sp (Specificity) in Tables 1, 2, 4 and 5.
+
+* If the dataset is imbalanced, provide balanced accuracy.
+
+* Tables display metrics with values that sometimes are better when they are higher and some times if they are lower. An arrow pointing up or down next to the metric name might improve the readability.
+
+* Why not add the F1 score to the tables as well?
+
+* Increasing the font size of the plots will help the readability (particularly figure 10).
+
+* Some figures have to be rearranged because they are not readable. Figure 5, and figure 11 are not easy to read. I think they should be reorganized and they should take more space in the paper.
+
+* Figure 13 has to be increased. It is too small.
+
+* All mathematical variables and symbols should be explained.
+
+--
+
+NICK FEEDBACK:
+
+* Update Nick and Bryce article to not be arXiv
