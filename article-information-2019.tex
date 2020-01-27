@@ -130,6 +130,8 @@ $^{3}$ \quad George Washington University}
 
 %\setcounter{secnumdepth}{4}
 
+\usepackage{caption}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,38 +169,6 @@ To provide a sense of accuracy differences, performance of more interpretable co
 Post-hoc explanation and discrimination testing techniques are applied to constrained, interpretable models trained on the mortgage data to provide a template workflow for future users of similar methods and tools. Presented explanation techniques include PD, ICE, and Shapley values \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. Discussed discrimination testing methods include AIR, ME, SMD, and confusion matrix metrics \cite{feldman2015certifying}, \cite{cohen1988statistical}, \cite{cohen1992power}.\footnote{Part 1607 - Uniform Guidelines on Employee Selection Procedures (1978) \textsection 1607.4.} Accuracy and other confusion matrix metrics are also reported by demographic segment \cite{zafar2017fairness}. All outlined materials and methods are implemented in open source Python code, and are made available in the software resources associated delineated in Subsection \ref{ssec:soft}.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Notation}\label{ssec:not}
-
-To facilitate descriptions of data and modeling, explanatory, and discrimination testing techniques, notation for input and output spaces, datasets, and models is defined.
-
-\subsubsection{Spaces} 
- 
-	\begin{itemize}[leftmargin=*,labelsep=5.8mm]
-		\item Input features come from the set $\mathcal{X}$ contained in a \textit{P}-dimensional input space, $\mathcal{X} \subset \mathbb{R}^P$.  An arbitrary, potentially unobserved, or future instance of $\mathcal{X}$ is denoted $\mathbf{x}$, $\mathbf{x} \in \mathcal{X}$.
-		\item Labels corresponding to instances of $\mathcal{X}$ come from the set $\mathcal{Y}$.
-		\item Learned output responses of models are contained in the set $\mathcal{\hat{Y}}$. % For regression models, the set $\mathcal{\hat{Y}}_r$ is also contained in a $C$-dimensional output space, $\mathcal{\hat{Y}}_r \subset \mathbb{R}^{C_r}$. For classification models, the set $\mathcal{\hat{Y}}_c$ typically contains a column vector for each unique class in $\mathcal{Y}$. Hence, $\mathcal{\hat{Y}}_c$ is contained in a $C'$-dimensional output space,  $\mathcal{\hat{Y}}_c \subset \mathbb{R}^{C'_c}$.
-	\end{itemize}	
-	
-\subsubsection{Datasets} 
-
-	\begin{itemize}[leftmargin=*,labelsep=5.8mm]
-		\item The input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$. 
-		\item Each $i$-th observation of $\mathbf{X}$ is denoted as $\mathbf{x}^{(i)} = $  
-		$[x_0^{(i)}, x_1^{(i)}, \dots, x_{\textit{P}-1}^{(i)}]$, with corresponding $i$-th labels in $\mathbf{Y}, \mathbf{y}^{(i)}$, and corresponding predictions in $\mathbf{\hat{Y}}, \mathbf{\hat{y}}^{(i)}$. % = [y_0^{(i)}, y_1^{(i)}, \dots, y_{\textit{C}-1}^{(i)}]$.
-		\item $\mathbf{X}$ and $\mathbf{Y}$ consist of $N$ tuples of observations: $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots,(\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$. %\\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
-		\item Each $j$-th input column vector of $\mathbf{X}$ is denoted as $X_j = [x_{j}^{(0)}, x_{j}^{(1)}, \dots, x_{j}^{(N-1)}]^T$.
-	\end{itemize}	 
-
-\subsubsection{Models}
-
-	\begin{itemize}[leftmargin=*,labelsep=5.8mm]
-		\item A type of ML model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown signal-generating function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
-		$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$, such that $g \approx f$.
-		\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
-		\item The model to be explained and tested for discrimination is denoted as $g$.
-	\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulated Data}\label{ssec:sim_data}
 
 Simulated data is created based on a function first proposed in \citet{friedman1979tree} and extended in \citet{friedman1991multivariate}:
@@ -216,9 +186,7 @@ For binary classification analysis, the Gaussian noise term is replaced with noi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Mortgage Data}\label{ssec:mort_data}
 
-The US HMDA law, originally enacted in 1975, requires many financial institutions that originate mortgage products to provide certain data about many of the mortgage-related products that they either deny or originate on an annual basis. This information is first provided to the Consumer Financial Protection Bureau (CFPB), which subsequently releases some of the data to the public. Regulators often use HMDA data to, ``...show whether lenders are serving the housing needs of their communities; they give public officials information that helps them make decisions and policies; and they shed light on lending patterns that could be discriminatory.''\textsuperscript{5} In addition to regulatory use, public advocacy groups use these data for similar purposes, and the lenders themselves use the data to benchmark their community outreach relative to their peers.  The publicly available data that the CFPB releases includes information such as the lender, the type of loan, loan amount, loan to value (LTV) ratio, debt to income (DTI) ratio, and other important financial descriptors. The data also include information on each borrower and co-borrower’s race, ethnicity, gender, and age. Because the data includes information on these protected class characteristics, certain metrics that can be indicative of discrimination in lending can be calculated directly using the HDMA data. 
-
-The mortgage dataset analyzed here is a random sample of consumer-anonymized loans from the HDMA database. These loans are a subset of all originated mortgage loans in the 2018 HMDA data that were chosen to represent a relatively comparable group of consumer mortgages.  A selection of features is used to predict whether a loan is \textit{high-priced}, i.e., the annual percentage rate (APR) charged was 150 basis points (1.5\%) or more above a survey-based estimate of other similar loans offered around the time of the given loan.  After data cleaning and preprocessing to encode categorical features and create missing markers, the mortgage data contains ten input features and the binary outcome, \textit{high-priced}. The data is split into a training set with 160,338 loans and a marker for 5 fold cross validation and a test set containing 39,662 loans. While lenders would almost certainly use more information than the selected features to determine whether to offer and originate a high-priced loan, the selected input features (LTV ratio, DTI ratio, property value, loan amount, introductory interest rate, customer income, etc.) are likely to be some of the most influential factors that a lender would consider.  Ultimately, the HMDA data represent the most comprehensive source of data on highly-regulated mortgage lending that is publicly available, which makes it an ideal dataset to use for the types of analyses set forth in Sections \ref{sec:m_and_m} and \ref{sec:res}.  
+The mortgage dataset analyzed here is a random sample of consumer-anonymized loans from the HDMA database. These loans are a subset of all originated mortgage loans in the 2018 HMDA data that were chosen to represent a relatively comparable group of consumer mortgages.  A selection of features is used to predict whether a loan is \textit{high-priced}, i.e., the annual percentage rate (APR) charged was 150 basis points (1.5\%) or more above a survey-based estimate of other similar loans offered around the time of the given loan.  After data cleaning and preprocessing to encode categorical features and create missing markers, the mortgage data contains ten input features and the binary outcome, \textit{high-priced}. The data is split into a training set with 160,338 loans and a marker for 5 fold cross validation and a test set containing 39,662 loans. While lenders would almost certainly use more information than the selected features to determine whether to offer and originate a high-priced loan, the selected input features (LTV ratio, DTI ratio, property value, loan amount, introductory interest rate, customer income, etc.) are likely to be some of the most influential factors that a lender would consider. See Appendix \ref{a_sec:mort} for general information regarding HMDA data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Monotonic Gradient Boosting Machine}\label{ssec:mgbm}
@@ -231,26 +199,9 @@ g^{\text{MGBM}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mo
 \end{aligned}
 \end{equation}
 
-\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the in $g^{\text{MGBM}}$, $g^{\text{MGBM}}_{b-1}(\mathbf{X})$, and the $b$-th tree splits, $T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)$, in a numeric error function (e.g., squared error, Huber error), $l$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For the $b$-th iteration, the loss function, $\mathcal{L}_{b}$, can generally be defined as:
+\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the in $g^{\text{MGBM}}$, $g^{\text{MGBM}}_{b-1}(\mathbf{X})$, and the $b$-th tree splits, $T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)$, in a numeric error function (e.g., squared error, Huber error), $l$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$.
 
-\begin{equation}
-\begin{aligned}
-\mathcal{L}_{b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{MGBM}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
-\end{aligned}
-\end{equation}
-
-\noindent In addition to $\mathcal{L}_{b}$, $g^\text{MGBM}$ training is characterized by additional splitting rules and constraints on tree node weights. Each binary splitting rule, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left and right child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$ can be direct numeric components of some $g^\text{MGBM}$ prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, $g^{\text{MGBM}}$ is positive monotonic with respect to some $X_j$ if $g^{\text{MGBM}}(x^{\alpha}_j) \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. The following rules and constraints ensure positive monotonicity in $\Theta_b$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$.
-
-\begin{enumerate}[leftmargin=*,labelsep=4.9mm]
-\item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ resulting in $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{b,j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$, is not considered. 
-\item For any subsequent left child node involving $X_j$, any $\theta_{b,j, k\ge1}$ resulting in $T(x_j; \theta_{b,j,k\ge1}) = \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$ where $w_{b,j,k\ge1,L} > w_{b,j,k\ge1,R}$, is not considered.
-\item Moreover, for any subsequent left child node involving $X_j$, $T(x_j; \theta_{b,j,k\ge1}) = \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$, $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$ are bound by the associated $\theta_{b,j,k-1}$ set of node weights, $\{w_{b,j,k-1,L}, w_{b,j,k-1, R}\}$, such that $ \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} < \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
-\item (1) and (2) are also applied to all right child nodes, except that for right child nodes $ w_{b,j,k,L} \le w_{b,j,k,R}$ and $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
-\end{enumerate}
-
-\noindent Note that for any one $X_j$ and $T_b \in g^{\text{MGBM}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{MGBM}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{MGBM}}(x^{\alpha}_j)  \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e., $g^{\text{MGBM}}(x^{\alpha}_j)  \ge g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched. Also consider that MGBM models with independent monotonicity constraints between some $X_j$ and $\mathbf{y}$ likely restrict non-monotonic interactions between multiple $X_j$. Moreover, if monotonicity constraints are not applied to all $X_j \in \mathbf{X}$, any strong non-monotonic signal in training data associated with some important $X_j$ maybe forced onto some other arbitrary unconstrained $X_j$ under some $g^{MGBM}$ models, compromising the end goal of interpretability.
-
-Herein, two $g^\text{MGBM}$ models are trained.  One on the simulated data and one on the mortgage data. In both cases, positive and negative monotonic constraints for each $X_j$ are selected using domain knowledge, random grid search is used to determine other hyperparameters, and five-fold cross validation and test partitions are used for model assessment. For exact parameterization of the two $g^\text{MGBM}$ models, see the software resources referenced in Subsection \ref{ssec:soft}. 
+Herein, two $g^\text{MGBM}$ models are trained.  One on the simulated data and one on the mortgage data. In both cases, positive and negative monotonic constraints for each $X_j$ are selected using domain knowledge, random grid search is used to determine other hyperparameters, and five-fold cross validation and test partitions are used for model assessment.  See Appendices \ref{a_ssec:not} and \ref{a_ssec:mgbm} for details pertaining to MGBM training. For exact parameterization of the two $g^\text{MGBM}$ models, see the software resources referenced in Subsection \ref{ssec:soft}. 
 
 \subsection{Explainable Neural Network}\label{ssec:xnn}
 
@@ -263,54 +214,26 @@ g^{\text{XNN}}(\mathbf{x}) = \mu_0 + \sum_{k=0}^{K-1}\gamma_k n_k(\sum^{J=\mathc
 \end{aligned}
 \end{equation}
 
-\noindent $g^{\text{XNN}}$ is comprised of 3 meta-layers:
-
-\begin{enumerate}[leftmargin=*,labelsep=4.9mm]
-\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, which should learn higher magnitude weights for important $X_j$, is known as the \textit{projection layer}. It is fully connected to each input $X_j$. Each hidden unit in the projection layer may optionally include a bias term.
-\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network, which can be parameterized to suit a given modeling task. To facilitate direct interpretation and visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer hidden unit, $\sum_j\beta_{k,j}x_j$. Each $n_k$ can contain several bias terms.
-\item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for interpretation and visualization purposes.
-\end{enumerate}
-
-Here, each $g^\text{XNN}$ is trained by mini-batch stochastic gradient descent (SGD) on the simulated data and mortgage data. Each $g^\text{XNN}$ is assessed in five training folds and in a test data partition. $L_1$ regularization is applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof. The $g^\text{XNN}$ models appear highly sensitive to weight initialization and batch size. Be aware that $g^{XNN}$ model architectures may require manual and judicious feature selection due to long training times. For more details regarding $g^\text{XNN}$ training, see the software resources in Subsection \ref{ssec:soft}. 
+Here, each $g^\text{XNN}$ is trained by mini-batch stochastic gradient descent (SGD) on the simulated data and mortgage data. Each $g^\text{XNN}$ is assessed in five training folds and in a test data partition. $L_1$ regularization is applied to both the projection and combination layers to induce a sparse and interpretable model, where each $n_k$ subnetwork and corresponding combination layer $\gamma_k$ are ideally associated with an important $X_j$ or combination thereof. The $g^\text{XNN}$ models appear highly sensitive to weight initialization and batch size. Be aware that $g^{XNN}$ model architectures may require manual and judicious feature selection due to long training times. For more details regarding $g^\text{XNN}$ training, see the software resources in Subsection \ref{ssec:soft} and Appendices  \ref{a_ssec:not} and \ref{a_ssec:xnn}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Partial Dependence and Individual Conditional Expectation}\label{ssec:pd_ice}
+\subsection{One-dimensional Partial Dependence and Individual Conditional Expectation}\label{ssec:pd_ice}
 
-PD plots are a widely-used method for describing and plotting the average predictions of a complex model $g$ across some partition of data $\mathbf{X}$ for some interesting input feature $X_j$ \cite{esl}. ICE plots are a newer method that describes the local behavior of $g$ for a single instance $\mathbf{x} \in \mathcal{X}$ \cite{ice_plots}. PD and ICE can be overlaid in the same plot to compensate for known weaknesses of PD (e.g., inaccuracy in the presence of strong interactions and correlations \cite{ice_plots}, \cite{ale_plot}), to identify interactions modeled by $g$, and to create a holistic global and local portrait of the predictions for some $g$ and $X_j$ \cite{ice_plots}.
-
-Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{\mathcal{P} \setminus \{j\}} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{\mathcal{P} \setminus \{j\}} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{\mathcal{P} \setminus \{j\}}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{\mathcal{P} \setminus \{j\}}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$, as displayed in Section \ref{sec:res}. Due to known problems for PD in the presence of strong correlation and interactions, PD should not be used alone. PD should be paired with ICE or be replaced with accumulated local effect (ALE) plots \cite{ice_plots}, \cite{ale_plot}.
+PD plots are a widely-used method for describing and plotting the average predictions of a complex model $g$ across some partition of data $\mathbf{X}$ for some interesting input feature $X_j$ \cite{esl}. ICE plots are a newer method that describes the local behavior of $g$ for a single instance $\mathbf{x} \in \mathcal{X}$ \cite{ice_plots}. PD and ICE can be overlaid in the same plot to compensate for known weaknesses of PD (e.g., inaccuracy in the presence of strong interactions and correlations \cite{ice_plots}, \cite{ale_plot}), to identify interactions modeled by $g$, and to create a holistic global and local portrait of the predictions for some $g$ and $X_j$ \cite{ice_plots}. For details regarding the calculation of one-dimensional PD and ICE, see the software resources in Subsection \ref{ssec:soft} and Appendices \ref{a_ssec:not} and \ref{a_ssec:pd_ice}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Shapley Values}\label{ssec:shap}
 
-Shapley explanations are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}, \cite{shapley1988shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ for some $\mathbf{x} \in \mathcal{X}$ and that Shapley explanation values should never decrease in magnitude for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}, \cite{tree_shap}. For some instance $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form: 
+Shapley explanations are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley}, \cite{shapley1988shapley}. Shapley explanations are the only possible locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to $g(\mathbf{x})$ for some $\mathbf{x} \in \mathcal{X}$ and that Shapley explanation values should never decrease in magnitude for some $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley}, \cite{tree_shap}. 
 
-\begin{equation}
-\label{eq:shap_additive}
-\begin{aligned}
-g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
-\end{aligned}
-\end{equation}
-
-\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. Each $\phi_j$ is a weighted combination of model scores, $g_x(\mathbf{x})$, with $x_j$, $g_x(S \cup \{j\})$, and the model scores without $x_j$, $g_x(S)$, for every subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$, where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
-
-\begin{equation}
-\label{eq:shap_contrib}
-\begin{aligned}
-\phi_{j} = \sum_{S \subseteq \mathcal{P} \setminus \{j\}}\frac{|S|!(\mathcal{P} -|S| -1)!}{\mathcal{P}!}[g_x(S \cup \{j\}) - g_x(S)]
-\end{aligned}
-\end{equation}
-
-\noindent Local, per-instance explanations using Shapley values tend to involve ranking $x_j$ by $\phi_j$ values or delineating a set of the $X_j$ names associated with the $k$-largest $\phi_j$ values for some $\mathbf{x}$, where $k$ is some small positive integer, say 5. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across all of the observations in some set $\mathbf{X}$.
-
-Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP (SHapley Additive exPlanations) has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in Sections \ref{sec:m_and_m} and \ref{sec:res}. Deep SHAP is an approximate Shapley value technique that creates SHAP values for ANNs \cite{shapley}. Deep SHAP is implemented in the \href{https://github.com/slundberg/shap}{\texttt{shap}} package and is used to generate SHAP values for the two $g^{XNN}$ models discussed in Sections \ref{sec:m_and_m} and \ref{sec:res}.
+Shapley values can be estimated in different ways, many of which are intractable for datasets with large $\mathcal{P}$. Tree SHAP is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP (SHapley Additive exPlanations) has been implemented efficiently in popular gradient boosting libraries such as \href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}{\texttt{h2o}}, \href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}{\texttt{LightGBM}}, and \href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}{\texttt{XGBoost}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in Sections \ref{sec:m_and_m} and \ref{sec:res}. Deep SHAP is an approximate Shapley value technique that creates SHAP values for ANNs \cite{shapley}. Deep SHAP is implemented in the \href{https://github.com/slundberg/shap}{\texttt{shap}} package and is used to generate SHAP values for the two $g^{XNN}$ models discussed in Sections \ref{sec:m_and_m} and \ref{sec:res}. For more information pertaining to the calculation of Shapley values, see Appendices \ref{a_ssec:not} and \ref{a_ssec:shap}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \subsection{Discrimination Testing Metrics}\label{ssec:di}
 
-Because many technical and academic discussions of fairness in ML have been inconclusive\footnote{See: \href{https://www.youtube.com/watch?v=jIXIuYdnyyk}{Tutorial: 21 Fairness Definitions and Their Politics}.}, this text will draw on regulatory and legal standards that have been used for years in industries like Financial Services. The discussed metrics are also representative of fair lending analyses and pair well with the mortgage data. Before discussing the techniques, it is important to explain and draw a distinction between the two major types of discrimination recognized in US legal and regulatory settings, disparate treatment (DT), and disparate impact (DI). DT (which is loosely referred to as \textit{intentional discrimination}) occurs most often in an algorithmic setting when a model explicitly uses protected class status (e.g., race, sex) as an input feature or uses a feature that is so similar to protected class status that it essentially proxies for class membership.  With some limited exceptions, the use of these factors in an algorithm is illegal under several statutes in the US.\textsuperscript{4} DI, colloquially known as \textit{unintentional discrimination}, occurs when some element of a decisioning process includes a \textit{facially neutral} factor (i.e, a reasonable and valid predictor of response) that results in a disproportionate share of a protected class receiving an unfavorable outcome.  In modeling, this is most typically driven by a statistically important feature that is distributed unevenly across classes, which causes more frequent unfavorable outcomes for the protected class.  However, other factors, such as hyperparameter or algorithm choices, can drive DI.  Crucially, legality hinges on whether changing the model, for example exchanging one feature for another or altering the hyperparameters of an algorithm, can lead to a similarly predictive model with lower disparate impact.
+Because many technical and academic discussions of fairness in ML have been inconclusive\footnote{See: \href{https://www.youtube.com/watch?v=jIXIuYdnyyk}{Tutorial: 21 Fairness Definitions and Their Politics}.}, this text will draw on regulatory and legal standards that have been used for years in industries like Financial Services. The discussed metrics are also representative of fair lending analyses and pair well with the mortgage data. See Appendix \ref{a_sec:types} for a brief discussion regarding different types of discrimination under US laws and Appendix \ref {a_sec:prac_v_stat} for remarks on statistical vs. practical significance for discrimination measure values.
 
-The analyses and metrics herein focus on several measures of disparate impact that are commonly used in US litigation and regulatory settings. One is known as marginal effects (ME). ME is simply the difference between the percent of the control group members receiving a favorable outcome and the percent of the protected class members receiving a favorable outcome. 
+One measure is known as marginal effects (ME). ME is simply the difference between the percent of the control group members receiving a favorable outcome and the percent of the protected class members receiving a favorable outcome. 
 
 \begin{equation}
 \label{eq:me}
@@ -338,10 +261,6 @@ The analyses and metrics herein focus on several measures of disparate impact th
 \end{equation}
 
 \noindent The numerator in the SMD is equivalent to marginal effects but adds the standard deviation divisor as a standardizing factor.  Because of this standardization factor, SMD allows for a comparison across different types of outcomes, such as inequity in mortgage closing fees or inequities in the interest rates given on certain loans.  In this, one may apply definitions in \citet{cohen1988statistical} of \textit{small}, \textit{medium}, and \textit{large} effect sizes, which represent a measure of \textit{practical significance}, which is described in detail below.  Finally, confusion matrix metrics and their ratios in demographic groups are also considered as measures of DI in section \ref{sec:res}.
-
-A finding of \textit{practical significance} means the disparity found is not only statistically significant, but also passes beyond a chosen threshold that would constitute \textit{prima facia} evidence of illegal discrimination.  Its use represents a recognition that any large dataset is likely to show statistically significant differences in outcomes by class, even if those differences are not truly meaningful.  It further recognizes that there are likely to be situations where differences in outcomes are beyond a model user’s ability to correct them without significantly degrading the quality of the model. Moreover, practical significance is also needed by model builders and compliance personnel to determine whether a model should undergo remediation efforts before it is put into production. Unfortunately, guidelines for practical significance, i.e., the threshold at which any statistically significant disparity would be considered evidence of illegal discrimination, are not as frequently codified as the standards for statistical significance.  One exception, however, is in employment discrimination analyses, where the US Equal Employment Opportunity Commission (EEOC) has stated that if the AIR is below 0.80 and statistically significant, then this constitutes \textit{prima facia} evidence of discrimination, which the model user must rebut in order for the disparate impact not to be considered illegal discrimination.\footnote{Importantly, the standard of 0.80 is not a law, but a rule of thumb for agencies tasked with enforcement of discrimination laws.  ``Adoption of Questions and Answers To Clarify and Provide a Common Interpretation of the Uniform Guidelines on Employee Selection Procedures,'' Federal Register, Volume 44, Number 43 (1979).} It is important to note that the 0.80 measure of practical significance, also known as the \textit{80\% rule} and the \textit{4/5ths rule}, is explicitly used in relation to AIR, and it is not clear that the use of this threshold is directly relevant to testing fairness for metrics other than the AIR.
-
-The legal thresholds for determining statistical significance is clearer and more consistent than that for practical significance.  The first guidance in US courts occurred in a case involving discrimination in jury selection, \textit{Castaneda v. Partida}.\footnote{\textit{Castaneda v. Partida}, 430 US 482 - Supreme Court (1977)}   Here, the US Supreme Court wrote that, ``As a general rule for such large samples, if the difference between the expected value and the observed number is greater than two or three standard deviations, then the hypothesis that the jury drawing was random would be suspect to a social scientist.''  This ``two or three standard deviations'' test was then applied to employment discrimination in \textit{Hazelwood School Districts v. United States.}\footnote{\textit{Hazelwood School Dist. v. United States}, 433 US 299 (1977)} Out of this, a 5\% two-sided test (z=1.96), or an equivalent 2.5\% one-sided test, has become a common standard for determining whether evidence of disparities is statistically significant.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Software Resources}\label{ssec:soft}
@@ -450,44 +369,48 @@ Local Deep SHAP feature importance in Figure \ref{fig:sim_xnn_loc} supplements t
 
 \subsubsection{Discrimination Testing Results}\label{ssec:dis_sim}
 
-Tables \ref{tab:sim_n_acc} and \ref{tab:sim_disc} show the results of the disparity tests using the simulated data for two hypothetical sets of class-control groups.  Several measures of disparities are shown, with the SMDs calculated using the probabilities from $g^{\text{MGBM}}$ and  $g^{\text{XNN}}$, and the false positive rates (FPRs), false negative rates (FNRs), their ratios, MEs, and AIRs calculated using a binary outcome based on a cutoff of 0.6 (anyone with probabilities of 0.6 or greater receives the favorable outcome).\footnote{The selection of which cutoff to use in production is typically based on the model’s use case, rather than one based solely on the statistical properties of the predictions themselves.  For example, a model developer at a bank might build a credit model where the F1 score is maximized at a delinquency probability cutoff of 0.15.  For purposes of evaluating the quality of the model, she may review confusion matrix statistics (accuracy, recall, precision, etc.) using cutoffs based on the maximum F1 score. But, because of its risk tolerance and other factors, the bank itself might be willing to lend to anyone with a delinquency probability of 0.18 or lower, which would mean that anyone who is scored at 0.18 or lower would receive an offer of credit.  Because disparity analyses are concerned with how people are affected by the way the model is used, it is essential that any confusion matrix-based metrics of disparity be calculated on the in-production classification decisions, rather than the cutoffs that are not related to what those affected by the model will experience.} 
+Tables \ref{tab:sim_n_acc} and \ref{tab:sim_disc} show the results of the disparity tests using the simulated data for two hypothetical sets of class-control groups.  Several measures of disparities are shown, with the SMDs calculated using the probabilities from $g^{\text{MGBM}}$ and  $g^{\text{XNN}}$, and the false positive rates (FPRs), false negative rates (FNRs), their ratios, MEs, and AIRs calculated using a binary outcome based on a cutoff of 0.6 (anyone with probabilities of 0.6 or greater receives the favorable outcome).\footnote{See Appendix \ref{a_sec:cut} for comments pertaining to cutoff selection and discrimination testing.}
+
 Since $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ assume that a higher score is favorable (as might be the case if the model were predicting responses to marketing offers), one might consider the relative FNRs as a measure of the class-control disparities. Table \ref{tab:sim_disc} shows that protected group 1 has higher relative FNRs under $g^{\text{XNN}}$ (1.13 vs. 1.06).  However, in Table \ref{tab:sim_n_acc} the overall FNRs were lower for  $g^{\text{XNN}}$ (0.357 vs. 0.401). This illustrates a danger in considering relative class-control metrics in isolation when comparing across models: despite the $g^\text{MGBM}$ appearing to be a relatively fairer model, more protected group 1 members experience negative outcomes using $g^{\text{MGBM}}$. This is because FNR accuracy improves for both the protected group 1 and control group 1, but members of control group 1 benefit more than those in protected group 1.  Of course, the choice of which model is truly fairer is a policy question.
 
 \begin{table}[H]
-\caption{Group size, accuracy, FPR, and FNR for $g^\text{MGBM}$ and $g^\text{XNN}$ on the simulated test data.} 
-\centering
-\begin{tabular}{cccccc}
-\toprule
-\textbf{Class}	& $\mathbf{N}$	& \textbf{Model} 												& \textbf{Accuracy}  								& \textbf{FPR}									& \textbf{FNR} \\
-\midrule
-Protected 1	& 3,057		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.770 \\ 0.771\end{tabular} 	& \begin{tabular}{@{}c@{}} 0.150 \\ 0.168\end{tabular} 	& \begin{tabular}{@{}c@{}} 0.401 \\ 0.357\end{tabular} \\	
-\midrule			 
-Control 1		& 16,943		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.739 \\ 0.756\end{tabular}	& \begin{tabular}{@{}c@{}} 0.129 \\ 0.163\end{tabular}	& \begin{tabular}{@{}c@{}} 0.378 \\ 0.314\end{tabular} \\
-\midrule
-Protected 2	& 9,916		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.758 \\ 0.762\end{tabular}	& \begin{tabular}{@{}c@{}} 0.169 \\ 0.186\end{tabular}	& \begin{tabular}{@{}c@{}} 0.331 \\ 0.302\end{tabular} \\	
-\midrule
-Control 2		& 10,084		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.729 \\ 0.756\end{tabular}	& \begin{tabular}{@{}c@{}} 0.091 \\ 0.138\end{tabular}	& \begin{tabular}{@{}c@{}} 0.420 \\ 0.332\end{tabular} \\		
-\bottomrule
-\label{tab:sim_n_acc}
-\end{tabular}
+	\captionsetup{width=7cm}
+	\hskip-20pt\parbox{.48\textwidth}{
+	\caption{Group size, accuracy, and FNR for $g^\text{MGBM}$ and $g^\text{XNN}$ on the simulated test data.} 
+	\centering
+	\begin{tabular}{ccccc}
+		\toprule
+		\textbf{Class}	& $\mathbf{N}$	& \textbf{Model} & \textbf{Accuracy} & \textbf{FNR} \\
+		\midrule
+		Protected 1	& 3,057		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.770 \\ 0.771\end{tabular} 	&  \begin{tabular}{@{}c@{}} 0.401 \\ 0.357\end{tabular} \\	
+		\midrule			 
+		Control 1		& 16,943		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.739 \\ 0.756\end{tabular}	& \begin{tabular}{@{}c@{}} 0.378 \\ 0.314\end{tabular} \\
+		\midrule
+		Protected 2	& 9,916		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.758 \\ 0.762\end{tabular}	&  \begin{tabular}{@{}c@{}} 0.331 \\ 0.302\end{tabular} \\	
+		\midrule
+		Control 2		& 10,084		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.729 \\ 0.756\end{tabular}	& \begin{tabular}{@{}c@{}} 0.420 \\ 0.332\end{tabular} \\		
+		\bottomrule
+		\label{tab:sim_n_acc}
+	\end{tabular}
+	}\hspace{10pt}
+	\parbox{.48\textwidth}{
+	\vspace{-13pt}
+	\caption{AIR, ME, SMD, and FNR ratio for $g^\text{MGBM}$ and $g^\text{XNN}$ on the simulated test data.}
+	\centering
+	\begin{tabular}{ccccccc}
+		\toprule
+		\textbf{Model}		&  \begin{tabular}[x]{@{}c@{}}\textbf{Protected}\\\textbf{Class}\end{tabular} & \begin{tabular}[x]{@{}c@{}}\textbf{Control}\\\textbf{Class}\end{tabular}					& \textbf{AIR}									& \textbf{ME}									& \textbf{SMD} &  \begin{tabular}[x]{@{}c@{}}\textbf{FNR}\\\textbf{Ratio}\end{tabular}\\
+		\midrule
+		$g^\text{MGBM}$	& \begin{tabular}{@{}c@{}} 1 \\  2\end{tabular}		& \begin{tabular}{@{}c@{}} 1 \\ 2\end{tabular}	& \begin{tabular}{@{}c@{}} 0.752 \\ 1.10\end{tabular}	& \begin{tabular}{@{}c@{}} 9.7\% \\ -3.6\%\end{tabular}	& \begin{tabular}{@{}c@{}} -0.206 \\ 0.106\end{tabular}	& \begin{tabular}{@{}c@{}} 1.06 \\ 0.788\end{tabular}\\
+		\midrule 
+		$g^\text{XNN}$		& \begin{tabular}{@{}c@{}} 1 \\ 2\end{tabular}		& \begin{tabular}{@{}c@{}} 1 \\  2\end{tabular}	& \begin{tabular}{@{}c@{}} 0.727 \\ 0.976\end{tabular}	& \begin{tabular}{@{}c@{}} 12.0\%\\ 1.0\%\end{tabular}	& \begin{tabular}{@{}c@{}} -0.274 \\ 0.001\end{tabular}	& \begin{tabular}{@{}c@{}} 1.13 \\ 0.907\end{tabular} \\										
+		\bottomrule
+		\label{tab:sim_disc}
+	\end{tabular}
+	}
 \end{table}
 
 For $g^{\text{XNN}}$, 12.0\% fewer control group 1 members receive the favorable offer under the ME column in Table \ref{tab:sim_disc}.  Of note is that 12.0\% is not a meaningful difference without context.  If the population of control group 1 and control group 2 were substantially similar in relevant characteristics, 12.0\% could represent an extremely large difference and would require remediation.  But if they represent substantially different populations, then 12.0\% could represent a reasonable deviation from parity.  As an example, if a lending institution that has traditionally focused on high credit quality clients were to expand into previously under-banked communities, an 12.0\% class-control difference in loan approval rates might be expected because the average credit quality of the new population would be lower than that of the existing population. Protected group 1’s AIR under $g^\text{XNN}$ is 0.727, below the EEOC 4/5ths rule threshold.  It is also highly statistically significant (not shown, but available in resources discussed in Subsection \ref{ssec:soft}). Together these would indicate that there may be evidence of illegal DI.  As with ME and other measures, the reasonableness of this disparity is not clear outside of context.  However, most regulated institutions that do perform discrimination analyses would find an AIR of this magnitude concerning and warranting further review. Some pertinent remediation strategies for discovered discrimination are discussed in Section \ref{ssec:disc_rem}.
-
-\begin{table}[H]
-\caption{AIR, ME, SMD, FPR ratio, and FNR ratio for $g^\text{MGBM}$ and $g^\text{XNN}$ on the simulated test data.}
-\centering
-\begin{tabular}{cccccccc}
-\toprule
-\textbf{Model}		& \textbf{Protected Class}										& \textbf{Control Class}								& \textbf{AIR}									& \textbf{ME}									& \textbf{SMD}   								& \textbf{FPR Ratio}							& \textbf{FNR Ratio} \\
-\midrule
-$g^\text{MGBM}$	& \begin{tabular}{@{}c@{}} Protected 1 \\ Protected 2\end{tabular}		& \begin{tabular}{@{}c@{}} Control 1 \\ Control 2\end{tabular}	& \begin{tabular}{@{}c@{}} 0.752 \\ 1.10\end{tabular}	& \begin{tabular}{@{}c@{}} 9.7\% \\ -3.6\%\end{tabular}	& \begin{tabular}{@{}c@{}} -0.206 \\ 0.106\end{tabular}	& \begin{tabular}{@{}c@{}} 1.16 \\ 1.86\end{tabular}	& \begin{tabular}{@{}c@{}} 1.06 \\ 0.788\end{tabular}\\
-\midrule 
-$g^\text{XNN}$		& \begin{tabular}{@{}c@{}} Protected 1 \\ Protected 2\end{tabular}		& \begin{tabular}{@{}c@{}} Control 1 \\ Control 2\end{tabular}	& \begin{tabular}{@{}c@{}} 0.727 \\ 0.976\end{tabular}	& \begin{tabular}{@{}c@{}} 12.0\%\\ 1.0\%\end{tabular}	& \begin{tabular}{@{}c@{}} -0.274 \\ 0.001\end{tabular}	& \begin{tabular}{@{}c@{}} 1.03 \\ 1.35\end{tabular}	& \begin{tabular}{@{}c@{}} 1.13 \\ 0.907\end{tabular} \\										
-\bottomrule
-\label{tab:sim_disc}
-\end{tabular}
-\end{table}
 
 \noindent SMD is used here to measure $g^\text{MGBM}(\mathbf{X})$ and $g^\text{MGBM}(\mathbf{X})$ probabilities prior to being transformed into classifications.  (This measurement would be particularly relevant if the probabilities are used in combination with other models to determine an outcome.)  The results show that $g^\text{MGBM}$ has less disparate impact than $g^\text{XNN}$ (-0.206 vs. -0.274), but both are close to Cohen’s small effect threshold of -0.20. Whether a small effect would be a highlighted concern would depend on a organization’s chosen threshold for flagging models for further review. 
 
@@ -592,40 +515,43 @@ To compliment the global interpretability of $g^\text{XNN}$, Figure \ref{fig:mor
 Tables \ref{tab:mort_n_acc} and \ref{tab:mort_disc} show the results of the discrimination tests using the mortgage data for two sets of class-control groups: blacks as compared to whites, and females as compared to males. As with the simulated data, several measures of disparities are shown, with the SMDs calculated using the probabilities from $g^{\text{MGBM}}$ and $g^{\text{XNN}}$, and the FPRs, FNRs, their ratios, MEs, and AIRs calculated using a binary outcome based on a cutoff of 0.20 (anyone with probabilities of 0.2 or less receives the favorable outcome).  Since $g^{\text{MGBM}}$ and $g^{\text{XNN}}$  are predicting the likelihood of receiving a high-priced loan, $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ assume that a lower score is favorable.  Thus, one might consider FPR ratios as a measure of the class-control disparities.  FPR ratios are higher under $g^{\text{XNN}}$ than $g^{\text{MGBM}}$ (2.45 vs. 2.10) in Table \ref{tab:mort_disc},  but overall FPRs are lower for blacks under $g^{\text{XNN}}$ (0.295 vs. 0.315) in Table \ref{tab:mort_n_acc}.  This is the same pattern seen in the simulated data results in Section \ref{ssec:dis_sim}, again leading to the question of whether a fairness goal should not only consider class-control relative rates, but also intra-class improvements in the chosen fairness metric.  Similar results are found for the female-male comparison, but the relative rates are less stark: 1.15 for $g^{\text{MGBM}}$ and 1.21 for $g^{\text{XNN}}$.
 
 \begin{table}[H]
-\caption{Group size, accuracy, FPR, and FNR for $g^\text{MGBM}$ and $g^\text{XNN}$ on the mortgage test data.}
-\centering
-\begin{tabular}{ccccccc}
+	\captionsetup{width=7cm}
+	\hskip-20pt\parbox{.48\textwidth}{
+		\caption{Group size, accuracy, and FNR for $g^\text{MGBM}$ and $g^\text{XNN}$ on the mortgage test data.} 
+		\centering
+		\begin{tabular}{ccccc}
 \toprule
-\textbf{Class}	& $\mathbf{N}$	& \textbf{Model} 												& \textbf{Accuracy} 									& \textbf{FPR}											& \textbf{FNR} \\
+\textbf{Class}	& $\mathbf{N}$	& \textbf{Model} 												& \textbf{Accuracy} 																			& \textbf{FNR} \\
 \midrule
-Black 		& 2,608		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.654 \\ 0.702\end{tabular} 		& \begin{tabular}{@{}c@{}} 0.315 \\ 0.295\end{tabular} 			& \begin{tabular}{@{}c@{}} 0.457 \\ 0.308\end{tabular} \\	
+Black 		& 2,608		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.654 \\ 0.702\end{tabular} 				& \begin{tabular}{@{}c@{}} 0.457 \\ 0.308\end{tabular} \\	
 \midrule			 
-White 		& 28,361		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.817 \\ 0.857\end{tabular} 		& \begin{tabular}{@{}c@{}} 0.150 \\ 0.120\end{tabular}			& \begin{tabular}{@{}c@{}} 0.508 \\ 0.360\end{tabular}\\		
+White 		& 28,361		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.817 \\ 0.857\end{tabular}			& \begin{tabular}{@{}c@{}} 0.508 \\ 0.360\end{tabular}\\		
 \midrule
-Female 		& 8,301		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}}  0.768 \\ 0.822\end{tabular}		& \begin{tabular}{@{}c@{}} 0.208 \\ 0.158\end{tabular}			& \begin{tabular}{@{}c@{}} 0.402 \\ 0.322\end{tabular}\\
+Female 		& 8,301		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}}  0.768 \\ 0.822\end{tabular}		& \begin{tabular}{@{}c@{}} 0.402 \\ 0.322\end{tabular}\\
 \midrule
-Male 		& 13,166		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.785 \\	0.847\end{tabular} 		& \begin{tabular}{@{}c@{}} 0.182 \\ 0.131\end{tabular}			& \begin{tabular}{@{}c@{}} 0.497 \\ 0.347\end{tabular}\\
+Male 		& 13,166		& \begin{tabular}{@{}c@{}} $g^\text{MGBM}$ \\ $g^\text{XNN}$\end{tabular}	& \begin{tabular}{@{}c@{}} 0.785 \\	0.847\end{tabular}			& \begin{tabular}{@{}c@{}} 0.497 \\ 0.347\end{tabular}\\
 \bottomrule
-\label{tab:mort_n_acc}
-\end{tabular}
+			\label{tab:mort_n_acc}
+		\end{tabular}
+	}\hspace{10pt}
+	\parbox{.48\textwidth}{
+		\vspace{-13pt}
+		\caption{AIR, ME, SMD, and FNR ratio for $g^\text{MGBM}$ and $g^\text{XNN}$ on the mortgage test data.}
+		\centering
+		\begin{tabular}{ccccccc}
+\toprule
+\textbf{Model}		&  \begin{tabular}[x]{@{}c@{}}\textbf{Protected}\\\textbf{Class}\end{tabular} & \begin{tabular}[x]{@{}c@{}}\textbf{Control}\\\textbf{Class}\end{tabular}					& \textbf{AIR}									& \textbf{ME}									& \textbf{SMD} &  \begin{tabular}[x]{@{}c@{}}\textbf{FNR}\\\textbf{Ratio}\end{tabular}\\
+\midrule
+$g^\text{MGBM}$	& \begin{tabular}{@{}c@{}} Black \\ Female\end{tabular}		& \begin{tabular}{@{}c@{}} White \\ Male\end{tabular}	& \begin{tabular}{@{}c@{}} 0.776 \\ 0.948\end{tabular}	& \begin{tabular}{@{}c@{}} 18.3\% \\ 4.1\%\end{tabular}	& \begin{tabular}{@{}c@{}} 0.628 \\ 0.084\end{tabular}	& \begin{tabular}{@{}c@{}} 0.900 \\ 0.810\end{tabular} \\
+\midrule 
+$g^\text{XNN}$		& \begin{tabular}{@{}c@{}} Black \\ Female\end{tabular}		& \begin{tabular}{@{}c@{}} White \\ Male\end{tabular}	& \begin{tabular}{@{}c@{}} 0.743 \\ 0.955\end{tabular}	& \begin{tabular}{@{}c@{}} 21.4\% \\ 3.6\%\end{tabular}	& \begin{tabular}{@{}c@{}} 0.621 \\ 0.105\end{tabular}	& \begin{tabular}{@{}c@{}} 0.855 \\ 0.927\end{tabular} \\							
+\bottomrule
+			\label{tab:mort_disc}
+		\end{tabular}
+	}
 \end{table}
 
 Both ME and AIR show higher disparities for blacks under $g^{\text{XNN}}$ than $g^{\text{MGBM}}$.  Blacks receive high-priced loans 21.4\% more frequently using $g^{\text{XNN}}$ vs. 18.3\% for $g^{\text{MGBM}}$.  Both $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ show AIRs that are statistically significantly below parity (not shown, but available in resources discussed in Subsection \ref{ssec:soft}), and which are also below the EEOC’s 0.80 threshold. This would typically indicate cause for further review to determine the cause and validity of these disparities, and a few relevant remediation techniques for such discovered discrimination are discussed in Section \ref{ssec:disc_rem}. On the other hand, women improve under $g^{\text{XNN}}$ vs. $g^{\text{MGBM}}$ (MEs of 3.6\% vs. 4.1\%; AIRs of 0.955 vs. 0.948). The AIRs, while statistically significantly below parity, are well above the EEOC’s threshold of 0.80.  In most situations, the values of these metrics alone would not likely flag a model for further review, though there may be other considerations which would lead to concern. 
-
-\begin{table}[H]
-\caption{AIR, ME, SMD, FPR ratio, and FNR ratio for $g^\text{MGBM}$ and $g^\text{XNN}$ on the mortgage test data.}
-\centering
-\begin{tabular}{cccccccc}
-\toprule
-\textbf{Model}	& \textbf{Protected Class}	& \textbf{Control Class}	& \textbf{AIR}	& \textbf{ME}	& \textbf{SMD}  & \textbf{FPR Ratio}		& \textbf{FNR Ratio} \\
-\midrule
-$g^\text{MGBM}$	& \begin{tabular}{@{}c@{}} Black \\ Female\end{tabular}		& \begin{tabular}{@{}c@{}} White \\ Male\end{tabular}	& \begin{tabular}{@{}c@{}} 0.776 \\ 0.948\end{tabular}	& \begin{tabular}{@{}c@{}} 18.3\% \\ 4.1\%\end{tabular}	& \begin{tabular}{@{}c@{}} 0.628 \\ 0.084\end{tabular}	& \begin{tabular}{@{}c@{}} 2.10 \\ 1.15\end{tabular}	& \begin{tabular}{@{}c@{}} 0.900 \\ 0.810\end{tabular} \\
-\midrule 
-$g^\text{XNN}$		& \begin{tabular}{@{}c@{}} Black \\ Female\end{tabular}		& \begin{tabular}{@{}c@{}} White \\ Male\end{tabular}	& \begin{tabular}{@{}c@{}} 0.743 \\ 0.955\end{tabular}	& \begin{tabular}{@{}c@{}} 21.4\% \\ 3.6\%\end{tabular}	& \begin{tabular}{@{}c@{}} 0.621 \\ 0.105\end{tabular}	& \begin{tabular}{@{}c@{}} 2.45 \\ 1.21\end{tabular}	& \begin{tabular}{@{}c@{}} 0.855 \\ 0.927\end{tabular} \\							
-\bottomrule
-\label{tab:mort_disc}
-\end{tabular}
-\end{table}
 
 Black SMDs for $g^{\text{XNN}}$ and $g^{\text{MGBM}}$ are similar: 0.621 and 0.628, respectively.  These exceed Cohen’s guidelines of 0.5 for a medium effect size and would likely trigger further review.  Female SMDs are well below Cohen’s definition of small effect size: 0.105 and 0.084 for $g^{\text{XNN}}$ and $g^{\text{MGBM}}$, respectively.  Similar to results for female AIR, these values alone are unlikely to prompt further review.
 
@@ -673,27 +599,20 @@ Interpretable model architectures and post-hoc explanations play an important ro
 
 \subsection{Discrimination Testing and Remediation in Practice}\label{ssec:disc_rem}
 
-The heightened interest in exploring and fixing algorithmic bias has led to a significant body of work focused in using ML to diminish discrimination in model outcomes \cite{friedler2019comparative}. Broadly, these can be defined into two groups: more traditional methods that mitigate discrimination by searching across possible algorithmic and feature specifications, and more recently developed approaches that change the algorithms or input data themselves in order to mitigate disparities. Many approaches that have been developed in the last five to seven years focus on altering the algorithm itself, preprocessing the data, or post-processing the predictions in order to diminish class-control correlations or dependencies. IBM’s \href{http://aif360.mybluemix.net/}{\texttt{AIF360}} toolkit provides an open source Python package for many of the metrics and techniques that have been developed recently.
+The heightened interest in exploring and fixing algorithmic bias has led to a significant body of work focused in using ML to diminish discrimination in model outcomes \cite{friedler2019comparative}. Broadly, these can be defined into two groups: more traditional methods that mitigate discrimination by searching across possible algorithmic and feature specifications, and more recently developed approaches that change the algorithms or input data themselves in order to mitigate disparities. Many approaches that have been developed in the last five to seven years focus on altering the algorithm itself, preprocessing the data, or post-processing the predictions in order to diminish class-control correlations or dependencies. For comments on why these techniques could result in regulatory non-compliance in certain cases, see Appendix \ref{a_sec:comp}.
 
-Whether these methods are suitable for a particular use case depends on the legal environment in which the model will be used and the use case itself.  Great care must be taken in order to ensure that the appropriate fairness metrics are chosen, because certain metrics may not be appropriate for some use cases. Additionally, the effects of changing the model must be viewed holistically.  For example, the mortgage data disparity analysis in Section \ref{ssec:dis_mort} shows that if one were to choose $g^\text{MGBM}$ over $g^\text{XNN}$ because $g^\text{MGBM}$ has a lower FPR ratio for blacks, it would ultimately lead to a higher FPR for blacks overall, which may represent doing more harm than good.
-
-Furthermore, using some recently developed discrimination mitigation methods may lead to non-compliance with anti-discrimination laws and regulations.  A fundamental maxim of US anti-discrimination law is that (to slightly paraphrase), ``similarly situated people should be treated similarly.''\footnote{In the pay discrimination case, \textit{Bazemore v. Friday}, 478 US 385 (1986), the US Supreme Court found that,``Each week's paycheck that delivers less to a black than to a similarly situated white is a wrong actionable ...''  Beyond the obvious conceptual meaning, what specifically constitutes \textit{similarly situated} is controversial and its interpretation differs by circuit.} A model developed without inclusion of class status (or proxies thereof) considers similarly situated people the same on the dimensions included in the model: people who have the same feature values will have the same model output (though there may be some small or random differences in outcomes due to computational issues). Obviously, the inclusion of protected class status will change model output by class. With possible rare exceptions, this is likely to be viewed with legal and regulatory skepticism today, even if including class status is done with fairness as the goal.\footnote{In a reverse discrimination case, \textit{Ricci v Desafano}, 557 US 557 (2009), the court found that any consideration of race which is not justified by correcting for past proven discrimination is illegal and, moreover, a lack of fairness is not necessarily evidence of illegal discrimination.}  Preprocessing and post-processing techniques may be similarly problematic, because industries that must provide explanations to those who receive unfavorable treatment (e.g., adverse action notices in US financial services) may have to incorporate the class adjustments into their explanations as well.
-
-Of the newer class of fairness enhancing interventions in ML, within-algorithm discrimination mitigation techniques that do not use class information may be more likely to be acceptable in highly regulated settings today. These techniques work by incorporating a loss function where more discriminatory paths or weights are penalized and will only be used by the model if the increase in model performance overcomes the penalty (the relative level of performance-to-discrimination penalty is determined via a hyperparameter choice). Other mitigation strategies that only alter hyperparameters or algorithm choice are also likely to be acceptable. And feature selection techniques that have been used in traditional modeling (ordinary least squares, logistic, and simple decision tree models) are likely to continue to be accepted in regulatory environments.  For further discussion of potential and utilized techniques that can mitigate disparate impact in financial services, see \citet{schmidt2019introduction}. 
+Whether these methods are suitable for a particular use case depends on the legal environment in which the model will be used and the use case itself. Of the newer class of fairness enhancing interventions in ML, within-algorithm discrimination mitigation techniques that do not use class information may be more likely to be acceptable in highly regulated settings today. These techniques work by incorporating a loss function where more discriminatory paths or weights are penalized and will only be used by the model if the increase in model performance overcomes the penalty (the relative level of performance-to-discrimination penalty is determined via a hyperparameter choice). Other mitigation strategies that only alter hyperparameters or algorithm choice are also likely to be acceptable. And feature selection techniques that have been used in traditional modeling (ordinary least squares, logistic, and simple decision tree models) are likely to continue to be accepted in regulatory environments.  For further discussion of potential and utilized techniques that can mitigate disparate impact in financial services, see \citet{schmidt2019introduction}. 
 
 Regardless of the methodology chosen to minimize disparities, advances in computing have enhanced the ability to search for less discriminatory models.  Prior to these advances, only a small number of alternative algorithms could be tested for lower levels of disparity without causing infeasible delays in model implementation.  Now, tens of thousands of alternative models or more can be quickly tested for lower discrimination and better predictive quality.  An additional opportunity arises as a result of ML itself: the well-known Rashomon effect, or the multiplicity of good ML models for most datasets. Thus, it is now feasible to train more models, find more good models, and test more models for discrimination, and among all those tested models, there are likely to be some with high predictive performance and low discrimination.
 
 \subsection{Intersectional and Non-static Problems in Machine Learning}
 
-The black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or the security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges, e.g., the \textit{fairwashing} or \textit{scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{shokri2019privacy}, \cite{fair_washing}, \cite{scaffolding}.\footnote{See: \href{https://www.theguardian.com/technology/2016/mar/24/tay-microsofts-ai-chatbot-gets-a-crash-course-in-racism-from-twitter}{\textit{Tay, Microsoft's AI chatbot, gets a crash course in racism from Twitter}}.}\textsuperscript{,}\footnote{While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This is sometimes known as the \textit{transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation.\textsuperscript{26}}\textsuperscript{,}\footnote{See: \href{https://hbr.org/2019/12/the-ai-transparency-paradox}{\textit{The AI Transparency Paradox}}.} Again, this text makes no claims that the opacity, discrimination, or security problems in ML have been solved, even treated as independent problems. Instead, this text aims to highlight these issues as both singular entities and non-static intersectional phenomena. Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and discrimination testing approaches as at least partial remedies to the black-box and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data extraction, and membership inference attacks, and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Accuracy, discrimination, and security characteristics of a system can change over time as well. Simply testing for these problems at training time, as presented in Sections \ref{sec:m_and_m} and \ref{sec:res}, is not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and security should be monitored in real-time and over time, as long as a model is deployed.
+The black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or the security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges, e.g., the \textit{fairwashing} or \textit{scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{shokri2019privacy}, \cite{fair_washing}, \cite{scaffolding}.\footnote{See: \href{https://www.theguardian.com/technology/2016/mar/24/tay-microsofts-ai-chatbot-gets-a-crash-course-in-racism-from-twitter}{\textit{Tay, Microsoft's AI chatbot, gets a crash course in racism from Twitter}}.}\textsuperscript{,}\footnote{While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This is sometimes known as the \textit{transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation.\textsuperscript{26}}\textsuperscript{,}\footnote{See: \href{https://hbr.org/2019/12/the-ai-transparency-paradox}{\textit{The AI Transparency Paradox}}.} Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and discrimination testing approaches as at least partial remedies to the black-box and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data extraction, and membership inference attacks, and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Accuracy, discrimination, and security characteristics of a system can change over time as well. Simply testing for these problems at training time, as presented in Sections \ref{sec:m_and_m} and \ref{sec:res}, is not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and security should be monitored in real-time and over time, as long as a model is deployed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}\label{sec:con}
 
 This text puts forward results on simulated data to provide a rough validation of constrained ML models, post-hoc explanation techniques, and discrimination testing methods. These same modeling, explanation, and discrimination testing approaches are then applied to more realistic mortgage data to provide an example of a responsible ML work flow for high-stakes, human-centered, or regulated ML applications. The discussed methodologies are solid steps toward interpretability, explanation, and minimal discrimination for ML decisions, which should ultimately enable increased fairness and logical appeal processes for ML decision subjects. Of course, there is more to the responsible practice of ML than interpretable models, post-hoc explanation, and discrimination testing, even from a technology perspective, and Section \ref{sec:disc} also points out numerous additional references and open source Python software assets that are available to researchers and practitioners today to increase human trust and understanding in ML systems. While the messy, complex, and human problems of racism, sexism, privacy violations, and cyber crime can probably not be solved by technology alone, this work (and many, many others) illustrate numerous ways for ML practitioners to become part of the solution to these problems, instead of perpetuating and exacerbating them. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{6pt} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \authorcontributions{NG, data cleaning, GBM and MGBM assessment and results; PH, primary author; KM, ANN and XNN implementation, assessment, and results; NS, secondary author, data simulation and collection, and discrimination testing.}%For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing--original draft preparation, X.X.; writing--review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work reported.}
@@ -748,6 +667,143 @@ US -- United States,
 XNN -- explainable neural network.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{6pt} 
+
+\appendixtitles{yes} 
+\appendix
+
+\section{HMDA Mortgage Data Details}\label{a_sec:mort}
+
+The US HMDA law, originally enacted in 1975, requires many financial institutions that originate mortgage products to provide certain data about many of the mortgage-related products that they either deny or originate on an annual basis. This information is first provided to the Consumer Financial Protection Bureau (CFPB), which subsequently releases some of the data to the public. Regulators often use HMDA data to, ``...show whether lenders are serving the housing needs of their communities; they give public officials information that helps them make decisions and policies; and they shed light on lending patterns that could be discriminatory.''\textsuperscript{5} In addition to regulatory use, public advocacy groups use these data for similar purposes, and the lenders themselves use the data to benchmark their community outreach relative to their peers.  The publicly available data that the CFPB releases includes information such as the lender, the type of loan, loan amount, loan to value (LTV) ratio, debt to income (DTI) ratio, and other important financial descriptors. The data also include information on each borrower and co-borrower’s race, ethnicity, gender, and age. Because the data includes information on these protected class characteristics, certain metrics that can be indicative of discrimination in lending can be calculated directly using the HDMA data. Ultimately, the HMDA data represent the most comprehensive source of data on highly-regulated mortgage lending that is publicly available, which makes it an ideal dataset to use for the types of analyses set forth in Sections \ref{sec:m_and_m} and \ref{sec:res}.  
+
+\section{Selected Algorithmic Details}\label{a_sec:algo}
+
+\subsection{Notation}\label{a_ssec:not}
+
+To facilitate descriptions of data and modeling, explanatory, and discrimination testing techniques, notation for input and output spaces, datasets, and models is defined.
+
+\subsubsection{Spaces} 
+
+\begin{itemize}[leftmargin=*,labelsep=5.8mm]
+	\item Input features come from the set $\mathcal{X}$ contained in a \textit{P}-dimensional input space, $\mathcal{X} \subset \mathbb{R}^P$.  An arbitrary, potentially unobserved, or future instance of $\mathcal{X}$ is denoted $\mathbf{x}$, $\mathbf{x} \in \mathcal{X}$.
+	\item Labels corresponding to instances of $\mathcal{X}$ come from the set $\mathcal{Y}$.
+	\item Learned output responses of models are contained in the set $\mathcal{\hat{Y}}$. % For regression models, the set $\mathcal{\hat{Y}}_r$ is also contained in a $C$-dimensional output space, $\mathcal{\hat{Y}}_r \subset \mathbb{R}^{C_r}$. For classification models, the set $\mathcal{\hat{Y}}_c$ typically contains a column vector for each unique class in $\mathcal{Y}$. Hence, $\mathcal{\hat{Y}}_c$ is contained in a $C'$-dimensional output space,  $\mathcal{\hat{Y}}_c \subset \mathbb{R}^{C'_c}$.
+\end{itemize}	
+
+\subsubsection{Datasets} 
+
+\begin{itemize}[leftmargin=*,labelsep=5.8mm]
+	\item The input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$. 
+	\item Each $i$-th observation of $\mathbf{X}$ is denoted as $\mathbf{x}^{(i)} = $  
+	$[x_0^{(i)}, x_1^{(i)}, \dots, x_{\textit{P}-1}^{(i)}]$, with corresponding $i$-th labels in $\mathbf{Y}, \mathbf{y}^{(i)}$, and corresponding predictions in $\mathbf{\hat{Y}}, \mathbf{\hat{y}}^{(i)}$. % = [y_0^{(i)}, y_1^{(i)}, \dots, y_{\textit{C}-1}^{(i)}]$.
+	\item $\mathbf{X}$ and $\mathbf{Y}$ consist of $N$ tuples of observations: $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots,(\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$. %\\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
+	\item Each $j$-th input column vector of $\mathbf{X}$ is denoted as $X_j = [x_{j}^{(0)}, x_{j}^{(1)}, \dots, x_{j}^{(N-1)}]^T$.
+\end{itemize}	 
+
+\subsubsection{Models}
+
+\begin{itemize}[leftmargin=*,labelsep=5.8mm]
+	\item A type of ML model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown signal-generating function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
+	$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$, such that $g \approx f$.
+	\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
+	\item The model to be explained and tested for discrimination is denoted as $g$.
+\end{itemize}
+
+\subsection{Monotonic Gradient Boosting Machine}\label{a_ssec:mgbm}
+
+MGBMs constrain typical GBM training to consider only tree splits that obey user-defined positive and negative monotonicity constraints, with respect to each $X_j$ and $\mathbf{y}$ independently. The MGBM remains an additive combination of $B$ trees trained by gradient boosting, $T_b$, and each tree learns a set of splitting rules that respect monotonicity constraints,  $\Theta^\text{mono}_b$. 
+
+\begin{equation}
+\begin{aligned}\label{eq:gbm}
+g^{\text{MGBM}}(\mathbf{x}) &= \sum_{b=1}^B T_b\left(\mathbf{x}; \Theta^\text{mono}_b\right)
+\end{aligned}
+\end{equation}
+
+\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the in $g^{\text{MGBM}}$, $g^{\text{MGBM}}_{b-1}(\mathbf{X})$, and the $b$-th tree splits, $T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)$, in a numeric error function (e.g., squared error, Huber error), $l$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For the $b$-th iteration, the loss function, $\mathcal{L}_{b}$, can generally be defined as:
+
+\begin{equation}
+\begin{aligned}
+\mathcal{L}_{b} =\sum_{i=0}^{N-1}l(y^{(i)}, g^{\text{MGBM}}_{b-1}(\mathbf{x}^{(i)}), T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)) + \Omega(T_b)\\
+\end{aligned}
+\end{equation}
+
+\noindent In addition to $\mathcal{L}_{b}$, $g^\text{MGBM}$ training is characterized by additional splitting rules and constraints on tree node weights. Each binary splitting rule, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left and right child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$ can be direct numeric components of some $g^\text{MGBM}$ prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, $g^{\text{MGBM}}$ is positive monotonic with respect to some $X_j$ if $g^{\text{MGBM}}(x^{\alpha}_j) \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. The following rules and constraints ensure positive monotonicity in $\Theta_b$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$.
+
+\begin{enumerate}[leftmargin=*,labelsep=4.9mm]
+	\item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ resulting in $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{b,j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$, is not considered. 
+	\item For any subsequent left child node involving $X_j$, any $\theta_{b,j, k\ge1}$ resulting in $T(x_j; \theta_{b,j,k\ge1}) = \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$ where $w_{b,j,k\ge1,L} > w_{b,j,k\ge1,R}$, is not considered.
+	\item Moreover, for any subsequent left child node involving $X_j$, $T(x_j; \theta_{b,j,k\ge1}) = \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$, $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\}$ are bound by the associated $\theta_{b,j,k-1}$ set of node weights, $\{w_{b,j,k-1,L}, w_{b,j,k-1, R}\}$, such that $ \{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} < \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
+	\item (1) and (2) are also applied to all right child nodes, except that for right child nodes $ w_{b,j,k,L} \le w_{b,j,k,R}$ and $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
+\end{enumerate}
+
+\noindent Note that for any one $X_j$ and $T_b \in g^{\text{MGBM}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{MGBM}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{MGBM}}(x^{\alpha}_j)  \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e., $g^{\text{MGBM}}(x^{\alpha}_j)  \ge g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched. Also consider that MGBM models with independent monotonicity constraints between some $X_j$ and $\mathbf{y}$ likely restrict non-monotonic interactions between multiple $X_j$. Moreover, if monotonicity constraints are not applied to all $X_j \in \mathbf{X}$, any strong non-monotonic signal in training data associated with some important $X_j$ maybe forced onto some other arbitrary unconstrained $X_j$ under some $g^{MGBM}$ models, compromising the end goal of interpretability.
+
+\subsection{Explainable Neural Network}\label{a_ssec:xnn}
+
+XNNs are an alternative formulation of additive index models in which the ridge functions are neural networks \cite{wf_xnn}. XNNs also bear a strong resemblance to generalized additive models (GAMs) and so-called explainable boosting machines (EBMs or GA\textsuperscript{2}M), i.e., GAMs which consider main effects and a small number of 2-way interactions and may also incorporate boosting into their training \cite{esl}, \cite{ga2m}.  Hence, XNNs enable users to tailor interpretable neural network architectures to a given prediction problem and to visualize model behavior by plotting ridge functions. XNNs are composed of a global bias term, $\mu_0$, $K$ individually specified neural networks, $n_k$ with scale parameters $\gamma_k$, and the inputs to each $n_k$ are themselves a linear combination of modeling inputs, $\sum_j\beta_{k,j}x_j$.
+
+\begin{equation}
+\begin{aligned}
+\label{eq:xnn}
+g^{\text{XNN}}(\mathbf{x}) = \mu_0 + \sum_{k=0}^{K-1}\gamma_k n_k(\sum^{J=\mathcal{P}-1}_{j=0}\beta_{k, j}x_j)
+\end{aligned}
+\end{equation}
+
+\noindent $g^{\text{XNN}}$ is comprised of 3 meta-layers:
+
+\begin{enumerate}[leftmargin=*,labelsep=4.9mm]
+	\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, which should learn higher magnitude weights for important $X_j$, is known as the \textit{projection layer}. It is fully connected to each input $X_j$. Each hidden unit in the projection layer may optionally include a bias term.
+	\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network, which can be parameterized to suit a given modeling task. To facilitate direct interpretation and visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer hidden unit, $\sum_j\beta_{k,j}x_j$. Each $n_k$ can contain several bias terms.
+	\item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for interpretation and visualization purposes.
+\end{enumerate}
+
+\subsection{One-dimensional Partial Dependence and Individual Conditional Expectation}\label{a_ssec:pd_ice}
+
+Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{\mathcal{P} \setminus \{j\}} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{\mathcal{P} \setminus \{j\}} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observations of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{\mathcal{P} \setminus \{j\}}$ is left unchanged. $\text{ICE}(x_j, \mathbf{x}, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{\mathcal{P} \setminus \{j\}}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$, as displayed in Section \ref{sec:res}. Due to known problems for PD in the presence of strong correlation and interactions, PD should not be used alone. PD should be paired with ICE or be replaced with accumulated local effect (ALE) plots \cite{ice_plots}, \cite{ale_plot}.
+
+\subsection{Shapley Values}\label{a_ssec:shap}
+
+For some instance $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form: 
+
+\begin{equation}
+\label{eq:shap_additive}
+\begin{aligned}
+g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
+\end{aligned}
+\end{equation}
+
+\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$ and $\phi_0$ is the average of $g(\mathbf{X})$. Each $\phi_j$ is a weighted combination of model scores, $g_x(\mathbf{x})$, with $x_j$, $g_x(S \cup \{j\})$, and the model scores without $x_j$, $g_x(S)$, for every subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$, where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
+
+\begin{equation}
+\label{eq:shap_contrib}
+\begin{aligned}
+\phi_{j} = \sum_{S \subseteq \mathcal{P} \setminus \{j\}}\frac{|S|!(\mathcal{P} -|S| -1)!}{\mathcal{P}!}[g_x(S \cup \{j\}) - g_x(S)]
+\end{aligned}
+\end{equation}
+
+\noindent Local, per-instance explanations using Shapley values tend to involve ranking $x_j$ by $\phi_j$ values or delineating a set of the $X_j$ names associated with the $k$-largest $\phi_j$ values for some $\mathbf{x}$, where $k$ is some small positive integer, say 5. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across all of the observations in some set $\mathbf{X}$.
+
+\section{Machine Learning Discrimination Under US Law}\label{a_sec:types}
+
+Before discussing the techniques, it is important to explain and draw a distinction between the two major types of discrimination recognized in US legal and regulatory settings, disparate treatment (DT), and disparate impact (DI). DT (which is loosely referred to as \textit{intentional discrimination}) occurs most often in an algorithmic setting when a model explicitly uses protected class status (e.g., race, sex) as an input feature or uses a feature that is so similar to protected class status that it essentially proxies for class membership.  With some limited exceptions, the use of these factors in an algorithm is illegal under several statutes in the US.\textsuperscript{4} DI, colloquially known as \textit{unintentional discrimination}, occurs when some element of a decisioning process includes a \textit{facially neutral} factor (i.e, a reasonable and valid predictor of response) that results in a disproportionate share of a protected class receiving an unfavorable outcome.  In modeling, this is most typically driven by a statistically important feature that is distributed unevenly across classes, which causes more frequent unfavorable outcomes for the protected class.  However, other factors, such as hyperparameter or algorithm choices, can drive DI.  Crucially, legality hinges on whether changing the model, for example exchanging one feature for another or altering the hyperparameters of an algorithm, can lead to a similarly predictive model with lower disparate impact. The analyses and metrics herein focus on several measures of disparate impact that are commonly used in US litigation and regulatory settings.
+
+\section{Practical vs. Statistical Significance for Discrimination Metrics}\label{a_sec:prac_v_stat}
+
+A finding of \textit{practical significance} means the disparity found is not only statistically significant, but also passes beyond a chosen threshold that would constitute \textit{prima facia} evidence of illegal discrimination.  Its use represents a recognition that any large dataset is likely to show statistically significant differences in outcomes by class, even if those differences are not truly meaningful.  It further recognizes that there are likely to be situations where differences in outcomes are beyond a model user’s ability to correct them without significantly degrading the quality of the model. Moreover, practical significance is also needed by model builders and compliance personnel to determine whether a model should undergo remediation efforts before it is put into production. Unfortunately, guidelines for practical significance, i.e., the threshold at which any statistically significant disparity would be considered evidence of illegal discrimination, are not as frequently codified as the standards for statistical significance.  One exception, however, is in employment discrimination analyses, where the US Equal Employment Opportunity Commission (EEOC) has stated that if the AIR is below 0.80 and statistically significant, then this constitutes \textit{prima facia} evidence of discrimination, which the model user must rebut in order for the disparate impact not to be considered illegal discrimination.\footnote{Importantly, the standard of 0.80 is not a law, but a rule of thumb for agencies tasked with enforcement of discrimination laws.  ``Adoption of Questions and Answers To Clarify and Provide a Common Interpretation of the Uniform Guidelines on Employee Selection Procedures,'' Federal Register, Volume 44, Number 43 (1979).} It is important to note that the 0.80 measure of practical significance, also known as the \textit{80\% rule} and the \textit{4/5ths rule}, is explicitly used in relation to AIR, and it is not clear that the use of this threshold is directly relevant to testing fairness for metrics other than the AIR.
+
+The legal thresholds for determining statistical significance is clearer and more consistent than that for practical significance.  The first guidance in US courts occurred in a case involving discrimination in jury selection, \textit{Castaneda v. Partida}.\footnote{\textit{Castaneda v. Partida}, 430 US 482 - Supreme Court (1977)}   Here, the US Supreme Court wrote that, ``As a general rule for such large samples, if the difference between the expected value and the observed number is greater than two or three standard deviations, then the hypothesis that the jury drawing was random would be suspect to a social scientist.''  This ``two or three standard deviations'' test was then applied to employment discrimination in \textit{Hazelwood School Districts v. United States.}\footnote{\textit{Hazelwood School Dist. v. United States}, 433 US 299 (1977)} Out of this, a 5\% two-sided test (z=1.96), or an equivalent 2.5\% one-sided test, has become a common standard for determining whether evidence of disparities is statistically significant.
+
+\section{Cutoff Selection w.r.t Mitigating Discrimination}\label{a_sec:cut}
+
+The selection of which cutoff to use in production is typically based on the model’s use case, rather than one based solely on the statistical properties of the predictions themselves.  For example, a model developer at a bank might build a credit model where the F1 score is maximized at a delinquency probability cutoff of 0.15.  For purposes of evaluating the quality of the model, she may review confusion matrix statistics (accuracy, recall, precision, etc.) using cutoffs based on the maximum F1 score. But, because of its risk tolerance and other factors, the bank itself might be willing to lend to anyone with a delinquency probability of 0.18 or lower, which would mean that anyone who is scored at 0.18 or lower would receive an offer of credit.  Because disparity analyses are concerned with how people are affected by the way the model is used, it is essential that any confusion matrix-based metrics of disparity be calculated on the in-production classification decisions, rather than the cutoffs that are not related to what those affected by the model will experience.
+
+\section{Recent Fairness Techniques and Compliance}\label{a_sec:comp}
+
+Great care must be taken in order to ensure that the appropriate fairness metrics are chosen, because certain metrics may not be appropriate for some use cases. Additionally, the effects of changing the model must be viewed holistically.  For example, the mortgage data disparity analysis in Section \ref{ssec:dis_mort} shows that if one were to choose $g^\text{MGBM}$ over $g^\text{XNN}$ because $g^\text{MGBM}$ has a lower FPR ratio for blacks, it would ultimately lead to a higher FPR for blacks overall, which may represent doing more harm than good.
+
+Furthermore, using some recently developed discrimination mitigation methods may lead to non-compliance with anti-discrimination laws and regulations.  A fundamental maxim of US anti-discrimination law is that (to slightly paraphrase), ``similarly situated people should be treated similarly.''\footnote{In the pay discrimination case, \textit{Bazemore v. Friday}, 478 US 385 (1986), the US Supreme Court found that,``Each week's paycheck that delivers less to a black than to a similarly situated white is a wrong actionable ...''  Beyond the obvious conceptual meaning, what specifically constitutes \textit{similarly situated} is controversial and its interpretation differs by circuit.} A model developed without inclusion of class status (or proxies thereof) considers similarly situated people the same on the dimensions included in the model: people who have the same feature values will have the same model output (though there may be some small or random differences in outcomes due to computational issues). Obviously, the inclusion of protected class status will change model output by class. With possible rare exceptions, this is likely to be viewed with legal and regulatory skepticism today, even if including class status is done with fairness as the goal.\footnote{In a reverse discrimination case, \textit{Ricci v Desafano}, 557 US 557 (2009), the court found that any consideration of race which is not justified by correcting for past proven discrimination is illegal and, moreover, a lack of fairness is not necessarily evidence of illegal discrimination.}  Preprocessing and post-processing techniques may be similarly problematic, because industries that must provide explanations to those who receive unfavorable treatment (e.g., adverse action notices in US financial services) may have to incorporate the class adjustments into their explanations as well.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \reftitle{References}
 
 %=====================================
@@ -758,6 +814,8 @@ XNN -- explainable neural network.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
