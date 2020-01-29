@@ -41,3 +41,11 @@ STRUCTURAL REVIEVER FEEDBACK:
 NICK FEEDBACK:
 
 * Update Nick and Bryce article to not be arXiv
+
+--
+
+RESPONSE:
+
+* increased emphasis on workflow, de-emphasized individual techniques
+* increased all figure sizes
+* moved large amounts of text and figures to the appendix
