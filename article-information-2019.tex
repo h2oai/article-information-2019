@@ -266,23 +266,25 @@ Results are laid out for the simulated and mortgage datasets. Accuracy is compar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulated Data Results}
 
-As model training and assessment on the simulated data is a rough validation exercise meant to showcase expected results on data with known characteristics, and given that most of the techniques in the proposed workflow are already used widely or have been validated elsewhere, reporting of simulated data results in the main text will focus mostly on debunking the perceived \textit{accuracy-interpretability tradeoff} for the considered model architectures and on the more novel XNN results. The bulk of the post-hoc explanation and discrimination testing results for the simulated are left to Appendix \ref{a_sec:res_sim}. 
+As model training and assessment on the simulated data is a rough validation exercise meant to showcase expected results on data with known characteristics, and given that most of the techniques in the proposed workflow are already used widely or have been validated elsewhere, reporting of simulated data results in the main text will focus mostly on challenging the perceived \textit{accuracy-interpretability tradeoff} for the considered model architectures and on the more novel XNN interpretability results. The bulk of the post-hoc explanation and discrimination testing results for the simulated are left to Appendix \ref{a_sec:res_sim}. 
 
 \subsubsection{Constrained vs. Unconstrained Model Fit Assessment}\label{ssec:c_v_uc_sim}
 
-Model fit is roughly uniform for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. Interpretability and explainability benefits of the constrained models appear to come at little cost to overall model performance, or in the case of $g^\text{ANN}$ and $g^\text{XNN}$, no cost at all. $g^\text{XNN}$ actually shows slightly better fit than $g^\text{ANN}$ across accuracy, area under the curve (AUC), logloss, and root mean squared error (RMSE). Accuracy is measured at the best F1 threshold for each model. Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. $g^\text{GBM}$ exhibits the best performance, but all models give relatively similar fit results. Interpretability and explainability benefits of the constrained models appear to come at little cost to overall model performance, or in the case of $g^\text{ANN}$ and $g^\text{XNN}$, no cost at all. $g^\text{XNN}$ actually shows slightly better fit than $g^\text{ANN}$ across accuracy, area under the curve (AUC), logloss, and root mean squared error (RMSE). Accuracy is measured at the best F1 threshold for each model.
+Model fit is roughly uniform for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. Interpretability and explainability benefits of the constrained models appear to come at little cost to overall model performance, or in the case of $g^\text{ANN}$ and $g^\text{XNN}$, no cost at all. $g^\text{XNN}$ actually shows slightly better fit than $g^\text{ANN}$ across accuracy, area under the curve (AUC), logloss, and root mean squared error (RMSE). Accuracy is measured at the best F1 threshold for each model. Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. $g^\text{GBM}$ exhibits the best performance, but all models give relatively similar fit results. Interpretability and explainability benefits of the constrained models appear to come at little cost to overall model performance, or in the case of $g^\text{ANN}$ and $g^\text{XNN}$, no cost at all. $g^\text{XNN}$ actually shows slightly better fit than $g^\text{ANN}$ across accuracy, area under the curve (AUC), logloss, and root mean squared error (RMSE). Measures that require a probability cutoff are taken at the best F1 threshold for each model.
 
 \begin{table}[H]
-	\caption{Fit metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data.}
+	\caption{Fit measures for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the simulated test data. Arrows indicate the direction of improvement for each measure.}
 	\centering
-	\begin{tabular}{ccccc}
+	\begin{tabular}{ccccccccc}
 		\toprule
-		\textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
+		\textbf{Model} & 
+		\href{https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score}{\textbf{Accuracy}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve}{\textbf{AUC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/F1_score}{\textbf{F1}}~$\uparrow$ & 
+		\href{https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss}{\textbf{Logloss}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Matthews_correlation_coefficient}{\textbf{MCC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Root-mean-square_deviation}{\textbf{RMSE}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Sensitivity}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Specificity}}~$\uparrow$ \\
 		\midrule
-		$g^\text{GBM}$		& 0.775	& 0.857	& 0.474	& 0.394 \\
-		$g^\text{MGBM}$	& 0.763	& 0.846	& 0.498	& 0.405 \\
-		$g^\text{ANN}$		& 0.757	& 0.850	& 0.480	& 0.398 \\
-		$g^\text{XNN}$		& 0.758	& 0.851	& 0.479	& 0.397 \\
+		$g^\text{GBM}$		& 0.775	& 0.857	& & 0.474 &	& 0.394 & & \\
+		$g^\text{MGBM}$		& 0.763	& 0.846	& & 0.498 &	& 0.405 & & \\
+		$g^\text{ANN}$		& 0.757	& 0.850	& 0.779 & 0.480 &	0.525 & 0.398 & 0.858 & \\
+		$g^\text{XNN}$		& 0.758	& 0.851	& 0.781 & 0.479 &	0.528 & 0.397 & 0.867 & \\
 		\bottomrule
 		\label{tab:sim_acc}
 	\end{tabular}
@@ -314,17 +316,18 @@ Results for the mortgage data are presented in Subsections \ref{ssec:c_v_uc_mort
 Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably outperform $g^\text{GBM}$ and $g^\text{MGBM}$ on the mortgage data. This is at least partially due to the preprocessing required to present directly comparable post-hoc explainability results and to use neural networks and tensorflow, e.g., numerical encoding of categorical features and missing values. This preprocessing appears to hamstring some of the tree-based models' inherent capabilities. $g^\text{GBM}$ models trained on non-encoded data with missing values repeatedly produced AUC values of $\sim0.81$ (not shown, but available in resources discussed in Subsection \ref{ssec:soft}). 
 
 \begin{table}[H]
-\caption{Fit metrics for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the mortgage test data.}
+	\caption{Fit measures for $g^\text{GBM}$, $g^\text{MGBM}$, $g^\text{ANN}$, and $g^\text{XNN}$ on the mortgage test data. Arrows indicate the direction of improvement for each measure.}
 \centering
-%% \tablesize{} %% You can specify the fontsize here, e.g., \tablesize{\footnotesize}. If commented out \small will be used.
-\begin{tabular}{ccccc}
-\toprule
-\textbf{Model}		& \textbf{Accuracy}	& \textbf{AUC}	 & \textbf{Logloss}	& \textbf{RMSE}\\
-\midrule	
-$g^\text{GBM}$		& 0.795	& 0.828	& 0.252	& 0.276 \\
-$g^\text{MGBM}$	& 0.765	& 0.814	& 0.259	& 0.278 \\
-$g^\text{ANN}$		& 0.865	& 0.871	& 0.231	& 0.262 \\
-$g^\text{XNN}$		& 0.869	& 0.868	& 0.233	& 0.263 \\
+\begin{tabular}{ccccccccc}
+	\toprule
+	\textbf{Model} & 
+	\href{https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score}{\textbf{Accuracy}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve}{\textbf{AUC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/F1_score}{\textbf{F1}}~$\uparrow$ & 
+	\href{https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss}{\textbf{Logloss}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Matthews_correlation_coefficient}{\textbf{MCC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Root-mean-square_deviation}{\textbf{RMSE}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Sensitivity}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Specificity}}~$\uparrow$ \\
+	\midrule	
+$g^\text{GBM}$		& 0.795	& 0.828	& & 0.252 &	& 0.276 & & \\
+$g^\text{MGBM}$		& 0.765	& 0.814	& & 0.259 &	& 0.278 & & \\
+$g^\text{ANN}$		& 0.865	& 0.871	& 0.474 & 0.231 &	0.418 & 0.262 & 0.624 & \\
+$g^\text{XNN}$		& 0.869	& 0.868	& 0.468 & 0.233 &	0.409 & 0.263 & 0.593 & \\
 \bottomrule
 \label{tab:mort_acc}
 \end{tabular}
