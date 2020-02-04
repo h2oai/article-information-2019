@@ -1,10 +1,12 @@
+% TODO:
+% EDITING:
 % - Structure ------------------------- x 
 % - External links
 % - Internal links
 %   - Sections/subsections/appendices - x
-%   - References
+%   - References ---------------------- x
 %   - Tables/figures
-%   - footnotes
+%   - footnotes ----------------------- x
 % - Abbreviations --------------------- x
 % - Bibliography 
 %   - Nick/Bryce citation
@@ -12,46 +14,16 @@
 % - Tables/figures
 % - Grammar and spelling
 %   - Hyphenation
-
-
-%  LaTeX support: latex@mdpi.com 
-%  In case you need support, please attach all files that are necessary for compiling as well as the log file, and specify the details of your LaTeX setup (which operating system and LaTeX version / tools you are using).
+%   - "metric" vs. "measure"
+% CONTENT:
+% - sim data: add error metrics, confirm statements about results
+% - sim data xnn: update figure: connections, feed-forward direction, make subfigure reference match discrimination measure table
+% - mort data: add error metrics, confirm statements about results
+% - mort data: update figure: connections, feed-forward direction, make subfigure reference match discrimination measure table
+% - make subfigure reference match XNN charts
 
 %=================================================================
 \documentclass[information,article,submit,moreauthors,pdftex]{definitions/mdpi} 
-
-% If you would like to post an early version of this manuscript  a preprint, you may use preprint as the journal and change 'submit' to 'accept'. The document class line would be, e.g., \documentclass[preprints,article,accept,moreauthors,pdftex]{mdpi}. This is especially recommended for submission to arXiv, where line numbers should be removed before posting. For preprints.org, the editorial staff will make this change immediately prior to posting.
-
-%--------------------
-% Class Options:
-%--------------------
-%----------
-% journal
-%----------
-% Choose between the following MDPI journals:
-% acoustics, actuators, addictions, admsci, aerospace, agriculture, agriengineering, agronomy, algorithms, animals, antibiotics, antibodies, antioxidants, applsci, arts, asc, asi, atmosphere, atoms, axioms, batteries, bdcc, behavsci , beverages, bioengineering, biology, biomedicines, biomimetics, biomolecules, biosensors, brainsci , buildings, cancers, carbon , catalysts, cells, ceramics, challenges, chemengineering, chemistry, chemosensors, children, cleantechnol, climate, clockssleep, cmd, coatings, colloids, computation, computers, condensedmatter, cosmetics, cryptography, crystals, dairy, data, dentistry, designs , diagnostics, diseases, diversity, drones, econometrics, economies, education, ejihpe, electrochem, electronics, energies, entropy, environments, epigenomes, est, fermentation, fibers, fire, fishes, fluids, foods, forecasting, forests, fractalfract, futureinternet, futurephys, galaxies, games, gastrointestdisord, gels, genealogy, genes, geohazards, geosciences, geriatrics, hazardousmatters, healthcare, heritage, highthroughput, horticulturae, humanities, hydrology, ijerph, ijfs, ijgi, ijms, ijns, ijtpp, informatics, information, infrastructures, inorganics, insects, instruments, inventions, iot, j, jcdd, jcm, jcp, jcs, jdb, jfb, jfmk, jimaging, jintelligence, jlpea, jmmp, jmse, jnt, jof, joitmc, jpm, jrfm, jsan, land, languages, laws, life, literature, logistics, lubricants, machines, magnetochemistry, make, marinedrugs, materials, mathematics, mca, medicina, medicines, medsci, membranes, metabolites, metals, microarrays, micromachines, microorganisms, minerals, modelling, molbank, molecules, mps, mti, nanomaterials, ncrna, neuroglia, nitrogen, notspecified, nutrients, ohbm, optics, particles, pathogens, pharmaceuticals, pharmaceutics, pharmacy, philosophies, photonics, physics, plants, plasma, polymers, polysaccharides, preprints , proceedings, processes, proteomes, psych, publications, quantumrep, quaternary, qubs, reactions, recycling, religions, remotesensing, reports, resources, risks, robotics, safety, sci, scipharm, sensors, separations, sexes, signals, sinusitis, smartcities, sna, societies, socsci, soilsystems, sports, standards, stats, surfaces, surgeries, sustainability, symmetry, systems, technologies, test, toxics, toxins, tropicalmed, universe, urbansci, vaccines, vehicles, vetsci, vibration, viruses, vision, water, wem, wevj
-
-%---------
-% article
-%---------
-% The default type of manuscript is "article", but can be replaced by: 
-% abstract, addendum, article, benchmark, book, bookreview, briefreport, casereport, changes, comment, commentary, communication, conceptpaper, conferenceproceedings, correction, conferencereport, expressionofconcern, extendedabstract, meetingreport, creative, datadescriptor, discussion, editorial, essay, erratum, hypothesis, interestingimages, letter, meetingreport, newbookreceived, obituary, opinion, projectreport, reply, retraction, review, perspective, protocol, shortnote, supfile, technicalnote, viewpoint
-% supfile = supplementary materials
-
-%----------
-% submit
-%----------
-% The class option "submit" will be changed to "accept" by the Editorial Office when the paper is accepted. This will only make changes to the frontpage (e.g., the logo of the journal will get visible), the headings, and the copyright information. Also, line numbering will be removed. Journal info and pagination for accepted papers will also be assigned by the Editorial Office.
-
-%------------------
-% moreauthors
-%------------------
-% If there is only one author the class option oneauthor should be used. Otherwise use the class option moreauthors.
-
-%---------
-% pdftex
-%---------
-% The option pdftex is for use with pdfLaTeX. If eps figures are used, remove the option pdftex and use LaTeX and dvi2pdf.
 
 %=================================================================
 \firstpage{1} 
@@ -67,27 +39,9 @@
 \history{Received: date; Accepted: date; Published: date}
 %\updates{yes} % If there is an update available, un-comment this line
 
-%% MDPI internal command: uncomment if new journal that already uses continuous page numbers 
-%\continuouspages{yes}
-
-%------------------------------------------------------------------
-% The following line should be uncommented if the LaTeX file is uploaded to arXiv.org
-%\pdfoutput=1
-
-%=================================================================
-% Add packages and commands here. The following packages are loaded in our class file: fontenc, calc, indentfirst, fancyhdr, graphicx, lastpage, ifthen, lineno, float, amsmath, setspace, enumitem, mathpazo, booktabs, titlesec, etoolbox, amsthm, hyphenat, natbib, hyperref, footmisc, geometry, caption, url, mdframed, tabto, soul, multirow, microtype, tikz
-
-%=================================================================
-%% Please use the following mathematics environments: Theorem, Lemma, Corollary, Proposition, Characterization, Property, Problem, Example, ExamplesandDefinitions, Hypothesis, Remark, Definition, Notation, Assumption
-%% For proofs, please use the proof environment (the amsthm package is loaded by the MDPI class).
-
 %=================================================================
 % Full title of the paper (Capitalized)
 \Title{A Responsible Machine Learning Workflow\\\normalsize{With Focus on Interpretable Models, Post-hoc Explanation, and Discrimination Testing}}
-
-% Author Orchid ID: enter ID or remove command
-%\newcommand{\orcidauthorA}{0000-0000-000-000X} % Add \orcidA{} behind the author's name
-%\newcommand{\orcidauthorB}{0000-0000-000-000X} % Add \orcidB{} behind the author's name
 
 % Authors, for the paper (add full first names)
 \Author{Navdeep Gill $^{1, \dagger}$, Patrick Hall $^{1,3,\dagger,*}$, Kim Montgomery $^{1,\dagger}$, and Nicholas Schmidt $^{2, \dagger}$}
@@ -106,44 +60,12 @@ $^{3}$ \quad George Washington University}
 
 % Current address and/or shared authorship
 \firstnote{All authors contributed equally to this work.} 
-%\secondnote{}
-% The commands \thirdnote{} till \eighthnote{} are available for further notes
-
-%\simplesumm{} % Simple summary
-
-%\conference{} % An extended version of a conference paper 
 
 % Abstract (Do not insert blank lines, i.e. \\) 
 \abstract{This manuscript outlines a viable approach for training and evaluating machine learning (ML) systems for high-stakes, human-centered, or regulated applications using common Python programming tools. The accuracy and intrinsic interpretability of two types of constrained models, monotonic gradient boosting machines (MGBM) and explainable neural networks (XNN), a deep learning architecture well-suited for structured data, are assessed on simulated data and publicly available mortgage data. For maximum transparency and the potential generation of personalized adverse action notices, the constrained models are analyzed using post-hoc explanation techniques including plots of partial dependence (PD) and individual conditional expectation (ICE) and global and local Shapley feature importance. The constrained model predictions are also tested for disparate impact (DI) and other types of discrimination using measures with long-standing legal precedents, adverse impact ratio (AIR), marginal effect (ME), standardized mean difference (SMD), and also with straightforward group fairness measures. By combining interpretable models, post-hoc explanation, and discrimination testing with accessible software tools, this text aims to provide a template workflow for important ML applications that require high accuracy and interpretability and that mitigate risks of discrimination.}
 
 % Keywords
 \keyword{Machine Learning; Neural Network; Gradient Boosting Machine; Interpretable; Explanation; Fairness; Disparate Impact; Python}
-
-% The fields PACS, MSC, and JEL may be left empty or commented out if not applicable
-%\PACS{J0101}
-%\MSC{}
-%\JEL{}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Only for the journal Diversity
-%\LSID{\url{http://}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Only for the journal Applied Sciences:
-%\featuredapplication{Authors are encouraged to provide a concise description of the specific application or a potential application of the work. This section is not mandatory.}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Only for the journal Data:
-%\dataset{DOI number or link to the deposited data set in cases where the data set is published or set to be published separately. If the data set is submitted and will be published as a supplement to this paper in the journal Data, this field will be filled by the editors of the journal. In this case, please make sure to submit the data set as a supplement when entering your manuscript into our manuscript editorial system.}
-
-%\datasetlicense{license under which the data set is made available (CC0, CC-BY, CC-BY-SA, CC-BY-NC, etc.)}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Only for the journal Toxins
-%\keycontribution{The breakthroughs or highlights of the manuscript. Authors can write one or two sentences to describe the most important part of the paper.}
-
-%\setcounter{secnumdepth}{4}
 
 % for subtables
 \usepackage{caption}
@@ -156,10 +78,6 @@ $^{3}$ \quad George Washington University}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{section}{-1} 
-%% Remove this when starting to work on the template.
-%\section{How to Use this Template}
-%The template details the sections that can be used in a manuscript. Note that the order and names of article sections may differ from the requirements of the journal (e.g., the positioning of the Materials and Methods section). Please check the instructions for authors page of the journal to verify the correct order and names. For any questions, please contact the editorial office of the journal or support@mdpi.com. For LaTeX related questions please contact latex@mdpi.com.
-%The order of the section titles is: Introduction, Materials and Methods, Results, Discussion, Conclusions for these journals: aerospace,algorithms,antibodies,antioxidants,atmosphere,axioms,biomedicines,carbon,crystals,designs,diagnostics,environments,fermentation,fluids,forests,fractalfract,informatics,information,inventions,jfmk,jrfm,lubricants,neonatalscreening,neuroglia,particles,pharmaceutics,polymers,processes,technologies,viruses,vision
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -173,7 +91,7 @@ Section \ref{sec:m_and_m} describes methods and materials, including collected t
 
 The simulated data (see Subsection \ref{ssec:sim_data}) is based on the well-known Friedman datasets. Its known feature importance and discrimination characteristics are used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1979tree}, \cite{friedman1991multivariate}. The mortgage data (see Subsection \ref{ssec:mort_data}) is sourced from the Home Mortgage Disclosure Act (HMDA) database and is a fairly realistic data source for demonstrating the template workflow.\footnote{See: \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}.} To provide a sense of accuracy differences, performance of more interpretable constrained ML models and less interpretable unconstrained ML models is compared on simulated data and collected mortgage data. Because the unconstrained ML models, gradient boosting machines (GBMs) (e.g. \cite{friedman2001greedy}, \cite{esl}) and artificial neural networks (ANNs) (e.g. \cite{recht2011hogwild}, \cite{hinton2012improving}, \cite{sutskever2013importance}, \cite{zeiler2012adadelta}), do not exhibit convincing accuracy benefits on the simulated or mortgage data and can also present unmitigated risks, further explanation and discrimination analyses are applied only to the constrained, interpretable ML models \cite{please_stop}, \cite{fair_washing}, \cite{scaffolding}. Here, MGBMs\footnote{As implemented in \href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}{\texttt{XGBoost}} or \href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}{\texttt{h2o}}.} (See Subsection \ref{ssec:mgbm}) and XNNs (see Subsection \ref{ssec:xnn}, \cite{wf_xnn} \cite{yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analyses. MGBM and XNN interpretable model architectures are selected for the example workflow because they are straightforward variants of popular unconstrained ML models. If practitioners are working with GBM and ANN models, it should be relatively uncomplicated to also evaluate the constrained versions of these models. 
 
-The same can be said of the selected explanation methods and discrimination tests. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines. Presented explanation techniques include PD and ICE (see Subsection \ref{ssec:pd_ice}) and Shapley values (see Subsection \ref{ssec:shap}) \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. Discussed discrimination testing methods (see Subsection \ref{ssec:di}) include AIR, ME, SMD, and confusion matrix metrics \cite{feldman2015certifying}, \cite{cohen1988statistical}, \cite{cohen1992power}.\footnote{Part 1607 - Uniform Guidelines on Employee Selection Procedures (1978) \textsection 1607.4.} Accuracy and other confusion matrix metrics are also reported by demographic segment \cite{zafar2017fairness}. All outlined materials and methods are implemented in open source Python code, and are made available on GitHub (see Subsection \ref{ssec:soft}). 
+The same can be said of the selected explanation methods and discrimination tests. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines. Presented explanation techniques include PD and ICE (see Subsection \ref{ssec:pd_ice}) and Shapley values (see Subsection \ref{ssec:shap}) \cite{esl}, \cite{ice_plots}, \cite{shapley}, \cite{tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. Discussed discrimination testing methods (see Subsection \ref{ssec:di}) include AIR, ME, and SMD \cite{feldman2015certifying}, \cite{cohen1988statistical}, \cite{cohen1992power}.\footnote{Part 1607 - Uniform Guidelines on Employee Selection Procedures (1978) \textsection 1607.4.} Accuracy and other confusion matrix metrics are also reported by demographic segment \cite{zafar2017fairness}. All outlined materials and methods are implemented in open source Python code, and are made available on GitHub (see Subsection \ref{ssec:soft}). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -306,7 +224,6 @@ Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$
 	\end{tabular}
 \end{table}
 
-% TODO: add error metrics, confirm statements about results
 \subsubsection{Interpretability Results}\label{ssec:xnn_sim}
 
 For $g^\text{XNN}$, inherent interpretability manifests as plots of sparse $\gamma_k$ output layer weights, $n_k$ subnetwork ridge functions, and sparse $\beta_j$ weights in the bottom projection layer. Figure \ref{fig:sim_xnn_glob_ridge} provides detailed insights into $g^\text{XNN}$. \ref{fig:sim_xnn_glob_ridge} \textbf{A} displays the sparse $\gamma_k$ weights of the output layer, where only $n_k$ subnetworks with $k \in \{1, 4, 7, 8, 9\}$ are associated with large magnitude weights. The $n_k$ subnetwork ridge functions appear in \ref{fig:sim_xnn_glob_ridge} \textbf{B} as simplistic but distinctive functional forms. Color-coding between \ref{fig:sim_xnn_glob_ridge} \textbf{A} and \ref{fig:sim_xnn_glob_ridge} \textbf{B} visually reinforces the direct feed-forward relationship between the $n_k$ subnetworks and the $\gamma_k$ weights of the output layer.
@@ -316,8 +233,6 @@ For $g^\text{XNN}$, inherent interpretability manifests as plots of sparse $\gam
 	\caption{\textbf{A.} Output layer $\gamma_k$ weights, \textbf{B.} corresponding $n_k$ ridge functions, and \textbf{C.} associated projection layer $\beta_j$ weights for $g^\text{XNN}$ on the simulated test data.}
 	\label{fig:sim_xnn_glob_ridge}
 \end{figure} 
-
-% TODO: update figure: connections, feed-forward direction, make subfigure reference match discrimination measure table
 
 \noindent $n_k$ subnetworks are plotted across the output values of their associated $\sum_j\beta_{k,j}x_j$ projection layer hidden units, and color-coding between \ref{fig:sim_xnn_glob_ridge} \textbf{B} and \ref{fig:sim_xnn_glob_ridge} \textbf{C} link the $\beta_j$ weights to their $n_k$ subnetworks. Most of the heavily utilized $n_k$ subnetworks have sparse weights in their $\sum_j\beta_{k,j}x_j$ projection layer hidden units. In particular, subnetwork $n_1$ appears to be almost solely a function of $X_{\text{Friedman}, 3}$ and appears to exhibit the expected quadratic behavior for $X_{\text{Friedman}, 3}$.  Subnetworks $n_7$, $n_8$, and $n_9$ appear to be most associated with the globally important $X_{\text{Friedman}, 1}$ and $X_{\text{Friedman}, 2}$ features, likely betraying the effort required for $g^{\text{XNN}}$ to model the nonlinear $\text{sin}()$ function of the $X_{\text{Friedman}, 1}$ and $X_{\text{Friedman}, 2}$ product, and these subnetworks, especially $n_7$ and $n_8$, appear to display some noticeable sinusoidal characteristics. Subnetwork $n_4$ seems to be a linear combination of all the original input $X_j$ features, but does weigh the linear $X_{\text{Friedman},4}$ and $X_{\text{Friedman},5}$ terms roughly in the correct two-to-one ratio. As a whole, Figure \ref{fig:sim_xnn_glob_ridge} \textbf{A}, \textbf{B}, and \textbf{C} exhibit evidence that $g^\text{XNN}(\mathbf{X})$ has learned about the signal-generating function in Equation \ref{eq:sim} and the displayed information should help practitioners understand which original input $X_j$ features are weighed heavily in each $n_k$ subnetwork, and which $n_k$ subnetworks have a strong influence on $g^\text{XNN}(\mathbf{X})$ output. 
 
@@ -349,8 +264,6 @@ $g^\text{XNN}$		& 0.869	& 0.868	& 0.468 & 0.233 &	0.409 & 0.263 & 0.593 & \\
 \end{table}
 
 \noindent Regardless of the fit differences between the two families of hypothesis models, the difference between the fit of constrained and unconstrained variants within the two types of models is small for the GBMs and negligible for ANNs, 3\% and < 1\% worse fit respectively, averaged across the metrics reported in Table \ref{tab:mort_acc}.  
-
-% TODO: add error metrics, confirm statements about results
 
 \subsubsection{Interpretability and Post-hoc Explanation Results}\label{ssec:int_ex_mort}
 
@@ -406,8 +319,6 @@ The capability of $g^\text{XNN}$ to model nonlinear phenomenon and high-degree i
 \caption{\textbf{A.} Output layer $\gamma_k$ weights, \textbf{B.} corresponding $n_k$ ridge functions, and \textbf{C.} associated projection layer $\beta_j$ weights for $g^\text{XNN}$ on the mortgage test data.}
 \label{fig:mort_xnn_glob_ridge}
 \end{figure} 
-
-% TODO: update figure: connections, feed-forward direction, make subfigure reference match discrimination measure table
 
 To compliment the global interpretability of $g^\text{XNN}$, Figure \ref{fig:mort_xnn_loc} displays local Shapley values for selected individuals, estimated from the projection layer using Deep SHAP in the $g^\text{XNN}$ probability space. Similar to Tree SHAP, local Deep SHAP values should sum to $g^\text{XNN}(\mathbf{x})$. While the Shapley values appear to follow the roughly increasing pattern established in Figures \ref{fig:sim_mgbm_loc}, \ref{fig:sim_xnn_loc}, and \ref{fig:mort_mgbm_loc}, their true value is their ability to be calculated for any $g^\text{XNN}(\mathbf{x})$ prediction, as a means to summarize model reasoning and allow for appeal and override of specific ML-based decisions, even for neural network architectures. 
 
@@ -470,8 +381,6 @@ Tables \ref{tab:mort_disc}\textbf{a} and \ref{tab:mort_disc}\textbf{b} show the 
 \label{tab:mort_disc}
 \end{table}
 
-% TODO: make subfigure reference match XNN charts
-
 Both ME and AIR show higher disparities for blacks under $g^{\text{XNN}}$ than $g^{\text{MGBM}}$.  Blacks receive high-priced loans 21.4\% more frequently using $g^{\text{XNN}}$ vs. 18.3\% for $g^{\text{MGBM}}$.  Both $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ show AIRs that are statistically significantly below parity (not shown, but available in resources discussed in Subsection \ref{ssec:soft}), and which are also below the EEOC’s 0.80 threshold. This would typically indicate need for further review to determine the cause and validity of these disparities, and a few relevant remediation techniques for such discovered discrimination are discussed in Subsection \ref{ssec:disc_rem}. On the other hand, women improve under $g^{\text{XNN}}$ vs. $g^{\text{MGBM}}$ (MEs of 3.6\% vs. 4.1\%; AIRs of 0.955 vs. 0.948). The AIRs, while statistically significantly below parity, are well above the EEOC’s threshold of 0.80.  In most situations, the values of these metrics alone would not likely flag a model for further review. Black SMDs for $g^{\text{XNN}}$ and $g^{\text{MGBM}}$ are similar: 0.621 and 0.628, respectively.  These exceed Cohen’s guidelines of 0.5 for a medium effect size and would likely trigger further review.  Female SMDs are well below Cohen’s definition of small effect size: 0.105 and 0.084 for $g^{\text{XNN}}$ and $g^{\text{MGBM}}$, respectively.  Similar to results for female AIR, these values alone are unlikely to prompt further review.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -526,7 +435,7 @@ Regardless of the methodology chosen to minimize disparities, advances in comput
 
 \subsection{Intersectional and Non-static Risks in Machine Learning}
 
-The often black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or the privacy harms and security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges, e.g., the \textit{fairwashing} or \textit{scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{shokri2019privacy}, \cite{fair_washing}, \cite{scaffolding}.\footnote{See: \href{https://www.theguardian.com/technology/2016/mar/24/tay-microsofts-ai-chatbot-gets-a-crash-course-in-racism-from-twitter}{\textit{Tay, Microsoft's AI chatbot, gets a crash course in racism from Twitter}}.}\textsuperscript{,}\footnote{While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This is sometimes known as the \textit{transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation.\textsuperscript{21}}\textsuperscript{,}\footnote{See: \href{https://hbr.org/2019/12/the-ai-transparency-paradox}{\textit{The AI Transparency Paradox}}.} Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and discrimination testing approaches as at least partial remedies to the black-box and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data extraction, and membership inference attacks, and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Accuracy, discrimination, and security characteristics of a system can change over time as well. Simply testing for these problems at training time, as presented in Section \ref{sec:res}, is not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and security should be monitored in real-time and over time, as long as a model is deployed.
+The often black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or the privacy harms and security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges, e.g., the \textit{fairwashing} or \textit{scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{shokri2019privacy}, \cite{fair_washing}, \cite{scaffolding}.\footnote{See: \href{https://www.theguardian.com/technology/2016/mar/24/tay-microsofts-ai-chatbot-gets-a-crash-course-in-racism-from-twitter}{\textit{Tay, Microsoft's AI chatbot, gets a crash course in racism from Twitter}}.}\textsuperscript{,}\footnote{While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This is sometimes known as the \textit{transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation.}\textsuperscript{,}\footnote{See: \href{https://hbr.org/2019/12/the-ai-transparency-paradox}{\textit{The AI Transparency Paradox}}.} Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and discrimination testing approaches as at least partial remedies to the black-box and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data extraction, and membership inference attacks, and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Accuracy, discrimination, and security characteristics of a system can change over time as well. Simply testing for these problems at training time, as presented in Section \ref{sec:res}, is not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and security should be monitored in real-time and over time, as long as a model is deployed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}\label{sec:con}
