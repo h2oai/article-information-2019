@@ -215,10 +215,10 @@ Table \ref{tab:sim_acc} presents a variety of fit metrics for the $g^\text{GBM}$
 		\href{https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score}{\textbf{Accuracy}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve}{\textbf{AUC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/F1_score}{\textbf{F1}}~$\uparrow$ & 
 		\href{https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss}{\textbf{Logloss}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Matthews_correlation_coefficient}{\textbf{MCC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Root-mean-square_deviation}{\textbf{RMSE}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Sensitivity}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Specificity}}~$\uparrow$ \\
 		\midrule
-		$g^\text{GBM}$		& 0.775	& 0.857	& & 0.474 &	& 0.394 & & \\
-		$g^\text{MGBM}$		& 0.763	& 0.846	& & 0.498 &	& 0.405 & & \\
-		$g^\text{ANN}$		& 0.757	& 0.850	& 0.779 & 0.480 &	0.525 & 0.398 & 0.858 & \\
-		$g^\text{XNN}$		& 0.758	& 0.851	& 0.781 & 0.479 &	0.528 & 0.397 & 0.867 & \\
+		$g^\text{GBM}$		& 0.757 	& 0.847 	& 0.779 & 0.486 & 0.525 & 0.400 & 0.858 & 0.657 \\
+		$g^\text{MGBM}$	& 0.744 	& 0.842 	& 0.771 & 0.502 & 0.504 & 0.407 & 0.864 & 0.625 \\
+		$g^\text{ANN}$		& 0.757	& 0.850	& 0.779 & 0.480 & 0.525 & 0.398 & 0.858 & 0.657 \\
+		$g^\text{XNN}$		& 0.758	& 0.851	& 0.781 & 0.479 & 0.528 & 0.397 & 0.867 & 0.648 \\
 		\bottomrule
 		\label{tab:sim_acc}
 	\end{tabular}
@@ -254,10 +254,10 @@ Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably
 	\href{https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score}{\textbf{Accuracy}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve}{\textbf{AUC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/F1_score}{\textbf{F1}}~$\uparrow$ & 
 	\href{https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss}{\textbf{Logloss}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Matthews_correlation_coefficient}{\textbf{MCC}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Root-mean-square_deviation}{\textbf{RMSE}}~$\downarrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Sensitivity}}~$\uparrow$ & \href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}{\textbf{Specificity}}~$\uparrow$ \\
 	\midrule	
-$g^\text{GBM}$		& 0.795	& 0.828	& & 0.252 &	& 0.276 & & \\
-$g^\text{MGBM}$		& 0.765	& 0.814	& & 0.259 &	& 0.278 & & \\
-$g^\text{ANN}$		& 0.865	& 0.871	& 0.474 & 0.231 &	0.418 & 0.262 & 0.624 & \\
-$g^\text{XNN}$		& 0.869	& 0.868	& 0.468 & 0.233 &	0.409 & 0.263 & 0.593 & \\
+$g^\text{GBM}$		& 0.795	& 0.828	& 0.376 & 0.252 & 0.314 & 0.276 & 0.634 & 0.813 \\
+$g^\text{MGBM}$	& 0.765	& 0.814	& 0.362 & 0.259 & 0.305 & 0.278 & 0.684 & 0.773 \\
+$g^\text{ANN}$		& 0.865	& 0.871	& 0.474 & 0.231 & 0.418 & 0.262 & 0.624 & 0.891 \\
+$g^\text{XNN}$		& 0.869	& 0.868	& 0.468 & 0.233 & 0.409 & 0.263 & 0.594 & 0.898 \\
 \bottomrule
 \label{tab:mort_acc}
 \end{tabular}
