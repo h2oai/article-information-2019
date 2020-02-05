@@ -43,7 +43,7 @@ $ jupyter notebook
 * For GBM and MGBM model building on the simulated dataset, see [simulated_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulated_preprocessing.ipynb)
 * For XNN model building on the lending dataset, see [xnn_notebook_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_hmda.ipynb)
 * For XNN model building on the simulated dataset, see [xnn_notebook_simulated_data.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_simulated_data.ipynb)
-* For ANN model building on the lending dataset, see [ann_hdma_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/ann_hdma_code.py)
+* For ANN model building on the lending dataset, see [hmda_ann.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/hmda_ann.ipynb)
 * For ANN model building on the simulated dataset, see [simulation_ann.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulation_ann.ipynb)
 
 #### Model Performance and Interpretation
