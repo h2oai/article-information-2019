@@ -35,33 +35,31 @@ $ jupyter notebook
 * For simulated testset after preprocessing, see [test_simulated_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/test_simulated_processed.csv)
 
 #### Data Summaries and Preprocessing
-* For simulated data, see [article-information-2019-sim-data-training-results.ipynb](notebooks/article-information-2019-sim-data-training-results.ipynb) (WIP)
-* For lending data, see [article-information-2019-loan-data-training-results.ipynb](notebooks/article-information-2019-loan-data-training-results.ipynb) (WIP)
 * For lending data preprocessing, see [hmda_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/hmda_preprocessing.ipynb)
 * For simulated data preprocessing, see [simulated_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulated_preprocessing.ipynb)
 
 #### Modelling
-* For GBM and MGBM model building on the lending dataset, see [mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/mgbm_hmda.ipynb)
-* For GBM and MGBM model building on the simulated dataset, see [simulated_preprocessing.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulated_preprocessing.ipynb)
-* For XNN model building on the lending dataset, see [xnn_notebook_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_hmda.ipynb)
-* For XNN model building on the simulated dataset, see [xnn_notebook_simulated_data.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_simulated_data.ipynb)
-* For ANN model building on the lending dataset, see [ann_hdma_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/ann_hdma_code.py)
-* For ANN model building on the simulated dataset, see [ann_simulation_code.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/ann_simulation_code.py)
+* For GBM and MGBM model training on the lending dataset, see [mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/mgbm_hmda.ipynb)
+* For GBM and MGBM model training on the simulated dataset, see [mgbm_simulated.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/mgbm_simulated.ipynb)
+* For XNN model training on the lending dataset, see [xnn_notebook_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_hmda.ipynb)
+* For XNN model training on the simulated dataset, see [xnn_notebook_simulated_data.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_notebook_simulated_data.ipynb)
+* For ANN model training on the lending dataset, see [hmda_ann.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/hmda_ann.ipynb)
+* For ANN model training on the simulated dataset, see [simulation_ann.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/simulation_ann.ipynb)
 
 #### Model Performance and Interpretation
 
 ##### GBM and MGBM
-* For GBM and MGBM performance evaluation and interpretation on the lending dataset (Table 4, Figure 7, Figure 8, Figure 9), see [perf_pdp_ice_shap_mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_hmda.ipynb)
-* For GBM and MGBM performance evaluation and interpretation on the simulated dataset (Table 1, Figure 1, Figure 2, Figure 3), see [perf_pdp_ice_shap_mgbm_sim.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_sim.ipynb)
+* For GBM and MGBM performance evaluation and interpretation on the lending dataset (Table 2, Figures 2 - 4), see [perf_pdp_ice_shap_mgbm_hmda.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_hmda.ipynb)
+* For GBM and MGBM performance evaluation and interpretation on the simulated dataset (Table 1, Figures A2 - A4), see [perf_pdp_ice_shap_mgbm_sim.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/perf_pdp_ice_shap_mgbm_sim.ipynb)
 
 ##### XNN and ANN
-* For XNN performance evaluation and interpretation on the lending dataset (Table 4, Figure 10, Figure 11, Figure 12), see [xnn_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_hmda_from_files.ipynb)
-* For XNN performance evaluation and interpretation on the simulated dataset (Table 1, Figure 4, Figure 5, Figure 6), see [xnn_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_simulation_from_files.ipynb)
-* For ANN performance evaluation and interpretation on the lending dataset (Table 1), see [ann_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_hmda_from_files.ipynb)
+* For XNN performance evaluation and interpretation on the lending dataset (Table 2, Figures 5 - 7), see [xnn_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_hmda_from_files.ipynb)
+* For XNN performance evaluation and interpretation on the simulated dataset (Table 1, Figure 1, Figures A5 and A6), see [xnn_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/xnn_analysis_simulation_from_files.ipynb)
+* For ANN performance evaluation and interpretation on the lending dataset (Table 2), see [ann_analysis_hmda_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_hmda_from_files.ipynb)
 * For ANN performance evaluation and interpretation on the simulated dataset (Table 1), see [ann_analysis_simulation_from_files.ipynb](https://github.com/h2oai/article-information-2019/blob/master/notebooks/ann_analysis_simulation_from_files.ipynb)
 
 #### Discrimination Testing Results
 * For discrimination testing analysis, see [disparity_measurement.py](https://github.com/h2oai/article-information-2019/blob/master/notebooks/scripts/disparity_measurement.py)
-* For discrimination testing results (Table 2, Table 3, Table 5, Table 6), see [Disparity Tables for Paper.xlsx](https://github.com/h2oai/article-information-2019/blob/master/data/output/Disparity%20Tables%20for%20Paper.xlsx)
+* For discrimination testing results (Tables 3 and A1), see [Disparity Tables for Paper.xlsx](https://github.com/h2oai/article-information-2019/blob/master/data/output/Disparity%20Tables%20for%20Paper.xlsx)
 
 
