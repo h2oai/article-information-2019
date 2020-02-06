@@ -2,9 +2,15 @@ CRITICAL REVIEVER FEEDBACK:
 
 * Two models chosen would be described very concretely, but on closer inspection the description is incomplete, imprecise to wrong ...
 
+>> Moved most technical descriptions of models to appendices (B.2 and B.3), drastically simplified technical descriptions in main text, double checked descriptions, and made a few definitions and descriptions more specific. Added Figure A1 for XNN architecture.
+
 * sometimes there are contradictions (especially in chapters 1.4 and 1.5)
 
+>> Moved most technical descriptions of models to appendices (B.2 and B.3) and double checked descriptions.
+
 * The evaluation measures are also not introduced in a scientifically adequate way.
+
+>> Provided in-table links for Tables 1 and 2 for evaluation measures that are not described in the paper (i.e., links to describe: acc., auc, f1, logloss, mcc, rmse., sens., spec.). Changed focus of text to description of a workflow composed of previously validated methods rather than posing a specific scientific experiment.
 
 --
 
@@ -12,35 +18,67 @@ STRUCTURAL REVIEVER FEEDBACK:
 
 * Many variables are not described at all or only inaccurately.
 
+>> Supplied Appendix B.1 in addition to adding more variable definitions to in-text descriptions.
+
 * It is not clear what exactly the authors want to achieve with the paper. They partly contradict each other: in the introduction they explain that they want to give a general workflow, but then limit themselves to 2 concrete models without ever giving a reason why these models are suitable.
+
+>> Changed title to reflect focus on workflow.
+
+>> Changed focus of Sections 0 and 1 toward workflow and away from specific techniques.
+
+>> Explicitly supplied reasons for models: "MGBM and XNN interpretable model architectures are selected for the example workflow because they are straightforward variants of popular unconstrained ML models. If practitioners are working with GBM and ANN models, it should be relatively uncomplicated to also evaluate the constrained versions of these models. The same can be said of the selected explanation methods and discrimination tests. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines."
 
 * Question arises why the models are introduced in such detail. In my opinion, this is not necessary for the workflow, since it should be generally valid.
 
+>> Moved detailed model descriptions to Appendices B2 and B3.
+
 * Reduce 24 pages into 12-16 pages and move the detailed information into supplementary information.
+
+>> Page count reduced to 16 pages.
 
 * Move at least 4-6 figures into supplementary information
 
+>> Moved 5 figures and 1 table to Appendix E.
+
 * Provide commonly used evaluation metrics such as MCC, Sn (Sensivity), Sp (Specificity) in Tables 1, 2, 4 and 5.
+
+>> Provided sensitivity and specificity in Tables 1 and 2. I feel MCC, sensitivity, and specificity are improper, or at least uncommon in this context, for the fairness measure Tables 3b and A1b, previously tables 2 and 5.
 
 * If the dataset is imbalanced, provide balanced accuracy.
 
+>> Four additional fit measures were requested by reviewers: sens., spec., f1, and mcc, leaving only a small amount of horizontal space in tables 1 and 2. Given the datasets are not imbalanced beyond the capacity of the described estimators, data was not weighted prior to training, nor where inverse priors, or other over- or under-sampling techniques applied, I don't feel this additional fit measure is required.
+
 * Tables display metrics with values that sometimes are better when they are higher and some times if they are lower. An arrow pointing up or down next to the metric name might improve the readability.
+
+>> Arrows added to headers of all tables.
 
 * Why not add the F1 score to the tables as well?
 
+>> F1 added to Tables 1 and 2.
+
 * Increasing the font size of the plots will help the readability (particularly figure 10).
+
+>> All plots increased by 1-3 cm in width and height.
 
 * Some figures have to be rearranged because they are not readable. Figure 5, and figure 11 are not easy to read. I think they should be reorganized and they should take more space in the paper.
 
+>> All plots increased by 1-3 cm in width and height. Enhancements and clarifications added to Figures 1 and 6, previously Figures 5 and 11.
+
 * Figure 13 has to be increased. It is too small.
 
+>> All plots increased by 1-3 cm in width and height.
+
 * All mathematical variables and symbols should be explained.
+
+>> Supplied Appendix B1 to address notation and definitions, double checked in-text definitions and supplied more in-text definitions.
 
 --
 
 NICK FEEDBACK:
 
 * Update Nick and Bryce article to not be arXiv
+
+>> Updated to: Schmidt, N.; Stephens, B. An Introduction to Artificial Intelligence and Solutions to the Problems of Algorithmic Discrimination. Conference on Consumer Finance Law Quarterly Report 2019, 73, 130–144. URL: https://arxiv.org/pdf/1911.05755.pdf.
 
 --
 
