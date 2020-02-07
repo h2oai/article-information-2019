@@ -508,7 +508,7 @@ The US HMDA law, originally enacted in 1975, requires many financial institution
 
 \subsection{Notation}\label{a_ssec:not}
 
-To facilitate descriptions of data and modeling, explanatory, and discrimination testing techniques, notation for input and output spaces, datasets, and models is defined.
+To facilitate descriptions of data, modeling, and other post-hoc techniques, notation for input and output spaces, datasets, and models is defined.
 
 \subsubsection{Spaces} 
 
@@ -521,7 +521,7 @@ To facilitate descriptions of data and modeling, explanatory, and discrimination
 \subsubsection{Data} 
 
 \begin{itemize}[leftmargin=*,labelsep=5.8mm]
-	\item The input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$. 
+	\item An input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$. 
 	\item Each $i$-th observed instance of $\mathbf{X}$ is denoted as $\mathbf{x}^{(i)} = $  
 	$[x_0^{(i)}, x_1^{(i)}, \dots, x_{\textit{P}-1}^{(i)}]$, with corresponding $i$-th labels in $\mathbf{Y}, \mathbf{y}^{(i)}$, and corresponding predictions in $\mathbf{\hat{Y}}, \mathbf{\hat{y}}^{(i)}$. % = [y_0^{(i)}, y_1^{(i)}, \dots, y_{\textit{C}-1}^{(i)}]$.
 	\item $\mathbf{X}$ and $\mathbf{Y}$ consist of $N$ tuples of observed instances: $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots,(\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$. %\\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
@@ -534,12 +534,12 @@ To facilitate descriptions of data and modeling, explanatory, and discrimination
 	\item A type of ML model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown signal-generating function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
 	$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$, such that $g \approx f$.
 	\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
-	\item The model to be explained and tested for discrimination is denoted as $g$.
+	\item A model to be explained or tested for discrimination is denoted as $g$.
 \end{itemize}
 
 \subsection{Monotonic Gradient Boosting Machine Details}\label{a_ssec:mgbm}
 
-\noindent As in unconstrained GBM, $\Theta^{\text{mono}}_b$ is selected in a greedy, additive fashion by minimizing a regularized loss function that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in the in $g^{\text{MGBM}}$, $g^{\text{MGBM}}_{b-1}(\mathbf{X})$, and the $b$-th tree splits, $T_b(\mathbf{x}^{(i)};\Theta^\text{mono}_b)$, in a numeric error function (e.g., squared error, Huber error), $l$, and a regularization term that penalizes complexity in the current tree, $\Omega(T_b)$. For the $b$-th iteration, the loss function, $\mathcal{L}_{b}$, can generally be defined as:
+\noindent For some $g^\text{MGBM}$ model (see Equation \ref{eq:gbm}), monotonic splitting rules, $\Theta^{\text{mono}}_b$, are selected in a greedy, additive fashion by minimizing a regularized loss function, $\mathcal{L}$,  that considers known target labels, $\mathbf{y}$, the predictions of all subsequently trained trees in $g^{\text{MGBM}}$, $g^{\text{MGBM}}_{b-1}(\mathbf{X})$, and the $b$-th tree splits applied to some instance $\mathbf{x}$, $T_b(\mathbf{x};\Theta^\text{mono}_b)$, in a numeric error function (e.g., squared error, Huber error), $l$, in addition to a regularization term that penalizes complexity in the $b$-th tree, $\Omega(T_b)$. For the $b$-th iteration over $N$ instances, $\mathcal{L}_{b}$, can generally be defined as:
 
 \begin{equation}
 \begin{aligned}
@@ -547,7 +547,7 @@ To facilitate descriptions of data and modeling, explanatory, and discrimination
 \end{aligned}
 \end{equation}
 
-\noindent In addition to $\mathcal{L}_{b}$, $g^\text{MGBM}$ training is characterized by additional splitting rules and constraints on tree node weights. Each binary splitting rule, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left and right child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$ can be direct numeric components of some $g^\text{MGBM}$ prediction. For two values of some feature $X_j$, $x^{\alpha}_j \le x^{\beta}_j$, $g^{\text{MGBM}}$ is positive monotonic with respect to some $X_j$ if $g^{\text{MGBM}}(x^{\alpha}_j) \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. The following rules and constraints ensure positive monotonicity in $\Theta_b$, where the prediction for each value results in $T_b(x^{\alpha}_j; \Theta_b) = w_\alpha$ and $T_b(x^{\beta}_j; \Theta_b) = w_\beta$.
+\noindent In addition to $\mathcal{L}$, $g^\text{MGBM}$ training is characterized by monotonic splitting rules and constraints on tree node weights. Each binary splitting rule in $T_b$, $\theta_{b,j,k} \in \Theta_b$, is associated with a feature, $X_j$, is the $k$-th split associated with $X_j$ in $T_b$, and results in left, $L$, and right, $R$, child nodes with a numeric weights, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$. For terminal nodes, $\{w_{b,j,k,L}, w_{b,j,k,R}\}$ can be direct numeric components of some $g^\text{MGBM}$ prediction. For two values, $x^{\alpha}_j$ and $x^{\beta}_j$, of some feature $X_j$, where $x^{\alpha}_j \le x^{\beta}_j$, $g^{\text{MGBM}}$ is positive monotonic with respect to $X_j$ if $g^{\text{MGBM}}(x^{\alpha}_j) \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~\{x^{\alpha}_j \le x^{\beta}_j\} \in X_j$. The following rules and constraints ensure positive monotonicity in $\Theta_b^\text{mono}$:
 
 \begin{enumerate}[leftmargin=*,labelsep=4.9mm]
 	\item For the first and highest split in $T_b$ involving $X_j$, any $\theta_{b,j,0}$ resulting in $T(x_j; \theta_{b,j,0}) = \{w_{b,j,0,L}, w_{b,j,0,R}\}$ where $w_{b,j,0,L} > w_{b,j,0,R}$, is not considered. 
@@ -556,28 +556,28 @@ To facilitate descriptions of data and modeling, explanatory, and discrimination
 	\item (1) and (2) are also applied to all right child nodes, except that for right child nodes $ w_{b,j,k,L} \le w_{b,j,k,R}$ and $\{w_{b,j,k\ge1,L}, w_{b,j,k\ge1,R}\} \ge \frac{w_{b,j,k-1,L} + w_{b,j,k-1,R}}{2}$.
 \end{enumerate}
 
-\noindent Note that for any one $X_j$ and $T_b \in g^{\text{MGBM}}$ left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{MGBM}}(\mathbf{x})$ is an addition of each $T_b$ output, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{MGBM}}(x^{\alpha}_j)  \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$. For a negative monotonic constraint, i.e., $g^{\text{MGBM}}(x^{\alpha}_j)  \ge g^{\text{MGBM}}(x^{\beta}_j) ~\forall ~x^{\alpha}_j \le x^{\beta}_j \in X_j$, left and right splitting rules and node weight constraints are switched. Also consider that MGBM models with independent monotonicity constraints between some $X_j$ and $\mathbf{y}$ likely restrict non-monotonic interactions between multiple $X_j$. Moreover, if monotonicity constraints are not applied to all $X_j \in \mathbf{X}$, any strong non-monotonic signal in training data associated with some important $X_j$ maybe forced onto some other arbitrary unconstrained $X_j$ under some $g^{MGBM}$ models, compromising the end goal of interpretability.
+\noindent Note that for any one $X_j$ and subtree in $g^{\text{MGBM}}$, left subtrees will alway produce lower predictions than right subtrees, and that any $g^{\text{MGBM}}(\mathbf{x})$ is an addition of each full $T_b$ prediction, with the application of a monotonic logit or softmax link function for classification problems. Moreover, each tree's root node corresponds to some constant node weight that by definition obeys monotonicity constraints, $ T(x^{\alpha}_j; \theta_{b,0}) = T(x^{\beta}_j; \theta_{b,0}) = w_{b,0}$. Together these additional splitting rules and node weight constraints ensure that $g^{\text{MGBM}}(x^{\alpha}_j) \le g^{\text{MGBM}}(x^{\beta}_j) ~\forall~ \{x^{\alpha}_j \le x^{\beta}_j\} \in X_j$. For a negative monotonic constraint, i.e., $g^{\text{MGBM}}(x^{\alpha}_j)  \ge g^{\text{MGBM}}(x^{\beta}_j) ~\forall~ \{x^{\alpha}_j \le x^{\beta}_j\} \in X_j$, left and right splitting rules and node weight constraints are switched. Also consider that MGBM models with independent monotonicity constraints between some $X_j$ and $\mathbf{y}$ likely restrict non-monotonic interactions between multiple $X_j$. Moreover, if monotonicity constraints are not applied to all $X_j \in \mathbf{X}$, any strong non-monotonic signal in training data associated with some important $X_j$ maybe forced onto some other arbitrary unconstrained $X_j$ under some $g^{MGBM}$ models, compromising the end goal of interpretability.
 
 \subsection{Explainable Neural Network Details}\label{a_ssec:xnn}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=8cm]{img/xnn_arch.png}
-	\caption{A diagram of an XNN with three metalayers: the bottom combination layer with  $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, the middle metalayer with with $K$ hidden and separate $n_k$ ridge functions, and the output combination layer that generates $g^{\text{XNN}}$ predictions. Figure adapted from \citet{wf_xnn}.}
+	\caption{A general diagram of an XNN with three metalayers: the bottom combination layer with  $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, the middle metalayer with with $K$ hidden and separate $n_k$ ridge functions, and the output combination layer that generates $g^{\text{XNN}}(\mathbf{X})$ predictions. Figure adapted from \citet{wf_xnn}.}
 	\label{fig:xnn_arch}
 \end{figure}  
 
 \noindent $g^{\text{XNN}}$ is comprised of 3 meta-layers:
 
 \begin{enumerate}[leftmargin=*,labelsep=4.9mm]
-	\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units, which should learn higher magnitude weights for important $X_j$, is known as the \textit{projection layer}. It is fully connected to each input $X_j$. Each hidden unit in the projection layer may optionally include a bias term.
-	\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network, which can be parameterized to suit a given modeling task. To facilitate direct interpretation and visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer hidden unit, $\sum_j\beta_{k,j}x_j$. Each $n_k$ can contain several bias terms.
-	\item The output meta-layer, called the \textit{combination layer}, is another linear unit comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, subnetwork output is restricted to 1-dimension for interpretation and visualization purposes.
+	\item The first and deepest meta-layer, composed of $K$ linear $\sum_j\beta_{k,j}x_j$ hidden units (see Equation \ref{eq:xnn}), which should learn higher magnitude weights for each important input, $X_j$, is known as the \textit{projection layer}. It is fully connected to each input $X_j$. Each hidden unit in the projection layer may optionally include a bias term.
+	\item The second meta-layer contains $K$ hidden and separate $n_k$ ridge functions, or \textit{subnetworks}. Each $n_k$ is a neural network itself, which can be parameterized to suit a given modeling task. To facilitate direct interpretation and visualization, the input to each subnetwork is the 1-dimensional output of its associated projection layer $\sum_j\beta_{k,j}x_j$ hidden unit. Each $n_k$ can contain several bias terms.
+	\item The output meta-layer, called the \textit{combination layer}, is an output neuron comprised of a global bias term, $\mu_0$, and the $K$ weighted 1-dimensional outputs of each subnetwork, $\gamma_kn_k(\sum_j\beta_{k,j}x_j)$. Again, each $n_k$ subnetwork output into the combination layer is restricted to 1-dimension for interpretation and visualization purposes.
 \end{enumerate}
 
 \subsection{One-dimensional Partial Dependence and Individual Conditional Expectation Details}\label{a_ssec:pd_ice}
 
-Following \citet{esl} a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{\mathcal{P} \setminus \{j\}} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{\mathcal{P} \setminus \{j\}} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g(\mathbf{X})$ when all the observed instances of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{\mathcal{P} \setminus \{j\}}$ is left unchanged. $\text{ICE}(x_j, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{\mathcal{P} \setminus \{j\}}$ are left untouched. PD and ICE curves are usually plotted over some set of constants $x \in \mathcal{X}$, as displayed in Subsection \ref{ssec:int_ex_mort} and Appendix \ref{a_ssec:int_ex_sim}. Due to known problems for PD in the presence of strong correlation and interactions, PD should not be used alone. PD should be paired with ICE or be replaced with accumulated local effect (ALE) plots \cite{ice_plots}, \cite{ale_plot}.
+Following \citet{esl} a single input feature, $X_j \in \mathbf{X}$, and its complement set, $\mathbf{X}_{\mathcal{P} \setminus \{j\}} \in \mathbf{X}$, where $X_j \cup \mathbf{X}_{\mathcal{P} \setminus \{j\}} = \mathbf{X}$ is considered. $\text{PD}(X_j, g)$ for a given $X_j$ is the estimated average output of the learned function $g(\mathbf{X})$ when all the observed instances of $X_j$ are set to a constant $x^\gamma \in \mathcal{X}$ and $\mathbf{X}_{\mathcal{P} \setminus \{j\}}$ is left unchanged. $\text{ICE}(x_j, g)$ for a given instance $\mathbf{x}$ and feature $x_j$ is estimated as the output of $g(\mathbf{x})$ when $x_j$ is set to a constant $x^\gamma \in \mathcal{X}$ and all other features $\mathbf{x} \in \mathbf{X}_{\mathcal{P} \setminus \{j\}}$ are left untouched. PD and ICE curves are usually plotted over some set of constants drawn from $\mathcal{X}$, as displayed in Subsection \ref{ssec:int_ex_mort} and Appendix \ref{a_ssec:int_ex_sim}. Due to known problems for PD in the presence of strong correlation and interactions, PD should not be used alone. PD should be paired with ICE or be replaced with accumulated local effect (ALE) plots \cite{ice_plots}, \cite{ale_plot}.
 
 \subsection{Shapley Value Details}\label{a_ssec:shap}
 
@@ -586,11 +586,11 @@ For some instance $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the fo
 \begin{equation}
 \label{eq:shap_additive}
 \begin{aligned}
-g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
+g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j z_j
 \end{aligned}
 \end{equation}
 
-\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$, and $\phi_0$ is the average of $g(\mathbf{X})$. Each $\phi_j$ is a weighted combination of model scores, $g_x(\mathbf{x})$, with $x_j$, $g_x(S \cup \{j\})$, and the model scores without $x_j$, $g_x(S)$, for every subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$, where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
+\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each Shapley value, $\phi_j$, is the local feature contribution value associated with $x_j$, and $\phi_0$ is the average of $g(\mathbf{X})$. Each $\phi_j$ is a weighted combination of model predictions with $x_j$, $g_x(S \cup \{j\})$, and the model predictions without $x_j$, $g_x(S)$, for every possible subset of features $S$ not including $j$, $S \subseteq \mathcal{P} \setminus \{j\}$, where $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$. 
 
 \begin{equation}
 \label{eq:shap_contrib}
@@ -599,7 +599,7 @@ g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
 \end{aligned}
 \end{equation}
 
-\noindent Local, per-instance explanations using Shapley values tend to involve ranking $x_j$ by $\phi_j$ values or delineating a set of the $X_j$ names associated with the $k$-largest $\phi_j$ values for some $\mathbf{x}$, where $k$ is some small positive integer, say 5. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across all of the instances in some set $\mathbf{X}$.
+\noindent Local, per-instance explanations using Shapley values tend to involve ranking $x_j \in \mathbf{x}$ by $\phi_j$ values or delineating a set of the $X_j$ names associated with the $k$-largest $\phi_j$ values for some $\mathbf{x}$, where $k$ is some small positive integer, say 5. Global explanations are typically the absolute mean of the $\phi_j$ associated with a given $X_j$ across all of the instances in some set $\mathbf{X}$.
 
 \section{Types of Machine Learning Discrimination in US Legal and Regulatory Settings}\label{a_sec:types}
 
