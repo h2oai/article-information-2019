@@ -45,7 +45,7 @@
 \Title{A Responsible Machine Learning Workflow\\{with Focus on Interpretable Models, Post-hoc Explanation, and Discrimination Testing}}%Attention AE/ME. The following layout issues have not been checked by the English Editing Department and must be carefully verified by the AE/Layout Department: All callout issues, bold usage of callouts, and references to callouts in the text. Correct callout usage in figures. Figure and Table layout issues. Footnote formatting and Glossaries have not been checked. En dash usage for negative values, en dash usage to indicate relationships, en dash usage to indicate bonds (especially in chemistry). The English Editing Department is not responsible for correct italic usage for genes, proteins and technical terminology. This responsibility belongs to the authors. The following are also not checked: spacing between numbers and units of measurement, ratios, en dashes for ranges, date and time formats, punctuation in equation lines, and less than/more than spacing (< >). Finally, capitalization and layout of titles/headings must be properly checked as well as ensuring 'Eq.' and 'Fig.' are properly spelled out, as these are layout issues.
 
 % Authors, for the paper (add full first names)
-\Author{\hl{Navdeep Gill} $^{1, \dagger}$, Patrick Hall $^{1,2,}$*$^{,\dagger}$, Kim Montgomery $^{1,\dagger}$ and Nicholas Schmidt $^{3,}$*$^{,\dagger}$} %%%Author order is not the same as on the system, please confirm which one is correct.
+\Author{{Navdeep Gill} $^{1, \dagger}$, Patrick Hall $^{1,2,}$*$^{,\dagger}$, Kim Montgomery $^{1,\dagger}$ and Nicholas Schmidt $^{3,}$*$^{,\dagger}$} %%%Author order is not the same as on the system, please confirm which one is correct.
 %Please carefully check the accuracy of names and affiliations. 
 
 % Authors, for metadata in PDF
@@ -53,10 +53,9 @@
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
-$^{1}$ \quad \hl{H2O.ai}, 2307 Leghorn St., Mountain View, CA, 94043, USA; navdeep.gill@h2o.ai (N.G.); kim.montgomery@h2o.ai (K.M.)\\%%%Please provide the department, university,zip code, city, country.
-$^{2}$ \quad \hl{The George Washington University}, Department of Decision Sciences, 2201 G Street NW,
-Washington, D.C., 20052, USA\\%%%Please provide the department, zip code, city, country.
-$^{3}$ \quad \hl{BLDS, LLC}, 1608 Walnut St., Suite 1108, Philadelphia, PA, 19103, USA}%%%Please provide the department, university,zip code, city, country.
+$^{1}$ \quad {H2O.ai}, Mountain View 94043, CA, USA; navdeep.gill@h2o.ai (N.G.); kim.montgomery@h2o.ai (K.M.)\\
+$^{2}$ \quad {Department of Decision Sciences, The George Washington University}, Washington 20052, DC,  USA\\%%%Please provide the department, zip code, city, country.
+$^{3}$ \quad {BLDS, LLC}, Philadelphia 19103, PA, USA}
 
 
 % Contact information of the corresponding author
@@ -86,10 +85,7 @@ $^{3}$ \quad \hl{BLDS, LLC}, 1608 Walnut St., Suite 1108, Philadelphia, PA, 1910
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Responsible artificial intelligence (AI) has been variously conceptualized as AI-based products or projects that use transparent technical mechanisms, that create appealable decisions or outcomes, that~perform reliably and in a trustworthy manner over time, that exhibit minimal social discrimination, and that are designed by humans with diverse experiences, both in terms of demographics and professional backgrounds ({\hl{See}%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-%is the text color necessary? please confirm if need remove the link of the text,
-%% we have removed the link of text, and keep web link
-: 
+Responsible artificial intelligence (AI) has been variously conceptualized as AI-based products or projects that use transparent technical mechanisms, that create appealable decisions or outcomes, that~perform reliably and in a trustworthy manner over time, that exhibit minimal social discrimination, and that are designed by humans with diverse experiences, both in terms of demographics and professional backgrounds (e.g.,
 % THESE HYPERLINKS ARE NECESSARY - PH
 \href{https://ec.europa.eu/jrc/communities/sites/jrccties/files/03_dignum_v.pdf}
 {Responsible Artificial Intelligence}, 
@@ -98,30 +94,33 @@ Responsible artificial intelligence (AI) has been variously conceptualized as AI
 \href{https://www.pwc.com/gx/en/issues/data-and-analytics/artificial-intelligence/what-is-responsible-ai.html}
 {PwC's Responsible AI}, 
 \href{https://ai.google/responsibilities/responsible-ai-practices/}
-{Responsible AI Practices}). Although responsible AI is today a somewhat broad and amorphous notion, at least one aspect is becoming clear. Machine learning (ML) models, a common application of AI, can present serious risks. ML~models can be inaccurate and unappealable %INCORRECT - PH -- Please confirm that the intended meaning has been retained.
-black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop} ({\hl{See}% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-: 
+{Responsible AI Practices}). 
+Although responsible AI is today a somewhat broad and amorphous notion, at least one aspect is becoming clear. Machine learning (ML) models, a common application of AI, can present serious risks. ML~models can be inaccurate and unappealable %INCORRECT - PH -- Please confirm that the intended meaning has been retained.
+black-boxes, even with the application of newer post-hoc explanation techniques \cite{please_stop} (e.g.,
 \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}
-{\textit{When a Computer Program Keeps You in Jail}}). ML models can perpetuate and exacerbate discrimination \cite{feldman2015certifying,dwork2012fairness,gender_shades}, and ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml,model_stealing,membership_inference,shokri2019privacy}. This~manuscript makes no claim that these interdependent issues of ML opaqueness, discrimination, privacy harms, and security vulnerabilities have been resolved, even as singular entities, and much less as complex intersectional phenomena. However, Sections \ref{sec:m_and_m}--\ref{sec:disc} do propose some specific technical countermeasures, mostly in the form of interpretable models, post-hoc explanation, and disparate impact (DI) and discrimination testing, that responsible practitioners can use to address a subset of these vexing problems ({\hl{This text and associated software are not, and should not be construed as, legal advice or regulatory compliance requirements}}), ({\hl{In the United States (US), interpretable models, explanations, DI testing, and the model documentation they enable may be required under the Civil Rights Acts of 1964 and 1991, the Americans with Disabilities Act, the Genetic Information Nondiscrimination Act, the Health Insurance Portability and Accountability Act, the Equal Credit Opportunity Act (ECOA), the Fair Credit Reporting Act (FCRA), the Fair Housing Act, Federal Reserve Supervision and Regulation (SR) Letter 11-7, the European Union (EU) General Data Protection Regulation (GDPR) Article} 22, or other laws and regulations \cite{ff_interpretability}.})%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this.  
+{\textit{When a Computer Program Keeps You in Jail}}). ML models can perpetuate and exacerbate discrimination \cite{feldman2015certifying,dwork2012fairness,gender_shades}, and ML models can be hacked, resulting in manipulated model outcomes or the exposure of proprietary intellectual property or sensitive training data \cite{security_of_ml,model_stealing,membership_inference,shokri2019privacy}. This~manuscript makes no claim that these interdependent issues of ML opaqueness, discrimination, privacy harms, and security vulnerabilities have been resolved, even as singular entities, and much less as complex intersectional phenomena. However, Sections \ref{sec:m_and_m}--\ref{sec:disc} do propose some specific technical countermeasures, mostly in the form of interpretable models, post-hoc explanation, and disparate impact (DI) and discrimination testing, that responsible practitioners can use to address a subset of these vexing problems. (In the United States (US), interpretable models, explanations, DI testing, and the model documentation they enable may also be required under the Civil Rights Acts of 1964 and 1991, the Americans with Disabilities Act, the Genetic Information Nondiscrimination Act, the Health Insurance Portability and Accountability Act, the Equal Credit Opportunity Act (ECOA), the Fair Credit Reporting Act (FCRA), the Fair Housing Act, Federal Reserve Supervision and Regulation (SR) Letter 11-7, the European Union (EU) General Data Protection Regulation (GDPR) Article 22, or other laws and regulations \cite{ff_interpretability}. Note that this text and associated software are not, and should not be construed as, legal advice or regulatory compliance requirements.)
 
 Section \ref{sec:m_and_m} describes methods and materials, including training datasets, interpretable and constrained models, post-hoc explanations, tests for DI and other social discrimination, and public and open source software resources associated with this text. In Section \ref{sec:res}, interpretable and constrained modeling results are compared to less interpretable and unconstrained models, and~post-hoc explanation and discrimination testing results are also presented for interpretable models. Of course, an even wider array of tools and techniques are likely helpful to fully minimize discrimination, inaccuracy, privacy, and security risks associated with ML models. Section \ref{sec:disc} puts forward a more holistic responsible ML modeling workflow, and addresses the burgeoning Python ecosystem for responsible AI, along with appeal and override of automated decisions, and discrimination testing and remediation in practice. Section \ref{sec:con} closes this manuscript with a brief summary of the outlined methods, materials, results, and discussion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Materials and Methods}\label{sec:m_and_m}
 
-The simulated data (see Section~\ref{ssec:sim_data}) are based on the well-known Friedman datasets. Its~known feature importance and augmented discrimination characteristics are used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1979tree,friedman1991multivariate}. The~mortgage data (see Section~\ref{ssec:mort_data}) are sourced from the Home Mortgage Disclosure Act (HMDA) database, a fairly realistic data source for demonstrating the template workflow \cite{hmda} ({\hl{See:} 
+The simulated data (see Section~\ref{ssec:sim_data}) are based on the well-known Friedman datasets. Its~known feature importance and augmented discrimination characteristics are used to gauge the validity of interpretable modeling, post-hoc explanation, and discrimination testing techniques \cite{friedman1979tree,friedman1991multivariate}. The~mortgage data (see Section~\ref{ssec:mort_data}) are sourced from the Home Mortgage Disclosure Act (HMDA) database, a fairly realistic data source for demonstrating the template workflow \cite{hmda} (see
 \href{https://www.consumerfinance.gov/data-research/hmda/}
-{Mortgage data (HMDA})}). %%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-To provide a sense of fit differences, performance is compared on simulated data and collected mortgage data between the more interpretable constrained ML models and the less interpretable unconstrained ML models. Because the unconstrained ML models, gradient boosting machines (GBMs, e.g., \cite{friedman2001greedy,esl}) and artificial neural networks (ANNs, e.g., \cite{recht2011hogwild,hinton2012improving,sutskever2013importance,zeiler2012adadelta}), do not exhibit convincing accuracy benefits on the simulated or mortgage data and can also present the unmitigated risks discussed above, further explanation and discrimination analyses are applied only to the constrained, interpretable ML models \cite{please_stop,fair_washing,scaffolding}. Here, monotonic gradient boosting machines ({\hl{as implemented in} 
+{Mortgage data (HMDA)}). %%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
+To provide a sense of fit differences, performance is compared on simulated data and collected mortgage data between the more interpretable constrained ML models and the less interpretable unconstrained ML models. Because the unconstrained ML models, gradient boosting machines (GBMs, e.g., \cite{friedman2001greedy,esl}) and artificial neural networks (ANNs, e.g., \cite{recht2011hogwild,hinton2012improving,sutskever2013importance,zeiler2012adadelta}), do not exhibit convincing accuracy benefits on the simulated or mortgage data and can also present the unmitigated risks discussed above, further explanation and discrimination analyses are applied only to the constrained, interpretable ML models \cite{please_stop,fair_washing,scaffolding}. Here, monotonic gradient boosting machines 
+(MGBMs, as implemented in 
 %\href{https://xgboost.readthedocs.io/en/latest/tutorials/monotonic.html}
-{\texttt{\hl{XGBoost}}} or 
+\texttt{XGBoost} or 
 %\href{https://github.com/h2oai/h2o-3/blob/master/h2o-py/demos/H2O_tutorial_gbm_monotonicity.ipynb}
-{\texttt{\hl{h2o}}}.}) %% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. % we have removed the link of text, and keep web link
-(MGBMs, see Section~\ref{ssec:mgbm}) and explainable neural networks (XNNs, see Section~\ref{ssec:xnn} \cite{,wf_xnn,yang2019enhancing}) will serve as those more interpretable models for subsequent explanatory and discrimination analyses. MGBM and XNN interpretable model architectures are selected for the example workflow because they are straightforward variants of popular unconstrained ML models. If~practitioners are working with GBM and ANN models, it should be relatively uncomplicated to also evaluate the constrained versions of these models. 
+\texttt{h2o}, see Section~\ref{ssec:mgbm}) 
+and explainable neural networks (XNNs, e.g., \cite{,wf_xnn,yang2019enhancing}, see Section~\ref{ssec:xnn}) will serve as those more interpretable models for subsequent explanatory and discrimination analyses. MGBM and XNN interpretable model architectures are selected for the example workflow because they are straightforward variants of popular unconstrained ML models. If~practitioners are working with GBM and ANN models, it should be relatively uncomplicated to also evaluate the constrained versions of these models. 
 
-The same can be said of the selected explanation methods and discrimination tests. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines. Presented explanation techniques include partial dependence (PD) and individual conditional expectation (ICE) (see Section~\ref{ssec:pd_ice}) and Shapley values (see Section~\ref{ssec:shap}) \cite{esl,ice_plots,shapley,tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. Discrimination testing methods discussed (see Section~\ref{ssec:di}) include adverse impact ratio (AIR), marginal effect (ME), and standardized mean difference (SMD)  \cite{feldman2015certifying,cohen1988statistical,cohen1992power}. ({\hl{See: Part 1607 - Uniform Guidelines on Employee Selection Procedures} (1978) \textsection 1607.4.}).
+The same can be said of the selected explanation methods and discrimination tests. Due to their post-hoc nature, they can often be shoe-horned into existing ML workflows and pipelines. Presented explanation techniques include partial dependence (PD) and individual conditional expectation (ICE) (see Section~\ref{ssec:pd_ice}) and Shapley values (see Section~\ref{ssec:shap}) \cite{esl,ice_plots,shapley,tree_shap}. PD, ICE, and Shapley values provide direct, global, and local summaries and descriptions of constrained models without resorting to the use of intermediary and approximate surrogate models. Discrimination testing methods discussed (see Section~\ref{ssec:di}) include adverse impact ratio
+(AIR, see Part 1607---Uniform Guidelines on Employee Selection Procedures (1978) \textsection 1607.4), 
+marginal effect (ME), and standardized mean difference (SMD)  \cite{feldman2015certifying,cohen1988statistical,cohen1992power}.
 %%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
- Accuracy and other confusion matrix measures are also reported by demographic segment \cite{zafar2017fairness}. All outlined materials and methods are implemented in open source Python code, and are made available on GitHub (see Section~\ref{ssec:soft}). 
+Accuracy and other confusion matrix measures are also reported by demographic segment \cite{zafar2017fairness}. All outlined materials and methods are implemented in open source Python code, and are made available on GitHub (see Section~\ref{ssec:soft}). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -181,31 +180,29 @@ PD plots are a widely-used method for describing and plotting the estimated aver
 
 Shapley explanations are a class of additive, locally accurate feature contribution measures with long-standing theoretical support \cite{shapley,shapley1988shapley}. Shapley explanations are the only known locally accurate and globally consistent feature contribution values, meaning that Shapley explanation values for input features always sum to the model's prediction, $g(\mathbf{x})$, for any instance $\mathbf{x}$, and that Shapley explanation values should not decrease in magnitude for some instance of $x_j$ when $g$ is changed such that $x_j$ truly makes a stronger contribution to $g(\mathbf{x})$ \cite{shapley,tree_shap}. Shapley values can be estimated in different ways, many of which are intractable for datasets with large numbers of input features. Tree~Shapley Additive Explanations (SHAP) is a specific implementation of Shapley explanations that relies on traversing internal decision tree structures to efficiently estimate the contribution of each $x_j$ for some $g(\mathbf{x})$ \cite{tree_shap}. Tree SHAP has been implemented in popular gradient boosting libraries such as 
 %\href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogradientboostingestimator}
-{\texttt{\hl{h2o}}}, 
+{\texttt{{h2o}}}, 
 %\href{https://lightgbm.readthedocs.io/en/latest/Python-Intro.html}
-{\texttt{\hl{LightGBM}}}, and 
+{\texttt{{LightGBM}}}, and 
 %\href{https://xgboost.readthedocs.io/en/latest/python/python_intro.html}
-{\texttt{\hl{XGBoost}}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in Section~\ref{ssec:int_ex_mort} and Appendix \ref{a_ssec:int_ex_sim}. Deep SHAP is an approximate Shapley value technique that creates SHAP values for ANNs \cite{shapley}. Deep SHAP is implemented in the 
+{\texttt{{XGBoost}}}, and Tree SHAP is used to calculate accurate and consistent global and local feature importance for MGBM models in Section~\ref{ssec:int_ex_mort} and Appendix \ref{a_ssec:int_ex_sim}. Deep SHAP is an approximate Shapley value technique that creates SHAP values for ANNs \cite{shapley}. Deep SHAP is implemented in the 
 %\href{https://github.com/slundberg/shap}
-{\texttt{\hl{shap}}} package and is used to generate SHAP values for the two $g^{XNN}$ models discussed in Section~\ref{ssec:int_ex_mort} and Appendix \ref{a_ssec:int_ex_sim}. For more information pertaining to the calculation of Shapley values, see Appendices \ref{a_ssec:not} and \ref{a_ssec:shap}.%% we have removed the link of text, and keep web link
+{\texttt{{shap}}} package and is used to generate SHAP values for the two $g^{XNN}$ models discussed in Section~\ref{ssec:int_ex_mort} and Appendix \ref{a_ssec:int_ex_sim}. For more information pertaining to the calculation of Shapley values, see Appendices \ref{a_ssec:not} and \ref{a_ssec:shap}.%% we have removed the link of text, and keep web link
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \subsection{Discrimination Testing Measures}\label{ssec:di}
 
-Because many current technical discussions of fairness in ML appear inconclusive ({See:} 
-\href{https://www.youtube.com/watch?v=jIXIuYdnyyk}
-{Tutorial: 21 Fairness Definitions and Their Politics}.)%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-, this text will draw on regulatory and legal standards that have been used for years in regulated, high-stakes employment and financial decisions. The~discussed measures are also representative of fair lending analyses and pair well with the mortgage data. (See~Appendix \ref{a_sec:types} for a brief discussion regarding different types of discrimination in US legal and regulatory settings, and Appendix \ref{a_sec:prac_v_stat} for remarks on practical vs. statistical significance for discrimination measures.) One such common measure of DI used in US litigation and regulatory settings is ME. ME is simply the difference between the percent of the control group members receiving a favorable outcome and the percent of the protected class members receiving a favorable outcome: 
+Because many current technical discussions of fairness in ML appear inconclusive (e.g., 
+\href{https://www.youtube.com/watch?v=jIXIuYdnyyk}{Tutorial: 21 Fairness Definitions and Their Politics}), this text will draw on regulatory and legal standards that have been used for years in regulated, high-stakes employment and financial decisions. The~discussed measures are also representative of fair lending analyses and pair well with the mortgage data. (See~Appendix \ref{a_sec:types} for a brief discussion regarding different types of discrimination in US legal and regulatory settings, and Appendix \ref{a_sec:prac_v_stat} for remarks on practical vs. statistical significance for discrimination measures.) One such common measure of DI used in US litigation and regulatory settings is ME. ME is simply the difference between the percent of the control group members receiving a favorable outcome and the percent of the protected class members receiving a favorable outcome: 
 \begin{equation}
 \label{eq:me}
 \begin{aligned}
 \text{ME} \equiv 100 \cdot (\text{Pr}(\hat{\mathbf{y}} = 1| X_c = 1)  - \text{Pr}(\hat{\mathbf{y}} = 1 | X_p = 1))
 \end{aligned}
 \end{equation}
- where $\hat{\mathbf{y}}$ are the model decisions, $X_p$ and $X_c$ represent binary markers created from some demographic attribute, $c$ denotes the control group (often whites or males), $p$ indicates a protected group, and $\text{Pr}(\cdot)$ is the operator for conditional probability.  ME is a favored DI measure used by the US Consumer Financial Protection Bureau (CFPB), the primary agency charged with regulating fair lending laws at the largest US lending institutions and for various other participants in the consumer financial market. ({See: 
+ where $\hat{\mathbf{y}}$ are the model decisions, $X_p$ and $X_c$ represent binary markers created from some demographic attribute, $c$ denotes the control group (often whites or males), $p$ indicates a protected group, and $\text{Pr}(\cdot)$ is the operator for conditional probability.  ME is a favored DI measure used by the US Consumer Financial Protection Bureau (CFPB), the primary agency charged with regulating fair lending laws at the largest US lending institutions and for various other participants in the consumer financial market (see  
 \href{https://files.consumerfinance.gov/f/201510_cfpb_supervisory-highlights.pdf}
-{Supervisory Highlights, Issue 9, Fall 2015}.) %%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
- Another important DI measure is AIR, more~commonly known as a {relative risk ratio} in settings outside of regulatory compliance.
+{\textit{Supervisory Highlights}, Issue 9, Fall 2015}).
+ Another important DI measure is AIR, more~commonly known as a relative risk ratio in settings outside of regulatory compliance.
 
 \begin{equation}
 \label{eq:air}
@@ -213,8 +210,8 @@ Because many current technical discussions of fairness in ML appear inconclusive
 \text{AIR} \equiv \frac{\text{Pr}(\hat{\mathbf{y}} = 1 | X_p = 1)}{\text{Pr}(\hat{\mathbf{y}} = 1| X_c = 1)}
 \end{aligned}
 \end{equation}
- AIR is equal to the ratio of the proportion of the protected class that receives a favorable outcome and the proportion of the control class that receives a favorable outcome. Statistically significant AIR values below 0.8 can be considered {prima facie} evidence of discrimination. An additional long-standing and pertinent measure of DI is SMD. SMD is often used to assess disparities in continuous features, such~as income differences in employment analyses, or interest rate differences in lending. It originates from work on statistical power, and is more formally known as {Cohen’s d}. SMD is equal to the difference in the average protected class outcome, $\bar{\hat{\mathbf{y}}}_p$, minus the control class outcome, $\bar{\hat{\mathbf{y}}}_c$, divided by a measure of the standard deviation of the population, $\sigma_{\hat{\mathbf{y}}}$. ({\hl{There are several measures of the standard deviation of the score that are typically used}%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-: \textbf{\hl{1}.} the standard deviation of the population, irrespective of protected class status, \textbf{\hl{2}.} a standard deviation calculated only over the two groups being considered in a particular calculation, or \textbf{\hl{3}.} a pooled standard deviation, using the standard deviations for each of the two groups with weights.}) Cohen defined values of this measure to have {small}, {medium}, and {large} effect sizes if the values exceeded 0.2, 0.5, and 0.8, respectively. %is bold necessary? 
+ AIR is equal to the ratio of the proportion of the protected class that receives a favorable outcome and the proportion of the control class that receives a favorable outcome. Statistically significant AIR values below 0.8 can be considered {prima facie} evidence of discrimination. An additional long-standing and pertinent measure of DI is SMD. SMD is often used to assess disparities in continuous features, such~as income differences in employment analyses, or interest rate differences in lending. It originates from work on statistical power, and is more formally known as {Cohen’s d}. SMD is equal to the difference in the average protected class outcome, $\bar{\hat{\mathbf{y}}}_p$, minus the control class outcome, $\bar{\hat{\mathbf{y}}}_c$, divided by a measure of the standard deviation of the population, $\sigma_{\hat{\mathbf{y}}}$. ({{There are several measures of the standard deviation of the score that are typically used}%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
+: \textbf{{1}.} the standard deviation of the population, irrespective of protected class status, \textbf{{2}.} a standard deviation calculated only over the two groups being considered in a particular calculation, or \textbf{{3}.} a pooled standard deviation, using the standard deviations for each of the two groups with weights.}) Cohen defined values of this measure to have {small}, {medium}, and {large} effect sizes if the values exceeded 0.2, 0.5, and 0.8, respectively. %is bold necessary? 
 
 \begin{equation}
 \label{eq:smd}
@@ -232,19 +229,19 @@ Because many current technical discussions of fairness in ML appear inconclusive
 
 Python code to reproduce discussed results is available at: {\url{https://github.com/h2oai/article-information-2019}}. The primary Python packages employed are:  
 %\href{https://numpy.org/}
-{\texttt{\hl{numpy}}} 1.14.5 and 
+{\texttt{{numpy}}} 1.14.5 and 
 %\href{https://pandas.pydata.org/}
-{\texttt{\hl{pandas}}} 0.22.0 for data manipulation, 
+{\texttt{{pandas}}} 0.22.0 for data manipulation, 
 %\href{https://github.com/h2oai/h2o-3}
-{\texttt{\hl{h2o}}} 3.26.0.9, 
+{\texttt{{h2o}}} 3.26.0.9, 
 %\href{https://keras.io/}
-{\texttt{\hl{Keras}}} 2.3.1, 
+{\texttt{{Keras}}} 2.3.1, 
 %\href{https://github.com/slundberg/shap}
-{\texttt{\hl{shap}}} 0.31.0, and 
+{\texttt{{shap}}} 0.31.0, and 
 %\href{https://www.tensorflow.org/}
-{\texttt{\hl{tensorflow}}} 1.14.0 for modeling, explanation, and discrimination testing, and typically 
+{\texttt{{tensorflow}}} 1.14.0 for modeling, explanation, and discrimination testing, and typically 
 %\href{https://matplotlib.org/}
-{\texttt{\hl{matplotlib}}} 2.2.2 for plotting. 
+{\texttt{{matplotlib}}} 2.2.2 for plotting. 
 
 % we have removed the link of text, and keep web link
 
@@ -269,21 +266,21 @@ Table \ref{tab:sim_acc} presents a variety of fit measures for $g^\text{GBM}$, $
 		\toprule
 		\textbf{Model} & 
 		%\href{https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score}
-		{\textbf{\hl{Accuracy}}}~$\uparrow$ & 
+		{\textbf{{Accuracy}}}~$\uparrow$ & 
 		%\href{https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve}
-		{\textbf{\hl{AUC}}}~$\uparrow$ & 
+		{\textbf{{AUC}}}~$\uparrow$ & 
 		%\href{https://en.wikipedia.org/wiki/F1_score}
-		{\textbf{\hl{F1}}}~$\uparrow$ & 
+		{\textbf{{F1}}}~$\uparrow$ & 
 		%\href{https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss}
-		{\textbf{\hl{Logloss}}}~$\downarrow$ & 
+		{\textbf{{Logloss}}}~$\downarrow$ & 
 		%\href{https://en.wikipedia.org/wiki/Matthews_correlation_coefficient}
-		{\textbf{\hl{MCC}}}~$\uparrow$ & 
+		{\textbf{{MCC}}}~$\uparrow$ & 
 		%\href{https://en.wikipedia.org/wiki/Root-mean-square_deviation}
-		{\textbf{\hl{RMSE}}}~$\downarrow$ & 
+		{\textbf{{RMSE}}}~$\downarrow$ & 
 		%\href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}
-		{\textbf{\hl{Sensitivity}}}~$\uparrow$ & 
+		{\textbf{{Sensitivity}}}~$\uparrow$ & 
 		%\href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}
-		{\textbf{\hl{Specificity}}}~$\uparrow$ \\
+		{\textbf{{Specificity}}}~$\uparrow$ \\
 		\midrule
 		$g^\text{GBM}$		& 0.757 & 0.847 & 0.779 & 0.486 & 0.525 & 0.400 & 0.858 & \textbf{0.657} \\
 		$g^\text{MGBM}$		& 0.744 & 0.842 & 0.771 & 0.502 & 0.504 & 0.407 & 0.864 & 0.625 \\
@@ -298,13 +295,35 @@ Table \ref{tab:sim_acc} presents a variety of fit measures for $g^\text{GBM}$, $
 
 For $g^\text{XNN}$, inherent interpretability manifested as plots of sparse $\gamma_k$ output layer weights, $n_k$ subnetwork ridge functions, and sparse $\beta_{j,k}$ weights in the bottom projection layer. Figure \ref{fig:sim_xnn_glob_ridge} provides detailed insights into the structure of $g^\text{XNN}$ (also described in Equation (\ref{eq:xnn})). Figure \ref{fig:sim_xnn_glob_ridge}{a} displays the sparse $\gamma_k$ weights of the output layer, where only $n_k$ subnetworks with $k \in \{1, 4, 7, 8, 9\}$ were associated with large magnitude weights. The $n_k$ subnetwork ridge functions appear in Figure \ref{fig:sim_xnn_glob_ridge}{b} as simplistic but distinctive functional forms. Color-coding between Figure \ref{fig:sim_xnn_glob_ridge}{a},{b} visually reinforces the direct feed-forward relationship between the $n_k$ subnetworks and the $\gamma_k$ weights of the output layer.% we have removed the link of text 
 
+% start a new page
+\newpage
+% change it to landscape
+\paperwidth=\pdfpageheight
+\paperheight=\pdfpagewidth
+\pdfpageheight=\paperheight
+\pdfpagewidth=\paperwidth
+\newgeometry{layoutwidth=297mm,layoutheight=210 mm, left=2.7cm,right=2.7cm,top=1.8cm,bottom=1.5cm, includehead,includefoot}
+\fancyheadoffset[LO,RE]{0cm}
+\fancyheadoffset[RO,LE]{0cm}
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{figure}[H]
 \centering
 	%\includegraphics[width=15cm]{img/sim_xnn_glob_ridge.png}
-	\includegraphics[width=17cm]{img/sim_xnn_glob_ridge.png}
+	\includegraphics[width=23cm]{img/sim_xnn_glob_ridge.png}
 	\caption{Output layer $\gamma_k$ weights, corresponding $n_k$ subnetwork ridge functions, and associated projection layer $\beta_{k,j}$ weights for $g^\text{XNN}$ on the simulated data.}
 	\label{fig:sim_xnn_glob_ridge}
 \end{figure} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% change everything back
+\newpage
+\restoregeometry
+\paperwidth=\pdfpageheight
+\paperheight=\pdfpagewidth
+\pdfpageheight=\paperheight
+\pdfpagewidth=\paperwidth
+\headwidth=\textwidth
 
   $n_k$ subnetworks were plotted across the output values of their associated $\sum_j\beta_{k,j}x_j$ projection layer hidden units, and color-coding between Figure \ref{fig:sim_xnn_glob_ridge}{b},c link the $\beta_{j,k}$ weights to their $n_k$ subnetworks. Most of the heavily utilized $n_k$ subnetworks had sparse weights in their $\sum_j\beta_{k,j}x_j$ projection layer hidden units. In particular, subnetwork $n_1$ appeared to be almost solely a function of $X_{\text{Friedman}, 3}$ and appeared to exhibit the expected quadratic behavior for $X_{\text{Friedman}, 3}$.  Subnetworks $n_7$, $n_8$, and $n_9$ appeaed to be most associated with the globally important $X_{\text{Friedman}, 1}$ and $X_{\text{Friedman}, 2}$ features, likely betraying the effort required for $g^{\text{XNN}}$ to model the nonlinear $\text{sin}()$ function of the $X_{\text{Friedman}, 1}$ and $X_{\text{Friedman}, 2}$ product, and these subnetworks, especially $n_7$ and $n_8$, appeared to display some noticeable sinusoidal characteristics. Subnetwork $n_4$ seemed to be a linear combination of all the original input $X_j$ features, but did weigh the linear $X_{\text{Friedman},4}$ and $X_{\text{Friedman},5}$ terms roughly in the correct two-to-one ratio. As~a whole, Figure \ref{fig:sim_xnn_glob_ridge}a--c exhibited evidence that $g^\text{XNN}$ learned about the signal-generating function in Equation (\ref{eq:sim}) and the displayed information should help practitioners understand which original input $X_j$ features were weighed heavily in each $n_k$ subnetwork, and which $n_k$ subnetworks have a strong influence on $g^\text{XNN}(\mathbf{X})$ output. See Appendix \ref{a_ssec:xnn} for additional details regarding general XNN architecture.
 
@@ -324,21 +343,21 @@ Table \ref{tab:mort_acc} shows that $g^\text{ANN}$ and $g^\text{XNN}$ noticeably
 	\toprule
 	\textbf{Model} & 	
 	%\href{https://scikit-learn.org/stable/modules/model_evaluation.html#accuracy-score}
-	{\textbf{\hl{Accuracy}}}~$\uparrow$ & 
+	{\textbf{{Accuracy}}}~$\uparrow$ & 
 	%\href{https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve}
-	{\textbf{\hl{AUC}}}~$\uparrow$ & 
+	{\textbf{{AUC}}}~$\uparrow$ & 
 	%\href{https://en.wikipedia.org/wiki/F1_score}
-	{\textbf{\hl{F1}}}~$\uparrow$ & 
+	{\textbf{{F1}}}~$\uparrow$ & 
 	%\href{https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss}
-	{\textbf{\hl{Logloss}}}~$\downarrow$ & 
+	{\textbf{{Logloss}}}~$\downarrow$ & 
 	%\href{https://en.wikipedia.org/wiki/Matthews_correlation_coefficient}
-	{\textbf{\hl{MCC}}}~$\uparrow$ & 
+	{\textbf{{MCC}}}~$\uparrow$ & 
 	%\href{https://en.wikipedia.org/wiki/Root-mean-square_deviation}
-	{\textbf{\hl{RMSE}}}~$\downarrow$ & 
+	{\textbf{{RMSE}}}~$\downarrow$ & 
 	%\href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}
-	{\textbf{\hl{Sensitivity}}}~$\uparrow$ & 
+	{\textbf{{Sensitivity}}}~$\uparrow$ & 
 	%\href{https://en.wikipedia.org/wiki/Sensitivity_and_specificity}
-	{\textbf{\hl{Specificity}}}~$\uparrow$ \\
+	{\textbf{{Specificity}}}~$\uparrow$ \\
 	\midrule	
 $g^\text{GBM}$		& 0.795	& 0.828	& 0.376 & 0.252 & 0.314 & 0.276 & 0.634 & 0.813 \\
 $g^\text{MGBM}$		& 0.765	& 0.814	& 0.362 & 0.259 & 0.305 & 0.278 & \textbf{0.684} & 0.773 \\
@@ -364,7 +383,7 @@ For $g^\text{MGBM}(\mathbf{X})$, intrinsic interpretability was evaluated with P
 \label{fig:mort_mgbm_glob}
 \end{figure} 
 
-Domain knowledge was used to positively constrain DTI ratio and LTV ratio and to negatively constrain income and the loan term flag under $g^\text{MGBM}$. The monotonicity constraints for DTI ratio and LTV ratio were confirmed for $g^\text{MGBM}(\mathbf{X})$ on the mortgage test data in Figure \ref{fig:mort_mgbm_glob_pdp_ice}. Both DTI ratio and LTV ratio displayed positive monotonic behavior at all selected percentiles of $g^\text{MGBM}(\mathbf{X})$ for ICE and on average with PD. Because PD curves generally followed the patterns of the ICE curves for both features, it is also likely that no strong interactions were at play for DTI ratio and LTV ratio under $g^\text{MGBM}$. Of course, the monotonicity constraints themselves could have dampened the effects of non-monotonic interactions under $g^\text{MGBM}$, even if they did exist in the training data (e.g., LTV ratio and the no introductory rate period flag, see\hl{ Figure} \ref{fig:mort_xnn_glob_ridge}). This rigidity could also have played a role in the performance differences between $g^\text{MGBM}(\mathbf{X})$ and $g^\text{XNN}(\mathbf{X})$ in the mortgage data not observed for the simulated data, wherein strong interactions appeared to be between features with the same monotonicity constraints (e.g., $X_{\text{Friedman},1}$ and $X_{\text{Friedman},2}$, see Figure \ref{fig:sim_xnn_glob_ridge}).%Figures  should be cited in sequential numerical order. Please confirm if it's invalid citation, if no, please revise the order.
+Domain knowledge was used to positively constrain DTI ratio and LTV ratio and to negatively constrain income and the loan term flag under $g^\text{MGBM}$. The monotonicity constraints for DTI ratio and LTV ratio were confirmed for $g^\text{MGBM}(\mathbf{X})$ on the mortgage test data in Figure \ref{fig:mort_mgbm_glob_pdp_ice}. Both DTI ratio and LTV ratio displayed positive monotonic behavior at all selected percentiles of $g^\text{MGBM}(\mathbf{X})$ for ICE and on average with PD. Because PD curves generally followed the patterns of the ICE curves for both features, it is also likely that no strong interactions were at play for DTI ratio and LTV ratio under $g^\text{MGBM}$. Of course, the monotonicity constraints themselves could have dampened the effects of non-monotonic interactions under $g^\text{MGBM}$, even if they did exist in the training data (e.g., LTV ratio and the no introductory rate period flag, see {Figure} 6). This rigidity could also have played a role in the performance differences between $g^\text{MGBM}(\mathbf{X})$ and $g^\text{XNN}(\mathbf{X})$ in the mortgage data not observed for the simulated data, wherein strong interactions appeared to be between features with the same monotonicity constraints (e.g., $X_{\text{Friedman},1}$ and $X_{\text{Friedman},2}$, see Figure \ref{fig:sim_xnn_glob_ridge}).%Figures  should be cited in sequential numerical order. Please confirm if it's invalid citation, if no, please revise the order.
 
 PD and ICE are displayed with a histogram to highlight any sparse regions in an input feature's domain. Because most ML models will always issue a prediction on any instance with a correct schema, it is crucial to consider whether a given model learned enough about an instance to make an accurate prediction. Viewing PD and ICE along with a histogram is a convenient method to visually assess whether a prediction is reasonable and based on sufficient training data. The DTI ratio and LTV ratio do appear to have had sparse regions in their univariate distributions. The monotonicity constraints likely play to the advantage of $g^\text{MGBM}$ in this regard, as $g^\text{MGBM}(\mathbf{X})$ appears to carry reasonable predictions learned from dense domains into the sparse domains of both features. 
 
@@ -402,11 +421,33 @@ Figure \ref{fig:mort_xnn_glob} displays global feature importance for $g^\text{X
 
 The capability of $g^\text{XNN}$ to model nonlinear phenomenon and high-degree interactions, and to do so in an interpretable manner, is on display in Figure \ref{fig:mort_xnn_glob_ridge}. Figure \ref{fig:mort_xnn_glob_ridge}{a} presents the sparse $\gamma_k$ weights of the $g^\text{XNN}$ output layer in which the $n_k$ subnetworks with $k \in \{0,1,2,3,5,8,9\}$ had large magnitude weights and $n_k$ subnetworks, $k \in \{4,6,7\}$, had small or near-zero magnitude weights. Distinctive ridge functions that fed into those large magnitude $\gamma_k$ weights are highlighted in Figure \ref{fig:mort_xnn_glob_ridge}{b} and color-coded to pair with their corresponding $\gamma_k$ weight. As in the Section~\ref{ssec:xnn_sim}, $n_k$ ridge function plots varied with the output of the corresponding projection layer $\sum_j\beta_{k,j}x_j$ hidden unit, with weights displayed in matching colors in Figure \ref{fig:mort_xnn_glob_ridge}{c}. In both the simulated and mortgage data, $n_k$ ridge functions appeared to be elementary functional forms that the output layer learned to combine to generate accurate predictions, reminiscent of basis functions for the modeled space. Figure \ref{fig:mort_xnn_glob_ridge}{c} displays the sparse $\beta_{j,k}$ weights of the projection layer $\sum_j\beta_{k,j}x_j$ hidden units that were associated with each $n_k$ subnetwork ridge function. For instance, subnetwork $n_3$ was influenced by large weights for LTV ratio, no introductory rate period flag, and introductory rate period, whereas subnetwork $n_9$ was nearly completely dominated by the weight for income. See Appendix \ref{a_ssec:xnn} for details regarding general XNN architecture.
 
+% start a new page
+\newpage
+% change it to landscape
+\paperwidth=\pdfpageheight
+\paperheight=\pdfpagewidth
+\pdfpageheight=\paperheight
+\pdfpagewidth=\paperwidth
+\newgeometry{layoutwidth=297mm,layoutheight=210 mm, left=2.7cm,right=2.7cm,top=1.8cm,bottom=1.5cm, includehead,includefoot}
+\fancyheadoffset[LO,RE]{0cm}
+\fancyheadoffset[RO,LE]{0cm}
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{figure}[H]
-\includegraphics[width=17cm]{img/mort_xnn_glob_ridge.png}
+\includegraphics[width=23cm]{img/mort_xnn_glob_ridge.png}
 \caption{Output layer $\gamma_k$ weights, corresponding $n_k$ ridge functions, and associated projection layer $\beta_{k,j}$ weights for $g^\text{XNN}$ on the mortgage data.}
 \label{fig:mort_xnn_glob_ridge}
 \end{figure} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% change everything back
+\newpage
+\restoregeometry
+\paperwidth=\pdfpageheight
+\paperheight=\pdfpagewidth
+\pdfpageheight=\paperheight
+\pdfpagewidth=\paperwidth
+\headwidth=\textwidth
 
 To complement the global interpretability of $g^\text{XNN}$, Figure \ref{fig:mort_xnn_loc} displays local Shapley values for selected individuals, estimated from the projection layer using Deep SHAP in the $g^\text{XNN}$ probability space. Similar to Tree SHAP, local Deep SHAP values should sum to $g^\text{XNN}(\mathbf{x})$. While the Shapley values appeared to follow the roughly increasing pattern established in Figures \ref{fig:sim_mgbm_loc}, \ref{fig:sim_xnn_loc}, and \ref{fig:mort_mgbm_loc}, their true value was their ability to be calculated for any $g^\text{XNN}(\mathbf{x})$ prediction, as a means to summarize model reasoning and allow for appeal and override of specific ML-based decisions. 
 
@@ -419,9 +460,8 @@ To complement the global interpretability of $g^\text{XNN}$, Figure \ref{fig:mor
 
 \subsubsection{Discrimination Testing Results}\label{ssec:dis_mort}
 
-Table \ref{tab:mort_disc}{a,b} show the results of the discrimination tests using the mortgage data for two sets of class-control groups: blacks as compared to whites, and females as compared to males. As with the simulated data in Table \ref{tab:sim_disc}, several measures of disparities are shown, with the SMDs calculated using the probabilities from $g^{\text{MGBM}}(\mathbf{X})$ and $g^{\text{XNN}}(\mathbf{X})$, and the accuracy, FPRs, and  FPR ratios, MEs, and AIRs calculated using a binary outcome based on a cutoff of 0.20 (anyone with probabilities of 0.2 or less receives the favorable outcome)({\hl{See Appendix} \ref{a_sec:cut} for comments pertaining to discrimination testing and cutoff selection.).
-%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-} Since $g^{\text{MGBM}}$ and $g^{\text{XNN}}$  were predicting the likelihood of receiving a high-priced loan, $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ assume that a lower score was favorable.  Thus, one might consider FPR ratios as a measure of the class-control disparities. FPR ratios were higher under $g^{\text{XNN}}$ than $g^{\text{MGBM}}$ (2.45 vs. 2.10) in Table \ref{tab:mort_disc}{b}, but overall FPRs were lower for blacks under $g^{\text{XNN}}$ (0.295 vs. 0.315) in Table \ref{tab:mort_disc}{a}.  This is the same pattern seen in the simulated data results in Appendix \ref{a_ssec:dis_sim}, leading to the question of whether a fairness goal should not only consider class-control relative rates, but also intra-class improvements in the chosen fairness measure.  Similar results were found for the female-male comparison, but the relative rates are less stark: 1.15 for $g^{\text{MGBM}}(\mathbf{X})$ and 1.21 for $g^{\text{XNN}}(\mathbf{X})$.
+Table \ref{tab:mort_disc}{a,b} show the results of the discrimination tests using the mortgage data for two sets of class-control groups: blacks as compared to whites, and females as compared to males. As with the simulated data in Table \ref{tab:sim_disc}, several measures of disparities are shown, with the SMDs calculated using the probabilities from $g^{\text{MGBM}}(\mathbf{X})$ and $g^{\text{XNN}}(\mathbf{X})$, and the accuracy, FPRs, and  FPR ratios, MEs, and AIRs calculated using a binary outcome based on a cutoff of 0.20 (anyone with probabilities of 0.2 or less receives the favorable outcome; see Appendix \ref{a_sec:cut} for comments pertaining to discrimination testing and cutoff selection).
+Since $g^{\text{MGBM}}$ and $g^{\text{XNN}}$  were predicting the likelihood of receiving a high-priced loan, $g^{\text{MGBM}}$ and $g^{\text{XNN}}$ assume that a lower score was favorable.  Thus, one might consider FPR ratios as a measure of the class-control disparities. FPR ratios were higher under $g^{\text{XNN}}$ than $g^{\text{MGBM}}$ (2.45 vs. 2.10) in Table \ref{tab:mort_disc}{b}, but overall FPRs were lower for blacks under $g^{\text{XNN}}$ (0.295 vs. 0.315) in Table \ref{tab:mort_disc}{a}.  This is the same pattern seen in the simulated data results in Appendix \ref{a_ssec:dis_sim}, leading to the question of whether a fairness goal should not only consider class-control relative rates, but also intra-class improvements in the chosen fairness measure.  Similar results were found for the female-male comparison, but the relative rates are less stark: 1.15 for $g^{\text{MGBM}}(\mathbf{X})$ and 1.21 for $g^{\text{XNN}}(\mathbf{X})$.
 
 %\begin{table}[H]
 %	\hskip-10pt\begin{subtable}{0.45\textwidth}
@@ -524,7 +564,7 @@ Both ME and AIR showed higher disparities for blacks under $g^{\text{XNN}}$ than
 
 \subsection{The Burgeoning Python Ecosystem for Responsible Machine Learning}
 
-Figure \ref{fig:blueprint} displays a holistic approach to ML model training, assessment, and deployment meant to decrease discrimination, inaccuracy, and privacy and security risks for high-stakes, human-centered, or regulated ML applications (See: \href{https://github.com/jphall663/hc_ml}{Toward Responsible Machine Learning} for details regarding Figure~\ref{fig:blueprint}.}). While all the methods mentioned in Figure \ref{fig:blueprint} play an important role in increasing human trust and understanding of ML, a few pertinent references and Python resources are highlighted below as further reading to augment this this text's focus on certain interpretable models, post-hoc explanation, and discrimination testing techniques.   
+Figure \ref{fig:blueprint} displays a holistic approach to ML model training, assessment, and deployment meant to decrease discrimination, inaccuracy, and privacy and security risks for high-stakes, human-centered, or regulated ML applications. (See \href{https://github.com/jphall663/hc_ml}{Toward Responsible Machine Learning} for details regarding Figure~\ref{fig:blueprint}.) While all the methods mentioned in Figure \ref{fig:blueprint} play an important role in increasing human trust and understanding of ML, a few pertinent references and Python resources are highlighted below as further reading to augment this this text's focus on certain interpretable models, post-hoc explanation, and discrimination testing techniques.   
 
 \begin{figure}[H]
 	\centering
@@ -535,47 +575,47 @@ Figure \ref{fig:blueprint} displays a holistic approach to ML model training, as
 
 Any discussion of interpretable ML models would be incomplete without references to the seminal work of the Rudin group at Duke University  and EBMs, or GA\textsuperscript{2}Ms, pioneered by researchers at Microsoft and Cornell \cite{ga2m,osdt,this_looks_like_that}. In keeping with a major theme of this manuscript, models from these leading researchers and several other kinds of interpretable ML models are now available as open source Python packages. Among several types of currently available interpretable models, practitioners can now use Python to evaluate EBM in the  % we have removed the link of text
 %\href{https://github.com/interpretml/interpret}
-{\texttt{\hl{interpret}}} package, optimal sparse decision trees, GAMs in the 
+{\texttt{{interpret}}} package, optimal sparse decision trees, GAMs in the 
 %\href{https://github.com/dswah/pyGAM}
-{\texttt{\hl{pyGAM}}} package, a variant of Friedman's RuleFit  in the 
+{\texttt{{pyGAM}}} package, a variant of Friedman's RuleFit  in the 
 %\href{https://github.com/scikit-learn-contrib/skope-rules}
-{\texttt{\hl{skope-rules}}} package, monotonic calibrated interpolated lookup tables in 
+{\texttt{{skope-rules}}} package, monotonic calibrated interpolated lookup tables in 
 %\href{https://github.com/tensorflow/lattice}
-{\texttt{\hl{tensorflow/lattice}}}, and \textit{this looks like that} interpretable deep learning \cite{osdt,rulefit,lattice,this_looks_like_that} ({See: 
-\href{https://github.com/xiyanghu/OSDT}{optimal sparse decision trees}; see: 
-\href{https://github.com/cfchen-duke/ProtoPNet}{this looks like that}.). Additional, relevant references and Python functionality include:
+{\texttt{{tensorflow/lattice}}}, and \textit{this looks like that} interpretable deep learning \cite{osdt,rulefit,lattice,this_looks_like_that} (see 
+\href{https://github.com/xiyanghu/OSDT}{Optimal Sparse Decision Trees},
+\href{https://github.com/cfchen-duke/ProtoPNet}{ProtoPNet (\textit{this looks like that})}). Additional, relevant references and Python functionality include:
 
 \begin{itemize}[leftmargin=*,labelsep=5.8mm]%is bold necessary?
 
-\item \textbf{\hl{Exploratory data analysis (EDA)}}: \texttt{H2OAggregatorEstimator} in 
+\item \textbf{{Exploratory data analysis (EDA)}}: \texttt{H2OAggregatorEstimator} in 
 %\href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2oaggregatorestimator}
-{\texttt{\hl{h2o}}} \cite{wilkinson2018visualizing}.
+{\texttt{{h2o}}} \cite{wilkinson2018visualizing}.
 
 \item \textbf{Sparse feature extraction}: \texttt{H2OGeneralizedLowRankEstimator} in 
 %\href{http://docs.h2o.ai/h2o/latest-stable/h2o-py/docs/modeling.html#h2ogeneralizedlowrankestimator}
-{\texttt{\hl{h2o}}} \cite{udell2016generalized}.
+{\texttt{{h2o}}} \cite{udell2016generalized}.
 
 \item \textbf{Preprocessing and models for privacy}: 
 %\href{https://github.com/IBM/differential-privacy-library}
 {\texttt{diffprivlib}}, 
 %\href{https://github.com/tensorflow/privacy/}
-{\texttt{\hl{tensorflow/privacy}}} \cite{diffprivlib,ji2014differential,pate,abadi2016deep}.
+{\texttt{{tensorflow/privacy}}} \cite{diffprivlib,ji2014differential,pate,abadi2016deep}.
 
 \item \textbf{Causal inference and probabilistic programming}: 
 %\href{https://github.com/microsoft/dowhy}
-{\hl{dowhy}}, 
+{{dowhy}}, 
 %\href{https://docs.pymc.io/}
 {PyMC3} \cite{book_of_why}.
 
 \item \textbf{Post-hoc explanation}: structured data explanations with 
 %\href{https://github.com/SeldonIO/alibi}
-{\texttt{\hl{alibi}}} and 
+{\texttt{{alibi}}} and 
 %\href{https://github.com/SauceCat/PDPbox}
-{\texttt{\hl{PDPbox}}}, image classification explanations with 
+{\texttt{{PDPbox}}}, image classification explanations with 
 %\href{https://github.com/marcoancona/DeepExplain}
-{\texttt{\hl{DeepExplain}}}, and natural language explanations with 
+{\texttt{{DeepExplain}}}, and natural language explanations with 
 %\href{https://github.com/allenai/allennlp}
-{\texttt{\hl{allennlp}}} \cite{wachter2017counterfactual,grad_attr,wallace2019allennlp}. 
+{\texttt{{allennlp}}} \cite{wachter2017counterfactual,grad_attr,wallace2019allennlp}. 
 
 \item \textbf{Discrimination testing}: 
 %\href{https://github.com/dssg/aequitas}
@@ -585,17 +625,17 @@ Any discussion of interpretable ML models would be incomplete without references
 
 \item \textbf{Discrimination remediation}: Reweighing, adversarial de-biasing, learning fair representations, and reject option classification with 
 %\href{http://aif360.mybluemix.net/}
-{\texttt{\hl{AIF}360}} \cite{kamiran2012data,zhang2018mitigating,lfr,kamiran2012decision}.
+{\texttt{{AIF}360}} \cite{kamiran2012data,zhang2018mitigating,lfr,kamiran2012decision}.
 
 \item \textbf{Model debugging}: 
 %\href{https://github.com/bethgelab/foolbox}
-{\texttt{\hl{foolbox}}}, 
+{\texttt{{foolbox}}}, 
 %\href{https://github.com/SALib/SALib}
-{\texttt{\hl{SALib}}}, 
+{\texttt{{SALib}}}, 
 %\href{https://github.com/tensorflow/cleverhans}
-{\texttt{\hl{tensorflow/cleverhans}}}, and 
+{\texttt{{tensorflow/cleverhans}}}, and 
 %\href{https://github.com/tensorflow/model-analysis}
-{\texttt{\hl{tensorflow/model- analysis}}} \cite{rauber2017foolbox,papernot2018cleverhans,modeltracker,papernot2018marauder}.
+{\texttt{{tensorflow/model- analysis}}} \cite{rauber2017foolbox,papernot2018cleverhans,modeltracker,papernot2018marauder}.
 
 \item \textbf{Model documentation}: models cards \cite{model_cards}, e.g.,  
 \href{https://github.com/openai/gpt-2/blob/master/model_card.md}{GPT-2 model card}, 
@@ -610,13 +650,14 @@ See
 
 \subsection{Appeal and Override of Automated Decisions}
 
-Interpretable models and post-hoc explanations can play an important role in increasing transparency into model mechanisms and predictions. As seen in Section \ref{sec:res}, interpretable models often enable users to enforce domain knowledge-based constraints on model behavior, to ensure that models obey reasonable expectations, and to gain data-derived insights into the modeled problem domain. Post-hoc explanations generally help describe and summarize mechanisms and decisions, potentially yielding an even clearer understanding of ML models. Together they can allow for human learning from ML, certain types of regulatory compliance, and crucially, human appeal or override of automated model decisions \cite{art_and_sci}. Interpretable models and post-hoc explanations are likely good candidates for ML uses cases under the FCRA, ECOA, GDPR and other regulations that may require explanations of model decisions, and they are already used in the financial services industry today for model validation and other purposes (See: 
+Interpretable models and post-hoc explanations can play an important role in increasing transparency into model mechanisms and predictions. As seen in Section \ref{sec:res}, interpretable models often enable users to enforce domain knowledge-based constraints on model behavior, to ensure that models obey reasonable expectations, and to gain data-derived insights into the modeled problem domain. Post-hoc explanations generally help describe and summarize mechanisms and decisions, potentially yielding an even clearer understanding of ML models. Together they can allow for human learning from ML, certain types of regulatory compliance, and crucially, human appeal or override of automated model decisions \cite{art_and_sci}. Interpretable models and post-hoc explanations are likely good candidates for ML uses cases under the FCRA, ECOA, GDPR and other regulations that may require explanations of model decisions, and they are already used in the financial services industry today for model validation and other purposes.
+(For examples uses in financial services, see
 \href{https://ww2.amstat.org/meetings/jsm/2019/onlineprogram/AbstractDetails.cfm?abstractid=303053}
-{\textit{Deep Insights into Explainability and Interpretability of Machine Learning Algorithms and Applications to Risk Management}}.  {Unfortunately, many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing a model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific adverse action notices for explaining and appealing automated ML-based decisions in highly-regulated settings, such as credit lending \cite{bracke2019machine}.}). Transparency in ML also facilitates additional responsible AI processes such as model debugging, model documentation, and logical appeal and override processes, some of which may also be required by applicable regulations ({\hl{E.g.:}  % we have removed the link of text
-%\href{https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm}
-{\hl{US Federal Reserve Bank SR 11-7: Guidance on Model Risk Management}}.}).%%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
- Among these, providing persons affected by a model with the opportunity to appeal ML-based decisions may deserve the most attention. ML models are often wrong ({``\hl{All models are wrong, but some are useful.''---George Box, Statistician (1919--2013)}}) %%% footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
- and appealing black-box decisions can be difficult. For high-stakes, human-centered, or regulated applications that are trusted with mission- or life-critical decisions, the ability to logically appeal or override inevitable wrong decisions is not only a possible prerequisite for compliance, but also a failsafe procedure for those affected by ML decisions.  %is this necessary?
+{Deep Insights into Explainability and Interpretability of Machine Learning Algorithms and Applications to Risk Management}.  Also note that many non-consistent explanation methods can result in drastically different global and local feature importance values across different models trained on the same data or even for refreshing a model with augmented training data \cite{molnar}. Consistency and accuracy guarantees are perhaps a factor in the growing momentum behind Shapley values as a candidate technique for generating consumer-specific adverse action notices for explaining and appealing automated ML-based decisions in highly-regulated settings, such as credit lending \cite{bracke2019machine}.) In general, transparency in ML also facilitates additional responsible AI processes such as model debugging, model documentation, and logical appeal and override processes, some of which may also be required by applicable regulations (e.g., US Federal Reserve Bank SR 11-7: Guidance on Model Risk Management).
+ Among these, providing persons affected by a model with the opportunity to appeal ML-based decisions may deserve the most attention. ML models are often wrong (``All models are wrong, but some are useful.''---George Box, Statistician (1919--2013))
+ and appealing black-box decisions can be difficult (e.g.,
+ \href{https://www.nytimes.com/2017/06/13/opinion/how-computers-are-harming-criminal-justice.html}
+ {\textit{When a Computer Program Keeps You in Jail}}). For high-stakes, human-centered, or regulated applications that are trusted with mission- or life-critical decisions, the ability to logically appeal or override inevitable wrong decisions is not only a possible prerequisite for compliance, but also a failsafe procedure for those affected by ML decisions.
 
 \subsection{Discrimination Testing and Remediation in Practice}\label{ssec:disc_rem}
 
@@ -628,8 +669,8 @@ Regardless of the methodology chosen to minimize disparities, advances in comput
 
 \subsection{Intersectional and Non-static Risks in Machine Learning}
 
-The often black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or~the privacy harms and security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges, e.g., the {fairwashing} or {scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{shokri2019privacy,fair_washing,scaffolding} (See: \href{https://www.theguardian.com/technology/2016/mar/24/tay-microsofts-ai-chatbot-gets-a-crash-course-in-racism-from-twitter} 
- {\textit{Tay, Microsoft's AI chatbot, gets a crash course in racism from Twitter}}.} While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This~is sometimes known as the {transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation}. {See: \href{https://hbr.org/2019/12/the-ai-transparency-paradox}{\textit{The AI Transparency Paradox}}.}). Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and~discrimination testing approaches as at least partial remedies to the black-box and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data~extraction, and membership inference attacks, and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and~specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Accuracy, discrimination, and security characteristics of a system can change over time as well. Simply testing for these problems at training time, as presented in Section \ref{sec:res}, is~not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and~security should be monitored in real-time and over time, as long as a model is deployed. % we have removed the link of text
+The often black-box nature of ML, the perpetuation or exacerbation of discrimination by ML, or~the privacy harms and security vulnerabilities inherent in ML are each serious and difficult problems on their own. However, evidence is mounting that these harms can also manifest as complex intersectional challenges, e.g., the {fairwashing} or {scaffolding} of biased models with ML explanations, the privacy harms of ML explanations, or the adversarial poisoning of ML models to become discriminatory \cite{shokri2019privacy,fair_washing,scaffolding} (e.g., \href{https://www.theguardian.com/technology/2016/mar/24/tay-microsofts-ai-chatbot-gets-a-crash-course-in-racism-from-twitter} 
+ {\textit{Tay, Microsoft's AI chatbot, gets a crash course in racism from Twitter}}). (While the focus of this paper is not ML security, proposed best-practices from that field do point to transparency of ML systems as a mitigating factor for some ML attacks and hacks \cite{papernot2018marauder}. High system complexity is sometimes considered a mitigating influence as well \cite{hoare19811980}. This~is sometimes known as the {transparency paradox} in data privacy and security, and it likely applies to ML security as well, especially in the context of interpretable ML models and post-hoc explanation (see \href{https://hbr.org/2019/12/the-ai-transparency-paradox}{\textit{The AI Transparency Paradox}}).) Practitioners should of course consider the discussed interpretable modeling, post-hoc explanation, and~discrimination testing approaches as at least partial remedies to the black-box and discrimination issues in ML. However, they should also consider that explanations can ease model stealing, data~extraction, and membership inference attacks, and that explanations can mask ML discrimination. Additionally, high-stakes, human-centered, or regulated ML systems should generally be built and tested with robustness to adversarial attacks as a primary design consideration, and~specifically to prevent ML models from being poisoned or otherwise altered to become discriminatory. Accuracy, discrimination, and security characteristics of a system can change over time as well. Simply testing for these problems at training time, as presented in Section \ref{sec:res}, is~not adequate for high-stakes, human-centered, or regulated ML systems. Accuracy, discrimination, and~security should be monitored in real-time and over time, as long as a model is deployed. % we have removed the link of text
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}\label{sec:con}
@@ -648,7 +689,7 @@ This text puts forward results on simulated data to provide some validation of c
 \acknowledgments{Wen Phan for work in formalizing notation. Sue Shay for editing. Andrew Burt for ideas around the transparency paradox.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\conflictsofinterest{\hl{The authors declare no conflict of interest}. %%Please confirm.
+\conflictsofinterest{{The authors declare no conflict of interest}. %%Please confirm.
 XNN was first made public by the corporate model validation team at Wells Fargo bank. Wells Fargo is a customer of, and investor in, H2O.ai and a client of BLDS, LLC. However, communications regarding XNN between Wells Fargo and Patrick Hall at H2O.ai have been extremely limited prior to and during the drafting of this manuscript. Moreover, Wells Fargo exerted absolutely no editorial control over the text or results herein.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -720,7 +761,7 @@ XNN & explainable neural network
 
 \section{Mortgage Data Details}\label{a_sec:mort}
 
-The US HMDA law, originally enacted in 1975, requires many financial institutions that originate mortgage products to provide certain loan-level data about many types of mortgage-related products on an annual basis. This information is first provided to the CFPB, which subsequently releases some of the data to the public. Regulators often use HMDA data to, ``... show whether lenders are serving the housing needs of their communities; they give public officials information that helps them make decisions and policies; and they shed light on lending patterns that could be discriminatory'' (see: \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}). In addition to regulatory use, public advocacy groups use these data for similar purposes, and the lenders themselves use the data to benchmark their community outreach relative to their peers.  The publicly available data that the CFPB releases includes information such as the lender, the type of loan, loan amount, LTV ratio, DTI ratio, and other important financial descriptors. The data also include information on each borrower and co-borrower’s race, ethnicity, gender, and age. Because the data includes information on these protected class characteristics, certain measures that can be indicative of discrimination in lending can be calculated directly using the HDMA data. Ultimately, the HMDA data represent the most comprehensive source of data on highly-regulated mortgage lending that is publicly available, which makes it an ideal dataset to use for the types of analyses set forth in Sections~\ref{sec:m_and_m}~and~\ref{sec:res}.  
+The US HMDA law, originally enacted in 1975, requires many financial institutions that originate mortgage products to provide certain loan-level data about many types of mortgage-related products on an annual basis. This information is first provided to the CFPB, which subsequently releases some of the data to the public. Regulators often use HMDA data to, ``... show whether lenders are serving the housing needs of their communities; they give public officials information that helps them make decisions and policies; and they shed light on lending patterns that could be discriminatory'' (see \href{https://www.consumerfinance.gov/data-research/hmda/}{Mortgage data (HMDA)}). In addition to regulatory use, public advocacy groups use these data for similar purposes, and the lenders themselves use the data to benchmark their community outreach relative to their peers.  The publicly available data that the CFPB releases includes information such as the lender, the type of loan, loan amount, LTV ratio, DTI ratio, and other important financial descriptors. The data also include information on each borrower and co-borrower’s race, ethnicity, gender, and age. Because the data includes information on these protected class characteristics, certain measures that can be indicative of discrimination in lending can be calculated directly using the HDMA data. Ultimately, the HMDA data represent the most comprehensive source of data on highly-regulated mortgage lending that is publicly available, which makes it an ideal dataset to use for the types of analyses set forth in Sections~\ref{sec:m_and_m}~and~\ref{sec:res}.  
 
 \section{Selected Algorithmic Details}\label{a_sec:algo}
 \vspace{-6pt}
@@ -828,13 +869,13 @@ It is important to explain and draw a distinction between the two major types of
 
 \section{Practical vs. Statistical Significance for Discrimination Testing}\label{a_sec:prac_v_stat}
 
-A finding of \textit{practical significance} means that discovered disparity is not only statistically significant, but also passes beyond a chosen threshold that would constitute {prima facie} evidence of illegal discrimination.  Practical significance acknowledges that any large dataset is likely to show statistically significant differences in outcomes by class, even if those differences are not truly meaningful.  It further recognizes that there are likely to be situations where differences in outcomes are beyond a model user’s ability to correct them without significantly degrading the quality of the model. Moreover, practical significance is also needed by model builders and compliance personnel to determine whether a model should undergo remediation efforts before it is put into production. Unfortunately, guidelines for practical significance, i.e., the threshold at which any statistically significant disparity would be considered evidence of illegal discrimination, are not as frequently codified as the standards for statistical significance.  One exception, however, is in employment discrimination analyses, where~the US Equal Employment Opportunity Commission (EEOC) has stated that if the AIR is below 0.80 and statistically significant, then this constitutes {prima facie} evidence of discrimination, which the model user must rebut in order for the DI not to be considered illegal discrimination ({Importantly, the standard of 0.80 is not a law, but a rule of thumb for agencies tasked with enforcement of discrimination laws.  ``Adoption of Questions and Answers To Clarify and Provide a Common Interpretation of the Uniform Guidelines on Employee Selection Procedures,'' Federal Register, Volume 44, Number 43 (1979).}). It is important to note that the 0.80 measure of practical significance, also known as the \textit{80\% rule} and the \textit{4/5ths rule}, is explicitly used in relation to AIR, and it is not clear that the use of this threshold is directly relevant to testing fairness for measures other than the AIR.
+A finding of \textit{practical significance} means that discovered disparity is not only statistically significant, but also passes beyond a chosen threshold that would constitute {prima facie} evidence of illegal discrimination.  Practical significance acknowledges that any large dataset is likely to show statistically significant differences in outcomes by class, even if those differences are not truly meaningful.  It further recognizes that there are likely to be situations where differences in outcomes are beyond a model user’s ability to correct them without significantly degrading the quality of the model. Moreover, practical significance is also needed by model builders and compliance personnel to determine whether a model should undergo remediation efforts before it is put into production. Unfortunately, guidelines for practical significance, i.e., the threshold at which any statistically significant disparity would be considered evidence of illegal discrimination, are not as frequently codified as the standards for statistical significance.  One exception, however, is in employment discrimination analyses, where~the US Equal Employment Opportunity Commission (EEOC) has stated that if the AIR is below 0.80 and statistically significant, then this constitutes {prima facie} evidence of discrimination, which the model user must rebut in order for the DI not to be considered illegal discrimination. (Importantly, the standard of 0.80 is not a law, but a rule of thumb for agencies tasked with enforcement of discrimination laws.  ``Adoption of Questions and Answers To Clarify and Provide a Common Interpretation of the Uniform Guidelines on Employee Selection Procedures,'' Federal Register, Volume 44, Number 43 (1979).) It is important to note that the 0.80 measure of practical significance, also known as the \textit{80\% rule} and the \textit{4/5ths rule}, is explicitly used in relation to AIR, and it is not clear that the use of this threshold is directly relevant to testing fairness for measures other than the AIR.
 
 The legal thresholds for determining statistical significance is clearer and more consistent than that for practical significance.  The first guidance in US courts occurred in a case involving discrimination in jury selection, \textit{Castaneda vs. Partida} (430 US 482 - Supreme Court (1977)). Here, the US Supreme Court wrote that, ``As a general rule for such large samples, if the difference between the expected value and the observed number is greater than two or three standard deviations, then the hypothesis that the jury drawing was random would be suspect to a social scientist.''  This ``two or three standard deviations'' test was then applied to employment discrimination in \textit{Hazelwood School Districts vs. United States} (433 US 299 (1977)). Out of this, a 5\% two-sided test (z = 1.96), or an equivalent 2.5\% one-sided test, has become a common standard for determining whether evidence of disparities is statistically significant.
 
 \section{Additional Simulated Data Results}\label{a_sec:res_sim}
 
-As seen in Section~\ref{ssec:c_v_uc_sim}, little or no trade-off is required in terms of model to fit to use the constrained models. Hence, intrinsic interpretability, post-hoc explainability, and discrimination are explored further for the $g^\text{MGBM}$ and $g^\text{XNN}$ models in Appendices \ref{a_ssec:int_ex_sim}  and  \ref{a_ssec:dis_sim}. Intrinsic interpretability for $g^\text{MGBM}$ is evaluated with PD and ICE, and post-hoc explainability is highlighted via global and local Shapley explanations. For $g^\text{XNN}$, Shapley explanation techniques are also used to generate global and local feature importance to augment interpretability results exhibited in Subection \ref{ssec:xnn_sim}. Both~$g^\text{MGBM}(\mathbf{X})$ and $g^\text{XNN}(\mathbf{X})$ are evaluated for discrimination using AIR, ME, SMD, and other measures.
+As seen in Section~\ref{ssec:c_v_uc_sim}, little or no trade-off is required in terms of model to fit to use the constrained models. Hence, intrinsic interpretability, post-hoc explainability, and discrimination are explored further for the $g^\text{MGBM}$ and $g^\text{XNN}$ models in Appendices \ref{a_ssec:int_ex_sim}  and  \ref{a_ssec:dis_sim}. Intrinsic interpretability for $g^\text{MGBM}$ is evaluated with PD and ICE, and post-hoc explainability is highlighted via global and local Shapley explanations. For $g^\text{XNN}$, Shapley explanation techniques are also used to generate global and local feature importance to augment interpretability results exhibited in Section \ref{ssec:xnn_sim}. Both~$g^\text{MGBM}(\mathbf{X})$ and $g^\text{XNN}(\mathbf{X})$ are evaluated for discrimination using AIR, ME, SMD, and other measures.
 
 \subsection{Interpretability and Post-hoc Explanation Results}\label{a_ssec:int_ex_sim}
 
@@ -998,8 +1039,8 @@ The selection of which cutoff to use in production is typically based on the mod
 
 \section{Recent Fairness Techniques in US Legal and Regulatory Settings}\label{a_sec:comp}
 
-Great care must be taken to ensure that the appropriate discrimination measures are employed for any given use case. Additionally, the effects of changing a model must be viewed holistically.  For example, the mortgage data disparity analysis in Section~\ref{ssec:dis_mort} shows that if one were to choose $g^\text{MGBM}$ over $g^\text{XNN}$ because $g^\text{MGBM}$ has a lower FPR ratio for blacks, it would ultimately lead to a higher FPR for blacks overall, which may represent doing more harm than good. Furthermore, using some recently developed discrimination mitigation methods may lead to non-compliance with anti-discrimination laws and regulations.  A fundamental maxim of US anti-discrimination law is that (to slightly paraphrase), ``similarly situated people should be treated similarly.'' ({\hl{In the pay discrimination case,} \textit{Bazemore vs. Friday}, 478 US 385 (1986), the US Supreme Court found that,``Each week's paycheck that delivers less to a black than to a similarly situated white is a wrong actionable ...''  Beyond the obvious conceptual meaning, what specifically constitutes \textit{similarly situated} is controversial and its interpretation differs by circuit.}) % footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
-A model developed without inclusion of class status (or proxies thereof) considers similarly situated people the same on the dimensions included in the model: people who have the same feature values will have the same model output (though there may be some small or random differences in outcomes due to computational issues). Obviously, the inclusion of protected class status will change model output by class. With possible rare exceptions, this is likely to be viewed with legal and regulatory skepticism today, even if including class status is done with fairness as the goal ({\hl{In a reverse discrimination case}, \textit{Ricci v Desafano}, 557 US 557 (2009), the court found that any consideration of race which is not justified by correcting for past proven discrimination is illegal and, moreover, a lack of fairness is not necessarily evidence of illegal discrimination.}) Preprocessing and post-processing techniques may be similarly problematic, because industries that must provide explanations to those who receive unfavorable treatment (e.g., adverse action notices in US financial services) may have to incorporate the class adjustments into their explanations as well.
+Great care must be taken to ensure that the appropriate discrimination measures are employed for any given use case. Additionally, the effects of changing a model must be viewed holistically.  For example, the mortgage data disparity analysis in Section~\ref{ssec:dis_mort} shows that if one were to choose $g^\text{MGBM}$ over $g^\text{XNN}$ because $g^\text{MGBM}$ has a lower FPR ratio for blacks, it would ultimately lead to a higher FPR for blacks overall, which may represent doing more harm than good. Furthermore, using some recently developed discrimination mitigation methods may lead to non-compliance with anti-discrimination laws and regulations.  A fundamental maxim of US anti-discrimination law is that (to slightly paraphrase), ``similarly situated people should be treated similarly.'' ({{In the pay discrimination case,} \textit{Bazemore vs. Friday}, 478 US 385 (1986), the US Supreme Court found that,``Each week's paycheck that delivers less to a black than to a similarly situated white is a wrong actionable ...''  Beyond the obvious conceptual meaning, what specifically constitutes \textit{similarly situated} is controversial and its interpretation differs by circuit.}) % footnote is not allowed in our jounral, we have moved them in the main text, please confirm if you are OK with this. 
+A model developed without inclusion of class status (or proxies thereof) considers similarly situated people the same on the dimensions included in the model: people who have the same feature values will have the same model output (though there may be some small or random differences in outcomes due to computational issues). Obviously, the inclusion of protected class status will change model output by class. With possible rare exceptions, this is likely to be viewed with legal and regulatory skepticism today, even if including class status is done with fairness as the goal. (In a reverse discrimination case, \textit{Ricci v Desafano}, 557 US 557 (2009), the court found that any consideration of race which is not justified by correcting for past proven discrimination is illegal and, moreover, a lack of fairness is not necessarily evidence of illegal discrimination.) Preprocessing and post-processing techniques may be similarly problematic, because industries that must provide explanations to those who receive unfavorable treatment (e.g., adverse action notices in US financial services) may have to incorporate the class adjustments into their explanations as well.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \reftitle{References}
@@ -1059,8 +1100,8 @@ Barreno, M.; Nelson, B.; Joseph, A.D.; Tygar, J.
 Tram{\`e}r, F.; Zhang, F.; Juels, A.; Reiter, M.K.; Ristenpart, T.
 \newblock Stealing {M}achine {L}earning {M}odels via {P}rediction {A}{P}{I}s.
 \newblock In Proceedings of the 25th USENIX Security Symposium, Austin, TX, USA, 10--12 August 2016. pp. 601--618.
-%%%\newblock Available online: 
-%%%  \url{https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_tramer.pdf} ((accessed on 26 February 2020)).
+\newblock Available online: 
+\url{https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_tramer.pdf} (accessed on 26 February 2020).
 
 \bibitem[Shokri {et~al.}(2017)Shokri, Stronati, Song, and
   Shmatikov]{membership_inference}
@@ -1077,9 +1118,9 @@ Shokri, R.; Strobel, M.; Zick, Y.
 \newblock {\em arXiv} {\bf 2019}, arXiv:1907.00164.
 \newblock Available online: \url{https://arxiv.org/pdf/1907.00164.pdf} (accessed on 26 February 2020).
 
-\bibitem[Williams {et~al.}(2017)Williams et~al.]{ff_interpretability}
+\bibitem[Williams {et~al.}(2017) Williams et~al.]{ff_interpretability}
 Williams, M.
-\newblock {\em Interpretability}; \hl{Fast Forward Labs}: Brooklyn, NY, USA.  2017.   %Please add the location of the publisher 
+\newblock {\em Interpretability}; {Fast Forward Labs}: Brooklyn, NY, USA, 2017.   %Please add the location of the publisher 
 \newblock Available online: 
   \url{https://www.cloudera.com/products/fast-forward-labs-research.html} (accessed on 26 February 2020).
 
@@ -1088,15 +1129,15 @@ Friedman, J.H.
 \newblock A {T}ree-structured {A}pproach to {N}onparametric {M}ultiple
   {R}egression. In {\em Smoothing Techniques for Curve Estimation}; Springer: {Berlin/Heidelberg, Germany,} 
   1979; pp. 5--22.
-%%%\newblock Available online: 
-%%%  \url{http://inspirehep.net/record/140963/files/slac-pub-2336.pdf} (\hl{accessed~on}).
+\newblock Available online: 
+\url{http://inspirehep.net/record/140963/files/slac-pub-2336.pdf} (accessed on 28 February 2020).
 
 \bibitem[Friedman {et~al.}(1991)Friedman et~al.]{friedman1991multivariate}
 Friedman, J.H.
 \newblock Multivariate {A}daptive {R}egression {S}plines.
 \newblock {\em  Ann. Stat.} {\bf 1991}, {\em 19},~1--67.
-%%%\newblock Available online: 
-%%%  \url{https://projecteuclid.org/download/pdf_1/euclid.aos/1176347963} (\hl{accessed~on}).
+\newblock Available online: 
+\url{https://projecteuclid.org/download/pdf_1/euclid.aos/1176347963} (accessed on 28 February 2020).
 
 \bibitem[hmd()]{hmda}
 Mortgage Data ({H}{M}{D}{A}).
@@ -1107,8 +1148,8 @@ Mortgage Data ({H}{M}{D}{A}).
 Friedman, J.H.
 \newblock Greedy {F}unction {A}pproximation: a {G}radient {B}oosting {M}achine.
 \newblock {\em  Ann. Stat.} {\bf 2001}, 1189--1232.
-%%%\newblock Available online: 
-%%%  \url{https://projecteuclid.org/download/pdf_1/euclid.aos/1013203451} (\hl{accessed~on}).
+\newblock Available online: 
+\url{https://statweb.stanford.edu/~jhf/ftp/trebst.pdf} (accessed on 28 February 2020).
 
 \bibitem[Friedman {et~al.}(2001)Friedman, Hastie, and Tibshirani]{esl}
 Friedman, J.H.; Hastie, T.; Tibshirani, R.
