@@ -12,4 +12,4 @@ ipykernel==5.1.2
 Keras==2.3.1
 tensorflow==1.14.0
 plotly
-chart_studio
+chart-studio
