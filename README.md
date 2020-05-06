@@ -26,6 +26,7 @@ $ jupyter notebook
 ### Current Results:
 
 #### Datasets:
+* Raw dataset: see [hmda_lar_2018_orig_mtg_sample.csv](https://github.com/h2oai/article-information-2019/blob/master/data/input/hmda_lar_2018_orig_mtg_sample.csv)
 * For lending trainset before preprocessing, see [hmda_train.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_train.csv)
 * For lending testset before preprocessing, see [hmda_test.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_test.csv)
 * For lending trainset after preprocessing, see [hmda_train_processed.csv](https://github.com/h2oai/article-information-2019/blob/master/data/output/hmda_train_processed.csv)
